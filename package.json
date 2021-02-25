@@ -128,7 +128,7 @@
     "graphql-upload": "^11.0.0",
     "i18next": "^19.8.9",
     "i18next-fs-backend": "^1.0.8",
-    "i18next-http-backend": "^1.1.0",
+    "i18next-http-backend": "^1.1.1",
     "ioredis": "^4.22.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
