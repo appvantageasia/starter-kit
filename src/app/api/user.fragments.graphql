@@ -1,0 +1,10 @@
+fragment UserPreviewData on User {
+    id
+    displayName
+}
+
+fragment UserFullData on User {
+    id
+    username
+    displayName
+}

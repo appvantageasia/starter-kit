@@ -1,0 +1,21 @@
+# build output
+/build
+
+# webpack cache
+/.cache
+
+# dependencies
+/node_modules
+
+# editors
+/.idea
+
+# docker
+/docker-compose.override.yml
+
+# test reports & coverage reports
+/coverage
+/junit
+
+# env settings
+/.env*.local

@@ -1,0 +1,34 @@
+#impot "./user.fragments.graphql"
+
+fragment TopicPreviewData on Topic {
+    id
+    title
+    messagesCount
+
+    author {
+        ...UserPreviewData
+    }
+}
+
+fragment TopicMessageData on TopicMessage {
+    id
+    body
+
+    author {
+        ...UserPreviewData
+    }
+}
+
+fragment TopicFullData on Topic {
+    id
+    title
+    body
+
+    messages {
+        ...TopicMessageData
+    }
+
+    author {
+        ...UserPreviewData
+    }
+}

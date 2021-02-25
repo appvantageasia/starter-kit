@@ -1,0 +1,30 @@
+schema: ./schema/**/*.graphql
+
+generates:
+  src/server/schema/typeDefs.graphql:
+    plugins:
+      - schema-ast
+    config:
+      includeDirectives: true
+
+  src/app/api/index.ts:
+    documents: ./src/app/api/**/*.graphql
+    plugins:
+      - add:
+          content: '/* eslint-disable max-len */'
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo
+    config:
+      documentMode: documentNode
+      pureMagicComment: true
+      preResolveTypes: true
+      scalars:
+        ObjectID: string
+        DateTime: string | Date
+        Upload: File
+
+hooks:
+  afterAllFileWrite:
+    - prettier --write
+    - eslint --fix
