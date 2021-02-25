@@ -1,0 +1,26 @@
+type User {
+    id: ObjectID!
+    username: String!
+
+    """
+    Public displayed on interfaces
+    """
+    displayName: String!
+
+    """
+    List of topic authored by the user
+    """
+    topics: Topic!
+}
+
+type AuthenticationSuccessful {
+    """
+    User authenticated
+    """
+    user: User!
+
+    """
+    Json Web Token
+    """
+    token: String!
+}

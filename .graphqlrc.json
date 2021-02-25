@@ -1,0 +1,6 @@
+{
+    "name": "API",
+    "documents": "./src/**/*.graphql",
+    "schema": "./schema/**/*.graphql",
+    "excludes": "./src/server/schema/typeDefs.graphql"
+}

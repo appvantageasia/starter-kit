@@ -1,0 +1,39 @@
+type Mutation {
+    """
+    Create a new account/user
+    """
+    createAccount(username: String!, password: String!): User!
+
+    """
+    Update the display name for the logged in user
+
+    Authentication is required
+    """
+    updateDisplayName(displayName: String!): User!
+
+    """
+    Create a new topic
+
+    Authentication is required
+    """
+    createTopic(title: String!, body: String!, attachments: [Upload!]): Topic!
+
+    """
+    Post a message on a new topicd
+
+    Authentication is required
+    """
+    postMessage(topicId: ObjectID!, body: String!): Topic!
+
+    """
+    Validate credentials (username/password) and return a Json Web Token
+    """
+    authenticate(username: String!, password: String!): AuthenticationSuccessful!
+
+    """
+    Take the Json Web Token (JWT) from headers and returns a new one with a renewed lifetime
+
+    Authentication is required
+    """
+    refreshCredentials: String!
+}

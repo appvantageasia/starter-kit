@@ -1,0 +1,137 @@
+version: 2.1
+
+executors:
+    node-standalone:
+        docker:
+            - image: circleci/node:14.4.0
+    node-with-dependencies:
+        docker:
+            - image: circleci/node:14.4.0
+              environment:
+                  APP_DB_URI: mongodb://root:password@127.0.0.1:27017
+            - image: circleci/mongo:latest
+              environment:
+                  MONGO_INITDB_ROOT_USERNAME: root
+                  MONGO_INITDB_ROOT_PASSWORD: password
+            - image: minio/minio:latest
+              command: server /data
+              environment:
+                MINIO_ACCESS_KEY: "AKIAIOSFODNN7EXAMPLE"
+                MINIO_SECRET_KEY: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+            - image: circleci/redis:6.0.5-alpine
+              command: redis-server --appendonly yes
+
+jobs:
+    deps-install:
+        executor: node-standalone
+        steps:
+            - checkout
+            - restore_cache:
+                  keys:
+                      - yarn-cache-node14-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+                      - yarn-cache-node14-{{ checksum "package.json" }}
+                      - yarn-cache-node14
+            - run:
+                  name: Install depdencies
+                  command: yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
+            - save_cache:
+                  key: yarn-cache-node14-{{ checksum "yarn.lock" }}
+                  paths:
+                      - ~/.cache/yarn
+            - persist_to_workspace:
+                  root: ~/project
+                  paths:
+                      - node_modules
+
+    validate-project:
+        executor: node-with-dependencies
+        steps:
+            - checkout
+            - attach_workspace:
+                  at: ~/project
+            - run:
+                  name: Linting
+                  command: yarn lint --format junit -o ./junit/js-lint-results.xml
+            - run:
+                  name: Type checking
+                  command: yarn tsc
+            - run:
+                name: Type checking on cypress
+                command: yarn tsc
+                working_directory: ~/project/cypress
+            - run:
+                  name: Wait for db
+                  command: dockerize -wait tcp://127.0.0.1:27017 -timeout 1m
+            - run:
+                  name: Unit testing
+                  command: yarn test:coverage --reporters=default --reporters=jest-junit
+                  environment:
+                      JEST_JUNIT_OUTPUT_DIR: ./junit/
+            - run:
+                name: Install Cypress
+                command: |
+                  sudo apt-get update
+                  sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+                  yarn cypress install
+            - run:
+                name: Start test server
+                command: yarn dev
+                environment:
+                  NODE_ENV: test
+                background: true
+            - run:
+                name: Wait for test server
+                command: dockerize -wait http://127.0.0.1:3000 -timeout 5m
+            - run:
+                name: Functional testing
+                command: yarn cypress:run
+                environment:
+                  CYPRESS_BASE_URL: "http://localhost:3000"
+            - store_artifacts:
+                path: ~/project/cypress/screenshots
+                destination: cypress/screenshots
+            - store_artifacts:
+                path: ~/project/cypress/videos
+                destination: cypress/videos
+            - run:
+                name: Stop test server
+                command: pkill -SIGQUIT node
+            - run:
+                name: Build
+                command: yarn build
+            - store_artifacts:
+                path: ~/project/build
+                destination: build
+            - store_test_results:
+                  path: ~/project/junit/
+            - store_artifacts:
+                  path: ~/project/coverage/
+                  destination: coverage
+
+    release:
+        executor: node-standalone
+        steps:
+            - checkout
+            - attach_workspace:
+                  at: ~/project
+            - run:
+                  name: semantic-release
+                  command: yarn semantic-release
+
+workflows:
+    version: 2
+
+    main:
+        jobs:
+            - deps-install
+            - validate-project:
+                  requires:
+                      - deps-install
+            - release:
+                  filters:
+                      branches:
+                          only:
+                              - master
+                              - stable
+                  requires:
+                      - validate-project

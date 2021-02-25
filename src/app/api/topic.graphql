@@ -1,0 +1,25 @@
+#import "./topic.fragments.graphql"
+
+query getTopics {
+    topics {
+        ...TopicPreviewData
+    }
+}
+
+query getTopic($id: ObjectID!) {
+    topic(id: $id) {
+        ...TopicFullData
+    }
+}
+
+mutation createTopic($title: String!, $body: String!) {
+    createTopic(title: $title, body: $body) {
+        ...TopicFullData
+    }
+}
+
+mutation postMessage($topicId: ObjectID!, $body: String!) {
+    postMessage(topicId: $topicId, body: $body) {
+        ...TopicFullData
+    }
+}

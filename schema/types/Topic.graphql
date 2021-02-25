@@ -1,0 +1,26 @@
+type Topic {
+    id: ObjectID
+    title: String!
+    body: String!
+
+    """
+    list of messages posted on the topic
+    """
+    messages: [TopicMessage!]!
+
+    """
+    Counting how many messages are posted on this topic
+    """
+    messagesCount: Int!
+
+    author: User!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+
+type TopicMessage {
+    id: ObjectID
+    body: String!
+    author: User!
+    createdAt: DateTime!
+}

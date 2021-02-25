@@ -1,0 +1,99 @@
+schema {
+    query: Query
+    mutation: Mutation
+}
+type Mutation {
+    """
+    Create a new account/user
+    """
+    createAccount(username: String!, password: String!): User!
+    """
+    Update the display name for the logged in user
+
+    Authentication is required
+    """
+    updateDisplayName(displayName: String!): User!
+    """
+    Create a new topic
+
+    Authentication is required
+    """
+    createTopic(title: String!, body: String!, attachments: [Upload!]): Topic!
+    """
+    Post a message on a new topicd
+
+    Authentication is required
+    """
+    postMessage(topicId: ObjectID!, body: String!): Topic!
+    """
+    Validate credentials (username/password) and return a Json Web Token
+    """
+    authenticate(username: String!, password: String!): AuthenticationSuccessful!
+    """
+    Take the Json Web Token (JWT) from headers and returns a new one with a renewed lifetime
+
+    Authentication is required
+    """
+    refreshCredentials: String!
+}
+type Query {
+    """
+    List topics
+    """
+    topics: [Topic!]!
+    """
+    Fetch a topic by its ID
+    """
+    topic(id: ObjectID!): Topic
+    """
+    Fetch user document for the logged in user, returns null otherwise for anonymous
+    """
+    account: User
+}
+scalar ObjectID
+scalar DateTime
+scalar Upload
+type Topic {
+    id: ObjectID
+    title: String!
+    body: String!
+    """
+    list of messages posted on the topic
+    """
+    messages: [TopicMessage!]!
+    """
+    Counting how many messages are posted on this topic
+    """
+    messagesCount: Int!
+    author: User!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+}
+type TopicMessage {
+    id: ObjectID
+    body: String!
+    author: User!
+    createdAt: DateTime!
+}
+type User {
+    id: ObjectID!
+    username: String!
+    """
+    Public displayed on interfaces
+    """
+    displayName: String!
+    """
+    List of topic authored by the user
+    """
+    topics: Topic!
+}
+type AuthenticationSuccessful {
+    """
+    User authenticated
+    """
+    user: User!
+    """
+    Json Web Token
+    """
+    token: String!
+}

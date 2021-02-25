@@ -1,0 +1,13 @@
+{
+    "welcome": "Welcome on this starter kit",
+    "errors": {
+        "500": {
+            "title": "500",
+            "description": "Sorry, something went wrong."
+        },
+        "404": {
+            "title": "404",
+            "description": "Sorry, the page you visited does not exist."
+        }
+    }
+}

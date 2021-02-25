@@ -1,0 +1,59 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Create account rejects on duplicate username 1`] = `
+Array [
+  Object {
+    "extensions": Object {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exception": Object {
+        "code": 11000,
+        "driver": true,
+        "index": 0,
+        "keyPattern": Object {
+          "username": 1,
+        },
+        "keyValue": Object {
+          "username": "x",
+        },
+        "name": "MongoError",
+      },
+    },
+    "locations": Array [
+      Object {
+        "column": 3,
+        "line": 2,
+      },
+    ],
+    "message": "E11000 duplicate key error collection: test.users index: username_1 dup key: { username: \\"x\\" }",
+    "path": Array [
+      "createAccount",
+    ],
+  },
+]
+`;
+
+exports[`Create account rejects weak passwords 1`] = `
+Array [
+  Object {
+    "extensions": Object {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exception": Object {
+        "code": "API_INVALID_INPUT",
+        "data": Object {
+          "password": "Password too weak",
+        },
+      },
+    },
+    "locations": Array [
+      Object {
+        "column": 3,
+        "line": 2,
+      },
+    ],
+    "message": "Invalid Input",
+    "path": Array [
+      "createAccount",
+    ],
+  },
+]
+`;

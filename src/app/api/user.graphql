@@ -1,0 +1,12 @@
+mutation createNewAccount($username: String!, $password: String!) {
+    createAccount(username: $username, password: $password) {
+        id
+    }
+}
+
+mutation updateDisplayName($displayName: String!) {
+    updateDisplayName(displayName: $displayName) {
+        id
+        displayName
+    }
+}
