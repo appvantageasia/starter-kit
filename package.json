@@ -126,7 +126,7 @@
     "graphql": "^15.5.0",
     "graphql-tools": "^7.0.4",
     "graphql-upload": "^11.0.0",
-    "i18next": "^19.8.9",
+    "i18next": "^19.9.0",
     "i18next-fs-backend": "^1.0.8",
     "i18next-http-backend": "^1.1.0",
     "ioredis": "^4.22.0",
