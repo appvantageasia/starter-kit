@@ -9,6 +9,13 @@ executors:
             - image: circleci/node:14.4.0
               environment:
                   APP_DB_URI: mongodb://root:password@127.0.0.1:27017
+                  APP_SESSION_SECRET: localSecret
+                  APP_SMTP_PORT: 1025
+                  APP_STORAGE_ENDPOINT: localhost
+                  APP_STORAGE_PORT: 9000
+                  APP_STORAGE_SSL: false
+                  APP_STORAGE_ACCESS_KEY: "AKIAIOSFODNN7EXAMPLE"
+                  APP_STORAGE_SECRET_KEY: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
             - image: circleci/mongo:latest
               environment:
                   MONGO_INITDB_ROOT_USERNAME: root
@@ -68,17 +75,27 @@ jobs:
                   environment:
                       JEST_JUNIT_OUTPUT_DIR: ./junit/
             - run:
+                name: Build
+                command: yarn build
+            - store_artifacts:
+                path: ~/project/build
+                destination: build
+            - run:
                 name: Install Cypress
                 command: |
                   sudo apt-get update
                   sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
                   yarn cypress install
             - run:
-                name: Start test server
-                command: yarn dev
-                environment:
-                  NODE_ENV: test
+                name: Start server
+                command: node server.js serve
                 background: true
+                working_directory: ~/project/buid
+            - run:
+                name: Start worker
+                command: node server.js worker
+                background: true
+                working_directory: ~/project/buid
             - run:
                 name: Wait for test server
                 command: dockerize -wait http://127.0.0.1:3000 -timeout 5m
@@ -94,14 +111,8 @@ jobs:
                 path: ~/project/cypress/videos
                 destination: cypress/videos
             - run:
-                name: Stop test server
+                name: Stop test server & worker
                 command: pkill -SIGQUIT node
-            - run:
-                name: Build
-                command: yarn build
-            - store_artifacts:
-                path: ~/project/build
-                destination: build
             - store_test_results:
                   path: ~/project/junit/
             - store_artifacts:
