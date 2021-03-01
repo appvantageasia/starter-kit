@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/node';
 import { Document, EJSON } from 'bson';
 import BullQueue, { Queue, Job, JobOptions } from 'bull';
 import chalk from 'chalk';
@@ -26,8 +27,15 @@ export class QueueHandler<Message = any> {
 
     public setupWorker(): QueueHandler<Message> {
         this.queue.process(async job => {
+            const transaction = Sentry.startTransaction({
+                op: 'task',
+                name: this.queueName,
+            });
+
+            let message: Message = null;
+
             try {
-                const message = EJSON.deserialize(job.data) as Message;
+                message = EJSON.deserialize(job.data) as Message;
 
                 const promise = this.processFunction(message, job);
 
@@ -39,8 +47,18 @@ export class QueueHandler<Message = any> {
                 console.info(chalk.red(`Failed to execute ${this.queueName}`));
                 console.error(error);
 
+                Sentry.withScope(scope => {
+                    if (message) {
+                        scope.setExtra('message', message);
+                    }
+
+                    Sentry.captureException(error);
+                });
+
                 // set the job as failed
                 await job.moveToFailed(error);
+            } finally {
+                transaction.finish();
             }
         });
 

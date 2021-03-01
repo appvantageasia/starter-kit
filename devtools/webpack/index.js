@@ -39,6 +39,9 @@ const serverConfig = {
     resolve: {
         extensions: ['.js', '.mjs', '.tsx', '.ts', '.jsx', '.json', '.wasm'],
         mainFields: ['main', 'module'],
+        alias: {
+            '@sentry/react': '@sentry/node',
+        },
     },
 
     externals: ['./manifest.json', nodeExternals()],
@@ -101,6 +104,9 @@ const appConfig = {
     resolve: {
         extensions: ['.js', '.mjs', '.tsx', '.ts', '.jsx', '.json', '.wasm'],
         mainFields: ['browser', 'module', 'main'],
+        alias: {
+            '@sentry/node': '@sentry/react',
+        },
     },
 
     output: {

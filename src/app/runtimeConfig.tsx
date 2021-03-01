@@ -10,6 +10,8 @@ export type RuntimeConfig = {
         dsn?: string;
         release?: string;
         environment?: string;
+        tracing: boolean;
+        tracesSampleRate: number;
     };
 };
 

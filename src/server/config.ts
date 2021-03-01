@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { Region } from 'minio';
 import { SMTPSettings } from './emails';
-import { getString, getBoolean, getInteger } from './env';
+import { getString, getBoolean, getInteger, getNumber } from './env';
 
 const prefix = 'APP';
 
@@ -51,6 +51,8 @@ export type RuntimeConfig = {
         dsn?: string;
         release?: string;
         environment?: string;
+        tracing: boolean;
+        tracesSampleRate: number;
     };
 };
 
@@ -123,6 +125,8 @@ const config: RuntimeConfig = {
         dsn: getString('APP_SENTRY_DSN'),
         release: getString('APP_SENTRY_VERSION'),
         environment: getString('APP_SENTRY_ENVIRONMENT'),
+        tracing: getBoolean('APP_SENTRY_TRACING', true),
+        tracesSampleRate: getNumber('APP_SENTRY_TRACES_SAMPLE_RATE', 1.0),
     },
 };
 

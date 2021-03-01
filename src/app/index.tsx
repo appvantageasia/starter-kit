@@ -1,3 +1,5 @@
+import * as Sentry from '@sentry/react';
+import { Integrations } from '@sentry/tracing';
 import { hydrate } from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import createI18Instance from '../shared/createI18nInstance/browser';
@@ -15,6 +17,22 @@ const { i18n } = createI18Instance({
         locales: runtimeConfig.locales,
     },
 });
+
+if (runtimeConfig.sentry.dsn) {
+    const sentryInitOptions: Sentry.BrowserOptions = {
+        dsn: runtimeConfig.sentry.dsn,
+        release: runtimeConfig.sentry.release,
+        environment: runtimeConfig.sentry.environment,
+        integrations: [new Integrations.BrowserTracing()],
+    };
+
+    if (runtimeConfig.sentry.tracing) {
+        sentryInitOptions.tracesSampleRate = runtimeConfig.sentry.tracesSampleRate;
+        sentryInitOptions.integrations = [new Integrations.BrowserTracing()];
+    }
+
+    Sentry.init(sentryInitOptions);
+}
 
 const element = (
     <BrowserRouter>

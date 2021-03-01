@@ -4,6 +4,7 @@ import config, { runValidityChecks } from './config';
 import createWebServer from './createWebServer';
 import { getDatabaseContext, migrate } from './database';
 import { setup as startWorker } from './queues';
+import { initializeSentry } from './sentry';
 
 runValidityChecks();
 
@@ -35,6 +36,7 @@ program
     .command('worker')
     .description('Start worker')
     .action(() => {
+        initializeSentry();
         startWorker();
     });
 
@@ -42,7 +44,11 @@ program
     .command('serve')
     .description('Start web server')
     .action(() => {
-        createWebServer().httpServer.listen(3000, () => {
+        const { httpServer, expressServer } = createWebServer();
+
+        initializeSentry({ app: expressServer });
+
+        httpServer.listen(3000, () => {
             console.info(chalk.cyan('Server listening'));
         });
     });
