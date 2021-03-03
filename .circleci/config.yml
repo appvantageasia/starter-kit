@@ -93,12 +93,12 @@ jobs:
                 name: Start server
                 command: node server.js serve
                 background: true
-                working_directory: ~/project/buid
+                working_directory: ~/project/build
             - run:
                 name: Start worker
                 command: node server.js worker
                 background: true
-                working_directory: ~/project/buid
+                working_directory: ~/project/build
             - run:
                 name: Wait for test server
                 command: dockerize -wait http://127.0.0.1:3000 -timeout 5m

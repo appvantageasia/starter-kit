@@ -1,7 +1,8 @@
 import { genSalt, hash } from 'bcryptjs';
-import { ObjectId } from 'mongodb';
+import { ObjectId, MongoError } from 'mongodb';
 import zxcvbn from 'zxcvbn';
 import { getDatabaseContext, User } from '../../../database';
+import { isDuplicateErrorOnFields } from '../../../utils';
 import { RootResolver } from '../../context';
 import { InvalidInput } from '../../errors';
 
@@ -30,7 +31,16 @@ const mutation: RootResolver<Args> = async (root, { username, password }, { getT
         password: await cryptPassword(password),
     };
 
-    await collections.users.insertOne(document);
+    try {
+        await collections.users.insertOne(document);
+    } catch (error) {
+        if (isDuplicateErrorOnFields(error, 'username')) {
+            throw new InvalidInput({ password: t('errors:duplicateUsername') });
+        }
+
+        // throw it back
+        throw error;
+    }
 
     return document;
 };

@@ -1,4 +1,5 @@
 import { gql, ApolloError } from '@apollo/client';
+import { authenticationRateLimiter } from '../../server/rateLimiter';
 import { readSessionToken } from '../../server/schema/session';
 import {
     composeHandlers,
@@ -21,9 +22,15 @@ const mutation = gql`
     }
 `;
 
+const resetRateLimiter = async () => {
+    await authenticationRateLimiter.delete('::ffff:127.0.0.1');
+    await authenticationRateLimiter.delete('x');
+    await authenticationRateLimiter.delete('unknown');
+};
+
 const webService = setupWebService();
 
-beforeEach(composeHandlers(setupDatabase, loadFixtures(fixtures), webService.initialize));
+beforeEach(composeHandlers(setupDatabase, loadFixtures(fixtures), webService.initialize, resetRateLimiter));
 
 afterEach(composeHandlers(cleanDatabase, webService.cleanUp));
 

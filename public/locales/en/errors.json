@@ -1,4 +1,5 @@
 {
     "invalidCredentials": "Invalid credentials",
-    "weakPassword": "Password too weak"
+    "weakPassword": "Password too weak",
+    "duplicateUsername": "Username already taken"
 }
