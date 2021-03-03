@@ -11,6 +11,7 @@
     -   [Code Quality (ESLint & Prettier)](code-quality.md)
     -   [Semantic Release](sem-release.md)
     -   [Bug tracking (Sentry)](sentry.md)
+    -   [Rate Limiter](rate-limiter.md)
 -   Pipelines (CD/CD)
     -   [Continuous Integration](ci.md)
     -   [Continuous Deployment](cd.md)

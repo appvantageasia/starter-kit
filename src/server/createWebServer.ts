@@ -1,11 +1,12 @@
 // create http server
-import http, { IncomingMessage, Server } from 'http';
+import http, { Server } from 'http';
 import * as Sentry from '@sentry/node';
 import { ApolloServer } from 'apollo-server-express';
 import compression from 'compression';
-import express, { Express } from 'express';
+import express, { Express, Handler, Request } from 'express';
 import { graphqlUploadExpress } from 'graphql-upload';
 import config from './config';
+import { expressRateLimiter } from './rateLimiter';
 import renderApplication from './renderApplication';
 import schema from './schema';
 import createContext, { Context, RootDocument } from './schema/context';
@@ -15,6 +16,17 @@ export type WebServerCreation = {
     httpServer: Server;
     expressServer: Express;
     apolloServer: ApolloServer;
+};
+
+const rateLimiterMiddleware: Handler = (req, res, next) => {
+    expressRateLimiter
+        .consume(req.ip)
+        .then(() => {
+            next();
+        })
+        .catch(() => {
+            res.status(429).send('Too Many Requests');
+        });
 };
 
 const createWebServer = (): WebServerCreation => {
@@ -28,7 +40,7 @@ const createWebServer = (): WebServerCreation => {
         playground: !!process.isDev,
 
         // provide a custom context
-        context: ({ req }: { req: IncomingMessage }): Promise<Context> => createContext(req),
+        context: ({ req }: { req: Request }): Promise<Context> => createContext(req),
 
         // provide a custom root document
         rootValue: (): RootDocument => null,
@@ -49,6 +61,9 @@ const createWebServer = (): WebServerCreation => {
 
     // serve static files
     expressServer.use('/public', express.static('public'));
+
+    // then from here use rate limiter
+    expressServer.use(rateLimiterMiddleware);
 
     // serve graphql API
     expressServer.use(

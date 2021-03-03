@@ -6,7 +6,7 @@ const getRedisInstance = (): Redis => {
         return global.redis;
     }
 
-    global.redis = new IORedis(config.redis.uri);
+    global.redis = new IORedis(config.redis.uri, { enableOfflineQueue: false });
 
     return global.redis;
 };

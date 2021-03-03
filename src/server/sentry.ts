@@ -3,6 +3,7 @@ import * as Tracing from '@sentry/tracing';
 import { ApolloError } from 'apollo-server';
 import { Express } from 'express';
 import config from './config';
+import { APIError } from './schema/errors';
 
 const { sentry: sentryConfig } = config;
 
@@ -45,7 +46,7 @@ export const ApolloSentryPlugin = {
                 for (const error of ctx.errors) {
                     // Only report internal server errors,
                     // all errors extending ApolloError should be user-facing
-                    if (error instanceof ApolloError) {
+                    if (error.originalError instanceof ApolloError || error.originalError instanceof APIError) {
                         continue;
                     }
 
