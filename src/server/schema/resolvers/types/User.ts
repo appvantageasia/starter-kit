@@ -1,4 +1,4 @@
-import { getDatabaseContext, User, Topic } from '../../../database';
+import { User } from '../../../database';
 import { TypeResolver } from '../../context';
 import { InvalidPermission } from '../../errors';
 
@@ -13,11 +13,7 @@ const UserGraphQL: TypeResolver<User> = {
 
         throw new InvalidPermission();
     },
-    topics: async (root): Promise<Topic[]> => {
-        const { collections } = await getDatabaseContext();
-
-        return collections.topics.find({ authorId: root._id }).toArray();
-    },
+    topics: (root, args, { loaders }) => loaders.topicById.load(root._id),
 };
 
 export default UserGraphQL;

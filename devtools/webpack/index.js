@@ -3,11 +3,17 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const nodeExternals = require('webpack-node-externals');
+const WebpackBar = require('webpackbar');
 const PackagePlugin = require('./WebpackPackagePlugin');
+
 const getBabelRule = require('./babel');
 const getStyleRule = require('./style');
+
+// is it running in an interactive shell
+const isInteractive = process.stdout.isTTY;
 
 const {
     webpackMode,
@@ -84,6 +90,8 @@ const serverConfig = {
             new PackagePlugin({
                 yarnFile: path.resolve(rootDirname, './yarn.lock'),
             }),
+
+        isBuildIntentProduction && isInteractive && new WebpackBar({ name: 'server', profile: true }),
     ].filter(Boolean),
 };
 
@@ -181,6 +189,15 @@ const appConfig = {
                 filename: 'static/css/[contenthash].css',
                 chunkFilename: 'static/css/[contenthash].css',
             }),
+
+        isBuildIntentProduction &&
+            new BundleAnalyzerPlugin({
+                reportFilename: path.join(rootDirname, 'report.html'),
+                analyzerMode: 'static',
+                openAnalyzer: false,
+            }),
+
+        isBuildIntentProduction && isInteractive && new WebpackBar({ name: 'app', profile: true }),
     ].filter(Boolean),
 };
 

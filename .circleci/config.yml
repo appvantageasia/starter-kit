@@ -80,6 +80,9 @@ jobs:
             - store_artifacts:
                 path: ~/project/build
                 destination: build
+            - store_artifacts:
+                path: ~/project/report.html
+                destination: report.html
             - run:
                 name: Install Cypress
                 command: |

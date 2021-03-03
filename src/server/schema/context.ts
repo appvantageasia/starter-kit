@@ -1,6 +1,7 @@
 import { IncomingMessage } from 'http';
 import { IResolverObject } from 'apollo-server';
 import { GraphQLFieldResolver } from 'graphql';
+import createLoaders, { Loaders } from '../loaders';
 import { getSessionDataFromRequest, SessionData } from './session';
 import { getLanguage, getLazyTranslations, GetTranslations } from './translations';
 import { getLazyLoggedUser, GetLoggedUser } from './user';
@@ -10,6 +11,7 @@ export type Context = {
     getTranslations: GetTranslations;
     session: SessionData | null;
     getUser: GetLoggedUser;
+    loaders: Loaders;
 };
 
 export type RootDocument = null;
@@ -27,6 +29,7 @@ const createContext = async (req: IncomingMessage): Promise<Context> => {
         session,
         getTranslations: getLazyTranslations(language),
         getUser: getLazyLoggedUser(session?.userId),
+        loaders: createLoaders(),
     };
 };
 
