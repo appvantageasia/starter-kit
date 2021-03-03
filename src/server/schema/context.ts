@@ -2,8 +2,8 @@ import { IResolverObject } from 'apollo-server';
 import { Request } from 'express';
 import { GraphQLFieldResolver } from 'graphql';
 import createLoaders, { Loaders } from '../loaders';
+import { getLanguage, getLazyTranslations, GetTranslations } from '../translations';
 import { getSessionDataFromRequest, SessionData } from './session';
-import { getLanguage, getLazyTranslations, GetTranslations } from './translations';
 import { getLazyLoggedUser, GetLoggedUser } from './user';
 
 export type Context = {
