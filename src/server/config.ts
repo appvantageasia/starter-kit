@@ -78,8 +78,10 @@ const getSmtpSettings = (): RuntimeConfig['smtp']['transporter'] => {
     };
 };
 
+const version = getString('VERSION', '0.0.0-development');
+
 const config: RuntimeConfig = {
-    version: getString('VERSION', '0.0.0-development'),
+    version,
 
     // internationalization
     i18n: {
@@ -122,11 +124,11 @@ const config: RuntimeConfig = {
     },
 
     sentry: {
-        dsn: getString('APP_SENTRY_DSN'),
-        release: getString('APP_SENTRY_VERSION'),
-        environment: getString('APP_SENTRY_ENVIRONMENT'),
-        tracing: getBoolean('APP_SENTRY_TRACING', true),
-        tracesSampleRate: getNumber('APP_SENTRY_TRACES_SAMPLE_RATE', 1.0),
+        dsn: getString(getPrefix('SENTRY_DSN')),
+        release: getString(getPrefix('SENTRY_VERSION'), version),
+        environment: getString(getPrefix('SENTRY_ENVIRONMENT')),
+        tracing: getBoolean(getPrefix('SENTRY_TRACING'), true),
+        tracesSampleRate: getNumber(getPrefix('SENTRY_TRACES_SAMPLE_RATE'), 1.0),
     },
 };
 

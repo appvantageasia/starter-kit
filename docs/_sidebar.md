@@ -1,4 +1,5 @@
 -   [Project](/)
+-   [Settings](settings.md)
 -   Features
     -   [Isomorphism (SSR)](isomorphism.md)
     -   [Hot Reload](hot-releoad.md)
@@ -15,4 +16,3 @@
     -   [Caching](caching.md)
     -   [Internationalization](i18n.md)
     -   [Emails](emails.md)
--   [Docker & Kubernetes](docker.md)
