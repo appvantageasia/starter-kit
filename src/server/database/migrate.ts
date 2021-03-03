@@ -1,6 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import chalk from 'chalk';
 import { Db, ObjectId } from 'mongodb';
+import { getDatabaseContext } from './instance';
 import migrations, { Migration } from './migrations';
 
 export type MigrationDocument = {
@@ -46,4 +47,19 @@ export const migrate = async (db: Db, verbose = true): Promise<void> => {
     };
 
     return migrations.reduce((promise, migration) => promise.then(executeMigration(migration)), Promise.resolve());
+};
+
+export const listPendingMigrations = async (): Promise<string[]> => {
+    const { db } = await getDatabaseContext();
+    const migrationCollection = db.collection<MigrationDocument>('migrations');
+
+    // fetch existing migrations
+    const executed = await migrationCollection
+        .find({})
+        .map(migration => migration.identifier)
+        .toArray();
+
+    return migrations
+        .filter(migration => !executed.includes(migration.identifier))
+        .map(migration => migration.identifier);
 };
