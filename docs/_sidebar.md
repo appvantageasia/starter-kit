@@ -16,3 +16,4 @@
     -   [Caching](caching.md)
     -   [Internationalization](i18n.md)
     -   [Emails](emails.md)
+-   [Guides](guides.md)

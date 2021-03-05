@@ -33,15 +33,3 @@ But it also requires the server to be able to render exactly the same output as 
 
 It's very difficult to be added on a huge existing code base, this is why this feature is included by default.
 To remove it read the following section.
-
-### Removal
-
-To remove the isomorphic app you are simply required to update two files ;
-
-First update the rendering function on the server side, which should be in `src/server/renderApplication.tsx`.
-You should keep the document rendering, however you may remove the generation of the HTML injected into the React container.
-
-The second file to update is the entrypoint for the web application, which should be `src/app/index.tsx`.
-You simply need to replace `hydrate` by `render`.
-
-You may also update styled component settings to disable SSR support.
