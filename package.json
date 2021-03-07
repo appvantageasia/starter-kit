@@ -161,7 +161,7 @@
         "i18next": "^19.8.9",
         "i18next-fs-backend": "^1.0.8",
         "i18next-http-backend": "^1.1.0",
-        "ioredis": "^4.22.0",
+        "ioredis": "^4.23.0",
         "jsonwebtoken": "^8.5.1",
         "lodash": "^4.17.21",
         "minio": "^7.0.18",
