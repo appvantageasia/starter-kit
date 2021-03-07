@@ -87,7 +87,7 @@
         "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
         "copy-webpack-plugin": "^7.0.0",
         "css-loader": "^5.0.2",
-        "cypress": "^6.4.0",
+        "cypress": "^6.6.0",
         "dotenv": "^8.2.0",
         "dotenv-expand": "^5.1.0",
         "enquirer": "^2.3.6",
