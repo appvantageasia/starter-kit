@@ -2,7 +2,7 @@ import { i18n as I18n } from 'i18next';
 import { I18nextProvider } from 'react-i18next';
 import { ThemeProvider } from 'styled-components';
 import Bootstrap from './Bootstrap';
-import HomeRoute from './routes/HomeRoute';
+import MainRouter from './MainRouter';
 import { RuntimeProvider, RuntimeConfig } from './runtimeConfig';
 import theme from './theme';
 
@@ -16,7 +16,7 @@ const App = ({ i18n, runtime }: AppProps) => (
         <I18nextProvider i18n={i18n}>
             <ThemeProvider theme={theme}>
                 <Bootstrap>
-                    <HomeRoute />
+                    <MainRouter />
                 </Bootstrap>
             </ThemeProvider>
         </I18nextProvider>

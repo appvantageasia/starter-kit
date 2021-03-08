@@ -1,5 +1,10 @@
 {
-    "welcome": "Welcome on this starter kit",
+    "welcome": "Welcome on this starter kit, beware of your clicks, the whole thing is experimental",
+    "welcomeTitle": "Welcome",
+    "mainMenu": {
+        "home": "Get Starter",
+        "topics": "Topics"
+    },
     "errors": {
         "500": {
             "title": "500",
@@ -9,5 +14,8 @@
             "title": "404",
             "description": "Sorry, the page you visited does not exist."
         }
-    }
+    },
+    "signIn": "Sign in",
+    "signOut": "Logout",
+    "signUp": "Sign up"
 }

@@ -1,8 +1,7 @@
 import { ReactElement, ReactNode } from 'react';
 import { useRuntimeConfig } from '../../runtimeConfig';
-import HeaderLogo from './HeaderLogo';
-import HeaderMenu from './HeaderMenu';
-import { Layout, Header, Content, HeaderContainer, FooterText } from './styled';
+import BasicHeader from './BasicHeader';
+import { Layout, Content, FooterText } from './styled';
 
 const { Footer } = Layout;
 
@@ -15,12 +14,7 @@ const BasicLayout = ({ children }: DefaultLayoutProps): ReactElement => {
 
     return (
         <Layout>
-            <Header>
-                <HeaderContainer>
-                    <HeaderLogo />
-                    <HeaderMenu />
-                </HeaderContainer>
-            </Header>
+            <BasicHeader />
             <Content>{children}</Content>
             <Footer>
                 <FooterText type="secondary">here is the footer - version {version}</FooterText>

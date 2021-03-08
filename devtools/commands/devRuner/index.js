@@ -144,6 +144,12 @@ class MainRunner {
         // create a proxy but do not define a target yet
         const proxy = httpProxy.createProxyServer({});
 
+        // print error when there's any
+        proxy.on('error', () => {
+            // simply ignore the error
+            // as it's not critical to us
+        });
+
         app.use(
             // use the dev middleware to provide hot reload on the frontend
             devMiddleware(this.appCompiler, {

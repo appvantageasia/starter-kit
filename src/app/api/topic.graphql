@@ -1,7 +1,7 @@
 #import "./topic.fragments.graphql"
 
-query getTopics {
-    topics {
+query getTopics($pagination: Pagination, $sorting: TopicSorting) {
+    topics(pagination: $pagination, sorting: $sorting) {
         ...TopicPreviewData
     }
 }

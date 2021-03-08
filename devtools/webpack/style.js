@@ -4,7 +4,7 @@ const path = require('path');
 const lessToJS = require('less-vars-to-js');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
-const { isBuildIntentProduction, isBuildIntentDevelopment, srcDirname } = require('./variables');
+const { isBuildIntentProduction, srcDirname } = require('./variables');
 
 const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
@@ -15,10 +15,8 @@ const overrideFile = path.join(srcDirname, 'app/antd.override.less');
 
 const getStyleLoaders = cssOptions =>
     [
-        // use style loader on development so we can easily apply hot reload updates
-        isBuildIntentDevelopment && require.resolve('style-loader'),
-        // on production however we will extract the css
-        isBuildIntentProduction && { loader: MiniCssExtractPlugin.loader },
+        // extract the css
+        { loader: MiniCssExtractPlugin.loader },
         // everything go through the css loader
         {
             loader: require.resolve('css-loader'),

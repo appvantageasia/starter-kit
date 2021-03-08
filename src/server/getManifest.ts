@@ -1,19 +1,26 @@
+import fs from 'fs';
+import path from 'path';
+
+let manifest = null;
+
 const getManifest = (bundle = 'app'): { js: string[]; css: string[] } => {
     if (process.isDev) {
         // delete cache
-        delete require.cache[require.resolve('./manifest.json')];
+        manifest = null;
     }
 
-    try {
-        // eslint-disable-next-line global-require, import/no-unresolved
-        const manifest = require('./manifest.json');
+    if (manifest === null) {
+        try {
+            manifest = JSON.parse(fs.readFileSync(path.join(__dirname, './manifest.json'), { encoding: 'utf8' }));
+        } catch (error) {
+            console.error(error);
+            console.error("Couldn't load the manifest");
 
-        return manifest[bundle] || { js: [], css: [] };
-    } catch (error) {
-        console.error("Couldn't load the manifest");
-
-        return { js: [], css: [] };
+            return { js: [], css: [] };
+        }
     }
+
+    return manifest[bundle] || { js: [], css: [] };
 };
 
 export default getManifest;

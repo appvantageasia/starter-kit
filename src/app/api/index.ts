@@ -77,7 +77,11 @@ export type MutationAuthenticateArgs = {
 
 export type Query = {
     __typename?: 'Query';
-    /** List topics */
+    /**
+     * List topics
+     *
+     * If not sorting is provided, topics are sorted by descending update date
+     */
     topics: Array<Topic>;
     /** Fetch a topic by its ID */
     topic?: Maybe<Topic>;
@@ -85,9 +89,26 @@ export type Query = {
     account?: Maybe<User>;
 };
 
+export type QueryTopicsArgs = {
+    pagination?: Maybe<Pagination>;
+    sorting?: Maybe<TopicSorting>;
+};
+
 export type QueryTopicArgs = {
     id: Scalars['ObjectID'];
 };
+
+export type Pagination = {
+    /** Offset to apply when fetching a list */
+    offset: Scalars['Int'];
+    /** Number of items to fetch from a list */
+    limit: Scalars['Int'];
+};
+
+export enum SortingOrder {
+    Asc = 'Asc',
+    Desc = 'Desc',
+}
 
 export type Topic = {
     __typename?: 'Topic';
@@ -109,6 +130,16 @@ export type TopicMessage = {
     body: Scalars['String'];
     author: User;
     createdAt: Scalars['DateTime'];
+};
+
+export enum TopicSortingField {
+    CreateDate = 'CreateDate',
+    UpdateDate = 'UpdateDate',
+}
+
+export type TopicSorting = {
+    field: TopicSortingField;
+    order: SortingOrder;
 };
 
 export type User = {
@@ -153,7 +184,10 @@ export type TopicFullDataFragment = {
     author: { __typename?: 'User' } & UserPreviewDataFragment;
 };
 
-export type GetTopicsQueryVariables = Exact<{ [key: string]: never }>;
+export type GetTopicsQueryVariables = Exact<{
+    pagination?: Maybe<Pagination>;
+    sorting?: Maybe<TopicSorting>;
+}>;
 
 export type GetTopicsQuery = {
     __typename?: 'Query';
@@ -389,12 +423,36 @@ export const GetTopicsDocument: DocumentNode = /* #__PURE__ */ {
             kind: 'OperationDefinition',
             operation: 'query',
             name: { kind: 'Name', value: 'getTopics' },
+            variableDefinitions: [
+                {
+                    kind: 'VariableDefinition',
+                    variable: { kind: 'Variable', name: { kind: 'Name', value: 'pagination' } },
+                    type: { kind: 'NamedType', name: { kind: 'Name', value: 'Pagination' } },
+                },
+                {
+                    kind: 'VariableDefinition',
+                    variable: { kind: 'Variable', name: { kind: 'Name', value: 'sorting' } },
+                    type: { kind: 'NamedType', name: { kind: 'Name', value: 'TopicSorting' } },
+                },
+            ],
             selectionSet: {
                 kind: 'SelectionSet',
                 selections: [
                     {
                         kind: 'Field',
                         name: { kind: 'Name', value: 'topics' },
+                        arguments: [
+                            {
+                                kind: 'Argument',
+                                name: { kind: 'Name', value: 'pagination' },
+                                value: { kind: 'Variable', name: { kind: 'Name', value: 'pagination' } },
+                            },
+                            {
+                                kind: 'Argument',
+                                name: { kind: 'Name', value: 'sorting' },
+                                value: { kind: 'Variable', name: { kind: 'Name', value: 'sorting' } },
+                            },
+                        ],
                         selectionSet: {
                             kind: 'SelectionSet',
                             selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'TopicPreviewData' } }],
@@ -451,6 +509,8 @@ export const GetTopicsDocument: DocumentNode = /* #__PURE__ */ {
  * @example
  * const { data, loading, error } = useGetTopicsQuery({
  *   variables: {
+ *      pagination: // value for 'pagination'
+ *      sorting: // value for 'sorting'
  *   },
  * });
  */

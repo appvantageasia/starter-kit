@@ -19,9 +19,9 @@ export const Header = styled(AntLayout.Header)`
 `;
 
 export const HeaderContainer = styled.div`
-    max-width: ${props => props.theme.antd['layout-max-width']};
     display: flex;
     flex: 0 0 auto;
+    align-items: center;
     padding: ${props => props.theme.antd['layout-header-padding']};
 `;
 
@@ -49,9 +49,13 @@ export const LogoContainer = styled.div`
 
 const EnhancedMenu = props => <AntMenu {...props} theme="light" />;
 
+export const MenuFiller = styled.div`
+    flex-grow: 2;
+`;
+
 export const Menu = styled(EnhancedMenu)`
     margin-left: 16px;
-    line-height: 62px !important;
-    height: 62px !important;
-    border-bottom: none !important;
+    line-height: 60px !important;
+    height: 62px;
+    border-bottom: none;
 `;

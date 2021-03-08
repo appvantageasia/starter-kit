@@ -1,6 +1,8 @@
+import * as Sentry from '@sentry/node';
 import { Request, Response, Handler } from 'express';
 import { renderToString, renderToStaticMarkup } from 'react-dom/server';
 import Helmet from 'react-helmet';
+import { StaticRouterContext } from 'react-router';
 import { StaticRouter } from 'react-router-dom';
 import { ServerStyleSheet } from 'styled-components';
 import App from '../app/App';
@@ -29,13 +31,39 @@ const execute = (req: Request, res: Response): void => {
             i18n: config.i18n,
         });
 
+        // get the element
+        const routerContext: StaticRouterContext = {};
         const appElement = sheet.collectStyles(
-            <StaticRouter location={req.url}>
+            <StaticRouter context={routerContext} location={req.url}>
                 <App i18n={i18n} runtime={runtime} />
             </StaticRouter>
         );
 
-        const body = renderToString(appElement);
+        let body: string;
+
+        try {
+            // generate the body
+            body = renderToString(appElement);
+        } catch (renderingError) {
+            // capture it
+            console.error(renderingError);
+            Sentry.captureException(renderingError);
+
+            // redirect to internal error page
+            res.redirect('/500');
+
+            // stop here
+            return;
+        }
+
+        if (routerContext.url) {
+            // redirect as expected
+            res.redirect(routerContext.url);
+
+            // stop here
+            return;
+        }
+
         const helmet = Helmet.renderStatic();
         const styleTags = sheet.getStyleElement();
         const { css, js } = getManifest();

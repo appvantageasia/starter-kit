@@ -1,14 +1,15 @@
-import { Card, Typography } from 'antd';
-import { useTranslation } from 'react-i18next';
+import { Card } from 'antd';
+import LatestTopics from '../components/LatestTopics';
+import WelcomeAlert from '../components/WelcomeAlert';
+import { withErrorBoundary } from '../layouts/RoutedErrorBoundary';
 
-const HomePage = () => {
-    const { t } = useTranslation(['common']);
-
-    return (
+const HomePage = () => (
+    <>
+        <WelcomeAlert />
         <Card>
-            <Typography.Paragraph>{t('common:welcome')}</Typography.Paragraph>
+            <LatestTopics />
         </Card>
-    );
-};
+    </>
+);
 
-export default HomePage;
+export default withErrorBoundary(HomePage);

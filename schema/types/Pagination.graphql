@@ -1,0 +1,16 @@
+input Pagination {
+    """
+    Offset to apply when fetching a list
+    """
+    offset: Int!
+
+    """
+    Number of items to fetch from a list
+    """
+    limit: Int!
+}
+
+enum SortingOrder {
+    Asc
+    Desc
+}

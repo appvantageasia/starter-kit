@@ -42,9 +42,9 @@ class Bootstrap extends Component<BootstrapProps> {
         // otherwise use the batch http link
         const httpLink = ApolloLink.split(
             operation => extractFiles(operation).files.size > 0,
-            createUploadLink({ uri: '/api' }),
+            createUploadLink({ uri: '/graphql' }),
             // @ts-ignore
-            new BatchHttpLink({ uri: '/api' })
+            new BatchHttpLink({ uri: '/graphql' })
         );
 
         this.apolloClient = new ApolloClient({

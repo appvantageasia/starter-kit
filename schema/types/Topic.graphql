@@ -24,3 +24,13 @@ type TopicMessage {
     author: User!
     createdAt: DateTime!
 }
+
+enum TopicSortingField {
+    CreateDate
+    UpdateDate
+}
+
+input TopicSorting {
+    field: TopicSortingField!
+    order: SortingOrder!
+}

@@ -12,6 +12,10 @@ export default (config: InternalConfig): CreateClientReturn => {
         ...defaultConfig,
         lng: config.currentLocale || config.i18n.defaultLocale,
         supportedLngs: config.i18n.locales,
+
+        backend: {
+            loadPath: '/public/locales/{{lng}}/{{ns}}.json',
+        },
     });
 
     return { i18n: instance, initPromise };

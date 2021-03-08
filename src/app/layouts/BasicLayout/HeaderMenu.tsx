@@ -1,5 +1,7 @@
 import { Menu as AntMenu } from 'antd';
+import { TFunction } from 'i18next';
 import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { Menu } from './styled';
 
@@ -11,20 +13,20 @@ type GroupMeta = { key: string; label: string; items: ItemMeta[]; type: 'group' 
 
 type SubMenuMeta = { key: string; label: string; items: (ItemMeta | GroupMeta)[]; type: 'subMenu' };
 
-const staticMenu: (ItemMeta | SubMenuMeta)[] = [
-    { key: '1', label: 'nav 1', type: 'item', href: '/' },
-    { key: '2', label: 'nav 2', type: 'item', href: '/test' },
+const generateMenu = (t: TFunction): (ItemMeta | SubMenuMeta)[] => [
+    { key: '1', label: t('common:mainMenu.home'), type: 'item', href: '/' },
+    { key: '2', label: t('common:mainMenu.topics'), type: 'item', href: '/topics' },
     {
         type: 'subMenu',
         key: 'subMenu',
-        label: 'Navigation Three - Submenu',
+        label: '404/500 pages',
         items: [
             {
                 key: 'group:1',
                 type: 'group',
                 label: 'Item 1',
                 items: [
-                    { key: 'settings:1', label: 'Option 1', type: 'item', href: '/b' },
+                    { key: 'settings:1', label: 'Error page', type: 'item', href: '/dummyError' },
                     { key: 'settings:2', label: 'Option 2', type: 'item', href: '/c' },
                 ],
             },
@@ -93,10 +95,11 @@ const getSelectedKeys = (menuMap: MenuMap, pathname: string): string[] | undefin
 };
 
 const HeaderMenu = () => {
+    const { t } = useTranslation(['common']);
     const history = useHistory();
     const { location } = history;
 
-    const menu = useMemo(() => staticMenu, []);
+    const menu = useMemo(() => generateMenu(t), [t]);
     const menuMap = useMemo(() => computeMenuMap(menu), [menu]);
     const selectedKeys = useMemo(() => getSelectedKeys(menuMap, location.pathname), [menuMap, location.pathname]);
 

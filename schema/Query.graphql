@@ -1,8 +1,10 @@
 type Query {
     """
     List topics
+
+    If not sorting is provided, topics are sorted by descending update date
     """
-    topics: [Topic!]!
+    topics(pagination: Pagination, sorting: TopicSorting): [Topic!]!
 
     """
     Fetch a topic by its ID

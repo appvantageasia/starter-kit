@@ -105,6 +105,7 @@ const appConfig = {
         app: [
             isBuildIntentDevelopment && require.resolve('webpack-hot-middleware/client'),
             require.resolve('antd/dist/antd.less'),
+            path.resolve(srcDirname, 'app/global.less'),
             path.resolve(srcDirname, 'app/index.tsx'),
         ].filter(Boolean),
     },
@@ -184,11 +185,10 @@ const appConfig = {
         isBuildIntentDevelopment && new webpack.HotModuleReplacementPlugin(),
         isBuildIntentDevelopment && new ReactRefreshWebpackPlugin(),
 
-        isBuildIntentProduction &&
-            new MiniCssExtractPlugin({
-                filename: 'static/css/[contenthash].css',
-                chunkFilename: 'static/css/[contenthash].css',
-            }),
+        new MiniCssExtractPlugin({
+            filename: 'static/css/[contenthash].css',
+            chunkFilename: 'static/css/[contenthash].css',
+        }),
 
         isBuildIntentProduction &&
             new BundleAnalyzerPlugin({

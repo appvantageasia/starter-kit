@@ -39,8 +39,10 @@ type Mutation {
 type Query {
     """
     List topics
+
+    If not sorting is provided, topics are sorted by descending update date
     """
-    topics: [Topic!]!
+    topics(pagination: Pagination, sorting: TopicSorting): [Topic!]!
     """
     Fetch a topic by its ID
     """
@@ -53,6 +55,20 @@ type Query {
 scalar ObjectID
 scalar DateTime
 scalar Upload
+input Pagination {
+    """
+    Offset to apply when fetching a list
+    """
+    offset: Int!
+    """
+    Number of items to fetch from a list
+    """
+    limit: Int!
+}
+enum SortingOrder {
+    Asc
+    Desc
+}
 type Topic {
     id: ObjectID
     title: String!
@@ -74,6 +90,14 @@ type TopicMessage {
     body: String!
     author: User!
     createdAt: DateTime!
+}
+enum TopicSortingField {
+    CreateDate
+    UpdateDate
+}
+input TopicSorting {
+    field: TopicSortingField!
+    order: SortingOrder!
 }
 type User {
     id: ObjectID!
