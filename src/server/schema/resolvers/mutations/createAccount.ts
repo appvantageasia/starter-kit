@@ -1,5 +1,5 @@
 import { genSalt, hash } from 'bcryptjs';
-import { ObjectId, MongoError } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import zxcvbn from 'zxcvbn';
 import { getDatabaseContext, User } from '../../../database';
 import { isDuplicateErrorOnFields } from '../../../utils';

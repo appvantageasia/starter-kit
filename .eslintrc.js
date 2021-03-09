@@ -19,7 +19,7 @@ module.exports = {
     },
 
     plugins: ['prettier', 'react-hooks', 'graphql'],
-    extends: ['airbnb', 'prettier', 'prettier/react'],
+    extends: ['airbnb', 'prettier'],
 
     // custom set of rules
     rules: {
