@@ -1,5 +1,5 @@
+import { IncomingMessage } from 'http';
 import { IResolverObject } from 'apollo-server';
-import { Request } from 'express';
 import { GraphQLFieldResolver } from 'graphql';
 import createLoaders, { Loaders } from '../loaders';
 import { getLanguage, getLazyTranslations, GetTranslations } from '../translations';
@@ -7,7 +7,7 @@ import { getSessionDataFromRequest, SessionData } from './session';
 import { getLazyLoggedUser, GetLoggedUser } from './user';
 
 export type Context = {
-    ip: string;
+    ip?: string;
     language: string;
     getTranslations: GetTranslations;
     session: SessionData | null;
@@ -21,12 +21,15 @@ export type RootResolver<TArgs = { [argName: string]: any }> = GraphQLFieldResol
 
 export type TypeResolver<TSource = any> = IResolverObject<TSource, Context>;
 
-const createContext = async (req: Request): Promise<Context> => {
+const getIp = (req: IncomingMessage): string | undefined =>
+    (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress;
+
+const createContext = async (req: IncomingMessage): Promise<Context> => {
     const session = await getSessionDataFromRequest(req);
     const language = getLanguage(req);
 
     return {
-        ip: req.ip,
+        ip: getIp(req),
         language,
         session,
         getTranslations: getLazyTranslations(language),

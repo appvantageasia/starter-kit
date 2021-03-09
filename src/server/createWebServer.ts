@@ -5,6 +5,7 @@ import { ApolloServer } from 'apollo-server-express';
 import compression from 'compression';
 import express, { Express, Handler, Request } from 'express';
 import { graphqlUploadExpress } from 'graphql-upload';
+import { ExecutionParams } from 'subscriptions-transport-ws';
 import config from './config';
 import { expressRateLimiter } from './rateLimiter';
 import renderApplication from './renderApplication';
@@ -20,7 +21,7 @@ export type WebServerCreation = {
 
 const rateLimiterMiddleware: Handler = (req, res, next) => {
     expressRateLimiter
-        .consume(req.ip)
+        .consume(req.ip, 1)
         .then(() => {
             next();
         })
@@ -40,7 +41,17 @@ const createWebServer = (): WebServerCreation => {
         playground: !!process.isDev,
 
         // provide a custom context
-        context: ({ req }: { req: Request }): Promise<Context> => createContext(req),
+        context: ({ req, connection }: { req: Request; connection: ExecutionParams }): Promise<Context> => {
+            if (connection) {
+                return connection?.context;
+            }
+
+            return createContext(req);
+        },
+
+        subscriptions: {
+            onConnect: async (connectionParams, webSocket, context): Promise<Context> => createContext(context.request),
+        },
 
         // provide a custom root document
         rootValue: (): RootDocument => null,
@@ -92,7 +103,11 @@ const createWebServer = (): WebServerCreation => {
         response.status('500').send('Internal error');
     });
 
+    // create the http server
     const httpServer = http.createServer(expressServer);
+
+    // install websocket support
+    apolloServer.installSubscriptionHandlers(httpServer);
 
     return { httpServer, apolloServer, expressServer };
 };

@@ -1,6 +1,6 @@
+import { IncomingMessage } from 'http';
 import { AuthenticationError } from 'apollo-server';
 import { EJSON, Document } from 'bson';
-import { Request } from 'express';
 import jwt from 'jsonwebtoken';
 import { omit } from 'lodash/fp';
 import { ObjectId } from 'mongodb';
@@ -23,7 +23,7 @@ export const readSessionToken = async (token: string): Promise<SessionData> => {
     return omit(['iat', 'exp'], data);
 };
 
-export const getSessionDataFromRequest = async (req: Request): Promise<SessionData | null> => {
+export const getSessionDataFromRequest = async (req: IncomingMessage): Promise<SessionData | null> => {
     const header = req.headers?.authorization as string;
 
     if (!header) {

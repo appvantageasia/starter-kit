@@ -1,6 +1,7 @@
 schema {
     query: Query
     mutation: Mutation
+    subscription: Subscription
 }
 type Mutation {
     """
@@ -51,6 +52,9 @@ type Query {
     Fetch user document for the logged in user, returns null otherwise for anonymous
     """
     account: User
+}
+type Subscription {
+    topicUpdated(topicId: ObjectID!): Topic!
 }
 scalar ObjectID
 scalar DateTime

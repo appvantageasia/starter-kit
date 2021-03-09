@@ -1,3 +1,4 @@
+const http = require('http');
 const path = require('path');
 const chalk = require('chalk');
 const express = require('express');
@@ -170,7 +171,14 @@ class MainRunner {
             }
         });
 
-        app.listen(this.port);
+        // create the http server
+        const httpServer = http.createServer(app);
+
+        httpServer.on('upgrade', async (req, socket, head) => {
+            proxy.ws(req, socket, head, { target: await this.serverRunner.getUrl() });
+        });
+
+        httpServer.listen(this.port);
     }
 }
 

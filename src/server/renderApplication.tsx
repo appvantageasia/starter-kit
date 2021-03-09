@@ -10,9 +10,11 @@ import { RuntimeConfig } from '../app/runtimeConfig';
 import createI18Instance from '../shared/createI18nInstance/node';
 import Document from './Document';
 import config from './config';
+import createApolloClient from './createApolloClient';
 import getManifest from './getManifest';
+import createContext from './schema/context';
 
-const execute = (req: Request, res: Response): void => {
+const execute = async (req: Request, res: Response): Promise<void> => {
     const sheet = new ServerStyleSheet();
 
     try {
@@ -26,6 +28,9 @@ const execute = (req: Request, res: Response): void => {
             sentry: config.sentry,
         };
 
+        // create graphql context
+        const graphqlContext = await createContext(req);
+
         const { i18n } = createI18Instance({
             currentLocale,
             i18n: config.i18n,
@@ -35,7 +40,7 @@ const execute = (req: Request, res: Response): void => {
         const routerContext: StaticRouterContext = {};
         const appElement = sheet.collectStyles(
             <StaticRouter context={routerContext} location={req.url}>
-                <App i18n={i18n} runtime={runtime} />
+                <App createApolloClient={createApolloClient(graphqlContext)} i18n={i18n} runtime={runtime} />
             </StaticRouter>
         );
 
@@ -87,9 +92,9 @@ const execute = (req: Request, res: Response): void => {
     }
 };
 
-const handler: Handler = (req, res, next) => {
+const handler: Handler = async (req, res, next) => {
     try {
-        execute(req, res);
+        await execute(req, res);
     } catch (error) {
         next(error);
     }

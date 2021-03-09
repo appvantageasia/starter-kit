@@ -1,3 +1,4 @@
+import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { Redis } from 'ioredis';
 import { MongoClient, Db } from 'mongodb';
 
@@ -9,6 +10,7 @@ declare global {
                 promise: Promise<{ mongoClient: MongoClient; db: Db }>;
             };
             redis?: Redis;
+            pubSub?: RedisPubSub;
         }
     }
 }

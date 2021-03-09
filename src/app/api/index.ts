@@ -6,6 +6,7 @@ export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+const defaultOptions = {};
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
     ID: string;
@@ -96,6 +97,15 @@ export type QueryTopicsArgs = {
 
 export type QueryTopicArgs = {
     id: Scalars['ObjectID'];
+};
+
+export type Subscription = {
+    __typename?: 'Subscription';
+    topicUpdated: Topic;
+};
+
+export type SubscriptionTopicUpdatedArgs = {
+    topicId: Scalars['ObjectID'];
 };
 
 export type Pagination = {
@@ -218,6 +228,15 @@ export type PostMessageMutationVariables = Exact<{
 export type PostMessageMutation = {
     __typename?: 'Mutation';
     postMessage: { __typename?: 'Topic' } & TopicFullDataFragment;
+};
+
+export type OnTopicUpdatesSubscriptionVariables = Exact<{
+    topicId: Scalars['ObjectID'];
+}>;
+
+export type OnTopicUpdatesSubscription = {
+    __typename?: 'Subscription';
+    topicUpdated: { __typename?: 'Topic'; id?: Maybe<string> };
 };
 
 export type UserPreviewDataFragment = { __typename?: 'User'; id: string; displayName: string };
@@ -515,12 +534,16 @@ export const GetTopicsDocument: DocumentNode = /* #__PURE__ */ {
  * });
  */
 export function useGetTopicsQuery(baseOptions?: Apollo.QueryHookOptions<GetTopicsQuery, GetTopicsQueryVariables>) {
-    return Apollo.useQuery<GetTopicsQuery, GetTopicsQueryVariables>(GetTopicsDocument, baseOptions);
+    const options = { ...defaultOptions, ...baseOptions };
+
+    return Apollo.useQuery<GetTopicsQuery, GetTopicsQueryVariables>(GetTopicsDocument, options);
 }
 export function useGetTopicsLazyQuery(
     baseOptions?: Apollo.LazyQueryHookOptions<GetTopicsQuery, GetTopicsQueryVariables>
 ) {
-    return Apollo.useLazyQuery<GetTopicsQuery, GetTopicsQueryVariables>(GetTopicsDocument, baseOptions);
+    const options = { ...defaultOptions, ...baseOptions };
+
+    return Apollo.useLazyQuery<GetTopicsQuery, GetTopicsQueryVariables>(GetTopicsDocument, options);
 }
 export type GetTopicsQueryHookResult = ReturnType<typeof useGetTopicsQuery>;
 export type GetTopicsLazyQueryHookResult = ReturnType<typeof useGetTopicsLazyQuery>;
@@ -644,10 +667,14 @@ export const GetTopicDocument: DocumentNode = /* #__PURE__ */ {
  * });
  */
 export function useGetTopicQuery(baseOptions: Apollo.QueryHookOptions<GetTopicQuery, GetTopicQueryVariables>) {
-    return Apollo.useQuery<GetTopicQuery, GetTopicQueryVariables>(GetTopicDocument, baseOptions);
+    const options = { ...defaultOptions, ...baseOptions };
+
+    return Apollo.useQuery<GetTopicQuery, GetTopicQueryVariables>(GetTopicDocument, options);
 }
 export function useGetTopicLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTopicQuery, GetTopicQueryVariables>) {
-    return Apollo.useLazyQuery<GetTopicQuery, GetTopicQueryVariables>(GetTopicDocument, baseOptions);
+    const options = { ...defaultOptions, ...baseOptions };
+
+    return Apollo.useLazyQuery<GetTopicQuery, GetTopicQueryVariables>(GetTopicDocument, options);
 }
 export type GetTopicQueryHookResult = ReturnType<typeof useGetTopicQuery>;
 export type GetTopicLazyQueryHookResult = ReturnType<typeof useGetTopicLazyQuery>;
@@ -783,7 +810,9 @@ export type CreateTopicMutationFn = Apollo.MutationFunction<CreateTopicMutation,
 export function useCreateTopicMutation(
     baseOptions?: Apollo.MutationHookOptions<CreateTopicMutation, CreateTopicMutationVariables>
 ) {
-    return Apollo.useMutation<CreateTopicMutation, CreateTopicMutationVariables>(CreateTopicDocument, baseOptions);
+    const options = { ...defaultOptions, ...baseOptions };
+
+    return Apollo.useMutation<CreateTopicMutation, CreateTopicMutationVariables>(CreateTopicDocument, options);
 }
 export type CreateTopicMutationHookResult = ReturnType<typeof useCreateTopicMutation>;
 export type CreateTopicMutationResult = Apollo.MutationResult<CreateTopicMutation>;
@@ -922,11 +951,82 @@ export type PostMessageMutationFn = Apollo.MutationFunction<PostMessageMutation,
 export function usePostMessageMutation(
     baseOptions?: Apollo.MutationHookOptions<PostMessageMutation, PostMessageMutationVariables>
 ) {
-    return Apollo.useMutation<PostMessageMutation, PostMessageMutationVariables>(PostMessageDocument, baseOptions);
+    const options = { ...defaultOptions, ...baseOptions };
+
+    return Apollo.useMutation<PostMessageMutation, PostMessageMutationVariables>(PostMessageDocument, options);
 }
 export type PostMessageMutationHookResult = ReturnType<typeof usePostMessageMutation>;
 export type PostMessageMutationResult = Apollo.MutationResult<PostMessageMutation>;
 export type PostMessageMutationOptions = Apollo.BaseMutationOptions<PostMessageMutation, PostMessageMutationVariables>;
+export const OnTopicUpdatesDocument: DocumentNode = /* #__PURE__ */ {
+    kind: 'Document',
+    definitions: [
+        {
+            kind: 'OperationDefinition',
+            operation: 'subscription',
+            name: { kind: 'Name', value: 'onTopicUpdates' },
+            variableDefinitions: [
+                {
+                    kind: 'VariableDefinition',
+                    variable: { kind: 'Variable', name: { kind: 'Name', value: 'topicId' } },
+                    type: {
+                        kind: 'NonNullType',
+                        type: { kind: 'NamedType', name: { kind: 'Name', value: 'ObjectID' } },
+                    },
+                },
+            ],
+            selectionSet: {
+                kind: 'SelectionSet',
+                selections: [
+                    {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'topicUpdated' },
+                        arguments: [
+                            {
+                                kind: 'Argument',
+                                name: { kind: 'Name', value: 'topicId' },
+                                value: { kind: 'Variable', name: { kind: 'Name', value: 'topicId' } },
+                            },
+                        ],
+                        selectionSet: {
+                            kind: 'SelectionSet',
+                            selections: [{ kind: 'Field', name: { kind: 'Name', value: 'id' } }],
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+};
+
+/**
+ * __useOnTopicUpdatesSubscription__
+ *
+ * To run a query within a React component, call `useOnTopicUpdatesSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useOnTopicUpdatesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOnTopicUpdatesSubscription({
+ *   variables: {
+ *      topicId: // value for 'topicId'
+ *   },
+ * });
+ */
+export function useOnTopicUpdatesSubscription(
+    baseOptions: Apollo.SubscriptionHookOptions<OnTopicUpdatesSubscription, OnTopicUpdatesSubscriptionVariables>
+) {
+    const options = { ...defaultOptions, ...baseOptions };
+
+    return Apollo.useSubscription<OnTopicUpdatesSubscription, OnTopicUpdatesSubscriptionVariables>(
+        OnTopicUpdatesDocument,
+        options
+    );
+}
+export type OnTopicUpdatesSubscriptionHookResult = ReturnType<typeof useOnTopicUpdatesSubscription>;
+export type OnTopicUpdatesSubscriptionResult = Apollo.SubscriptionResult<OnTopicUpdatesSubscription>;
 export const CreateNewAccountDocument: DocumentNode = /* #__PURE__ */ {
     kind: 'Document',
     definitions: [
@@ -1000,9 +1100,11 @@ export type CreateNewAccountMutationFn = Apollo.MutationFunction<
 export function useCreateNewAccountMutation(
     baseOptions?: Apollo.MutationHookOptions<CreateNewAccountMutation, CreateNewAccountMutationVariables>
 ) {
+    const options = { ...defaultOptions, ...baseOptions };
+
     return Apollo.useMutation<CreateNewAccountMutation, CreateNewAccountMutationVariables>(
         CreateNewAccountDocument,
-        baseOptions
+        options
     );
 }
 export type CreateNewAccountMutationHookResult = ReturnType<typeof useCreateNewAccountMutation>;
@@ -1076,9 +1178,11 @@ export type UpdateDisplayNameMutationFn = Apollo.MutationFunction<
 export function useUpdateDisplayNameMutation(
     baseOptions?: Apollo.MutationHookOptions<UpdateDisplayNameMutation, UpdateDisplayNameMutationVariables>
 ) {
+    const options = { ...defaultOptions, ...baseOptions };
+
     return Apollo.useMutation<UpdateDisplayNameMutation, UpdateDisplayNameMutationVariables>(
         UpdateDisplayNameDocument,
-        baseOptions
+        options
     );
 }
 export type UpdateDisplayNameMutationHookResult = ReturnType<typeof useUpdateDisplayNameMutation>;

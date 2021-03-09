@@ -39,6 +39,7 @@ The backend implementation is fully organized in the `src/server/schema` directo
 -   the `resolvers` directory groups all resolvers for the schema
     -   mutations are grouped in the `mutations` directory
     -   queries are grouped in the `queries` directory
+    -   subscriptions are grouped in the `subscriptions` directory
     -   types and scalars are grouped in the `types` directory
 -   the GraphQL Context definitions and generation is in the `context.ts` file
 -   Common errors and helper will e in the `errors.ts` file
@@ -56,7 +57,7 @@ It's important to understand why we use such library and how.
 
 [data-loader]: https://github.com/graphql/dataloader
 
-## Example
+## Example - add a Query/Mutation
 
 Let's say we want to implement a query call `latestHeadline` and would return a `Headline` document.
 
@@ -141,12 +142,12 @@ import { useGetLatestHeadlineQuery } from './api';
 
 const Headline = () => {
     const { data, loading } = useGetLatestHeadlineQuery();
-    
+
     if (loading) {
         // not yet loaded
         return null;
     }
-    
+
     const headline = data?.headline;
 
     if (!headline) {
@@ -155,4 +156,64 @@ const Headline = () => {
 
     return <div>latest headline is {headline.title}</div>;
 };
+```
+
+## Example - Subscriptions
+
+Subscriptions are provided by [Apollo Server][sub].
+A homemade wrapped has been made to serialize/deserialize message with EJSON.
+
+[sub]: https://www.apollographql.com/docs/apollo-server/data/subscriptions/
+
+First define TypeScript types related to your subscription.
+
+```ts
+// first create your subscription arguments
+type Args = {
+    topicId: ObjectId;
+};
+
+// then define your messages (data)
+export type TopicUpdatedMessage = Topic;
+
+// the payload which will be sent as root resolution
+// the root key should be the same as the subscription name
+// here it would be "topicUpdated"
+type Payload = { topicUpdated: TopicUpdatedMessage };
+```
+
+You may now define you subscription instance by using the homemade helper.
+
+```ts
+// then create the subscription instead
+export const topicUpdatedSubscription = new Subscription<TopicUpdatedMessage>(
+    // channel use in redis to broker the events
+    'gql.topicUpdated',
+    // subscription name
+    'topicUpdated'
+);
+```
+
+Finally define your resolver for GraphQL and export it
+
+```ts
+const resolver = {
+    // with filter is optional and is a helper to filter events
+    // you may read the official documentation on subscription from Apollo to understand more
+    subscribe: withFilter(
+        // simply call the subscribe method
+        () => topicUpdatedSubscription.subscribe(),
+        (payload: Payload, variables: Args) =>
+            // only push for the same topic
+            payload.topicUpdated._id.equals(variables.topicId)
+    ),
+};
+
+export default resolver;
+```
+
+To propagate an event simply do as follow by using your subscription instance.
+
+```ts
+topicUpdatedSubscription.publish(myTopicAsMessage);
 ```

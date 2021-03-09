@@ -23,3 +23,9 @@ mutation postMessage($topicId: ObjectID!, $body: String!) {
         ...TopicFullData
     }
 }
+
+subscription onTopicUpdates($topicId: ObjectID!) {
+    topicUpdated(topicId: $topicId) {
+        id
+    }
+}
