@@ -60,10 +60,22 @@ const setup = (): (() => Promise<void>) => {
     const queues: QueueHandler[] = [
         // your new queue here
         dummyQueue.setupWorker(),
-    ];
 
-    // then schedule periodic jobs if you need to
-    dummyQueue.add({ value: 'whatever' }, { repeat: { cron: '10 * * * *' } });
+        // or if you want to plannify period job
+        // you may provide the list to schedule as follow :
+        dummyQueue.setupWorker([
+            {
+                // the job data
+                message: { value: 'whatever' },
+                // and the repeat definition as BullJS expects it
+                repeat: { cron: '10 * * * *' },
+            },
+        ]),
+
+        // if you want to manually handle the periodic jobs rather than relying on the homemade scheduler
+        // simply provide false instead
+        dummyQueue.setupWorker(false),
+    ];
 
     return async () => {
         // close queues

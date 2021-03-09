@@ -4,6 +4,7 @@ import { hydrate } from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import createI18Instance from '../shared/createI18nInstance/browser';
 import App from './App';
+import createApolloClient from './createApolloClient';
 import { RuntimeConfig } from './runtimeConfig';
 
 const runtimeConfig = JSON.parse(
@@ -36,7 +37,7 @@ if (runtimeConfig.sentry.dsn) {
 
 const element = (
     <BrowserRouter>
-        <App i18n={i18n} runtime={runtimeConfig} />
+        <App createApolloClient={createApolloClient} i18n={i18n} runtime={runtimeConfig} />
     </BrowserRouter>
 );
 

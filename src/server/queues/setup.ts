@@ -3,10 +3,15 @@ import { dummyQueue } from './dummyQueue';
 
 const setup = (): (() => Promise<void>) => {
     // first initialize every queues
-    const queues: QueueHandler[] = [dummyQueue.setupWorker()];
-
-    // then schedule periodic jobs
-    // dummyQueue.add({ value: 'periodic' }, { repeat: { cron: '10 * * * *' } });
+    const queues: QueueHandler[] = [
+        dummyQueue.setupWorker([
+            // provide a periodic plan to send an email every hour
+            {
+                message: { value: 'periodic' },
+                repeat: { cron: '0 * * * *' },
+            },
+        ]),
+    ];
 
     return async () => {
         // close queues

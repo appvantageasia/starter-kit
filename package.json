@@ -156,6 +156,7 @@
         "express": "^4.17.1",
         "extract-files": "^9.0.0",
         "graphql": "^15.5.0",
+        "graphql-redis-subscriptions": "^2.3.1",
         "graphql-tools": "^7.0.4",
         "graphql-upload": "^11.0.0",
         "i18next": "^19.8.9",
@@ -178,6 +179,7 @@
         "react-router": "^5.2.0",
         "react-router-dom": "^5.2.0",
         "styled-components": "^5.2.1",
+        "subscriptions-transport-ws": "^0.9.18",
         "zxcvbn": "^4.4.2"
     }
 }

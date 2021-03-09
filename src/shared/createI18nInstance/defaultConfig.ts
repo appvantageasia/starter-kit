@@ -2,6 +2,7 @@ import { InitOptions } from 'i18next';
 
 const defaultConfig: InitOptions = {
     defaultNS: 'common',
+    ns: [],
 
     interpolation: {
         escapeValue: false,

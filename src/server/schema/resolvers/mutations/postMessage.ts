@@ -2,6 +2,7 @@ import { ObjectId } from 'mongodb';
 import { getDatabaseContext, TopicMessage, Topic } from '../../../database';
 import { RootResolver } from '../../context';
 import { requiresLoggedUser } from '../../middlewares';
+import { topicUpdatedSubscription } from '../subscriptions/topicUpdated';
 
 type Args = { topicId: ObjectId; body: string };
 
@@ -23,6 +24,11 @@ const mutation: RootResolver<Args> = async (root, { topicId, body }, { getUser }
         { $push: { messages: document }, $set: { updatedAt: now } },
         { returnOriginal: false }
     );
+
+    if (operation.value) {
+        // emit on the subscription this topic has been updated
+        topicUpdatedSubscription.publish(operation.value);
+    }
 
     return operation?.value;
 };
