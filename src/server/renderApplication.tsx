@@ -14,6 +14,14 @@ import createApolloClient from './createApolloClient';
 import getManifest from './getManifest';
 import createContext from './schema/context';
 
+const externalCdn = config.publicPath.startsWith('http')
+    ? // we are using a CDN for serving the assets
+      new URL(config.publicPath).hostname
+    : null;
+
+// generate CSP rule
+const cspRule = `${['script-src', "'self'", externalCdn].filter(Boolean).join(' ')};`;
+
 const execute = async (req: Request, res: Response): Promise<void> => {
     const sheet = new ServerStyleSheet();
 
@@ -23,6 +31,7 @@ const execute = async (req: Request, res: Response): Promise<void> => {
 
         const runtime: RuntimeConfig = {
             version: config.version,
+            publicPath: config.publicPath,
             defaultLocale: currentLocale,
             locales: config.i18n.locales,
             sentry: config.sentry,
@@ -85,6 +94,13 @@ const execute = async (req: Request, res: Response): Promise<void> => {
         );
 
         const html = `<!doctype html>${renderToStaticMarkup(document)}`;
+
+        res.set({
+            'X-Content-Type-Options': 'nosniff',
+            'X-Frame-Options': 'SAMEORIGIN',
+            'X-Xss-Protection': '"1; mode=block"',
+            'Content-Security-Policy': cspRule,
+        });
 
         res.send(html);
     } finally {

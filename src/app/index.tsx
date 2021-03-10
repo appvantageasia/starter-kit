@@ -11,7 +11,7 @@ const runtimeConfig = JSON.parse(
     document.querySelector('script[data-role="runtime-config"]').textContent
 ) as RuntimeConfig;
 
-const { i18n } = createI18Instance({
+const { i18n } = createI18Instance(runtimeConfig.publicPath, {
     currentLocale: runtimeConfig.defaultLocale,
     i18n: {
         defaultLocale: runtimeConfig.defaultLocale,

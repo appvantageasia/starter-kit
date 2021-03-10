@@ -2,6 +2,7 @@ import { ReactElement } from 'react';
 import { HelmetData } from 'react-helmet';
 import { RuntimeConfig } from '../app/runtimeConfig';
 import config from './config';
+import { attachPublicPath } from './utils';
 
 type DocumentProps = {
     htmlAttrs?: { [prop: string]: any };
@@ -21,7 +22,7 @@ const Document = ({ htmlAttrs, bodyAttrs, helmet, body, styleTags, cssScripts, j
             {helmet.meta.toComponent()}
             {helmet.link.toComponent()}
             {cssScripts?.map((url, index) => (
-                <link key={index.toString()} href={url} rel="stylesheet" type="text/css" />
+                <link key={index.toString()} href={attachPublicPath(url)} rel="stylesheet" type="text/css" />
             ))}
             {styleTags}
             <script
@@ -35,7 +36,7 @@ const Document = ({ htmlAttrs, bodyAttrs, helmet, body, styleTags, cssScripts, j
             {/* eslint-disable-next-line react/no-danger */}
             <div dangerouslySetInnerHTML={{ __html: body }} id="root" />
             {jsScripts?.map((url, index) => (
-                <script key={index.toString()} src={url} type="application/javascript" />
+                <script key={index.toString()} src={attachPublicPath(url)} type="application/javascript" />
             ))}
         </body>
     </html>

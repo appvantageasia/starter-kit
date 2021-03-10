@@ -1,3 +1,12 @@
+## Serve the assets over CDN
+
+By default the server will serve the assets on the public path `/public/`.
+However you may override the public path by using the environment settings.
+
+The server only allows serving from `/public/`, but you may move the asset to a CDN instead.
+the server will properly apply the public path and include the CDN hostname in the content security policy.
+
+
 ## Remove SSR support
 
 To remove the isomorphic app you are simply required to update two files ;

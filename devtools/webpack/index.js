@@ -119,7 +119,7 @@ const appConfig = {
     },
 
     output: {
-        publicPath: '/public/',
+        publicPath: undefined,
         path: path.resolve(rootDirname, 'build/public'),
         filename: isBuildIntentDevelopment ? 'static/chunks/[name].js' : 'static/chunks/[name]-[chunkhash].js',
         chunkFilename: isBuildIntentDevelopment ? 'static/chunks/[name].js' : 'static/chunks/[name]-[chunkhash].js',
