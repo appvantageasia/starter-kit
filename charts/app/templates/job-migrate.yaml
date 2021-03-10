@@ -1,0 +1,29 @@
+{{- $selectorLabels := include "app.selectorLabels" . -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}-migrate"
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+spec:
+  template:
+    spec:
+      {{- if .Values.app.imagePullSecrets }}
+      imagePullSecrets: {{ .Values.app.imagePullSecrets }}
+      {{- end }}
+      containers:
+        - name: "{{ .Release.Name }}-migrate"
+          image: "{{ .Values.app.image }}"
+          command: ["dumb-init", "node", "migrate"]
+          imagePullPolicy: {{ .Values.app.imagePullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: "{{ .Release.Name }}-app-configmap"
+            - secretRef:
+                name: "{{ .Release.Name }}-app-secrets"
+      restartPolicy: OnFailure

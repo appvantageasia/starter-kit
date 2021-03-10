@@ -61,7 +61,7 @@ program
 
         initializeSentry({ app: expressServer });
 
-        httpServer.listen(3000, () => {
+        httpServer.listen(config.port, () => {
             console.info(chalk.cyan('Server listening'));
         });
     });
