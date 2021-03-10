@@ -157,6 +157,7 @@ class MainRunner {
                 stats: 'errors-only',
                 serverSideRender: true,
                 writeToDisk: true,
+                publicPath: '/public/',
             })
         );
 

@@ -1,23 +1,30 @@
 # production image, copy all the files and run next
-FROM node:14-alpine
+FROM node:14.16.0-alpine3.12
 
-WORKDIR /opt/app
+# add dumb-init
+RUN apk add dumb-init
 
-# once again set production environment for node
+# set production environment for node
 ENV NODE_ENV=production
 
+# create app directory
+WORKDIR /usr/src/app
+
 # copy everything we need from the builder to install dependencies
-COPY package.json yarn.lock ./
+COPY --chown=node:node package.json yarn.lock ./
 
 # install dependencies with frozen lockfile
-RUN yarn install --frozen-lockfile
+RUN yarn install --frozen-lockfile --production
 
 # copy everything else
-COPY . .
+COPY --chown=node:node . .
 
 # set the version
 ARG VERSION
 ENV VERSION=${VERSION:-0.0.0-development}
 
+# set user
+USER node
+
 # start command using the next entrypoint
-CMD ["node", "server.js"]
+CMD ["dumb-init", "node", "server.js"]

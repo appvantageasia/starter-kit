@@ -2,6 +2,7 @@ import { createContext, ReactElement, ReactNode, useContext } from 'react';
 
 export type RuntimeConfig = {
     version: string;
+    publicPath: string;
 
     locales: string[];
     defaultLocale: string;

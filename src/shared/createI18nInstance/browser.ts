@@ -3,7 +3,7 @@ import i18nextHTTPBackend from 'i18next-http-backend';
 import defaultConfig from './defaultConfig';
 import { InternalConfig, CreateClientReturn } from './types';
 
-export default (config: InternalConfig): CreateClientReturn => {
+export default (publicPath: string, config: InternalConfig): CreateClientReturn => {
     const instance = i18n.createInstance();
 
     instance.use(i18nextHTTPBackend);
@@ -14,7 +14,7 @@ export default (config: InternalConfig): CreateClientReturn => {
         supportedLngs: config.i18n.locales,
 
         backend: {
-            loadPath: '/public/locales/{{lng}}/{{ns}}.json',
+            loadPath: `${publicPath}locales/{{lng}}/{{ns}}.json`,
         },
     });
 
