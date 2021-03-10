@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Release.Name }}-app-configmap"
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+data:
+  # global settings
+  {{- with .Values.app.global }}
+  {{- include "app.configValue" ( dict "Key" "APP_PUBLIC_PATH" "Value" .publicPath ) }}
+  {{- end }}
+
+  # session settings
+  {{- with .Values.app.session }}
+  {{- include "app.configValue" ( dict "Key" "APP_SESSION_LIFETIME" "Value" .lifetime ) }}
+  {{- end }}
+
+  # smtp settings
+  {{- with .Values.app.smtp }}
+  {{- include "app.configValue" ( dict "Key" "APP_SMTP_FROM" "Value" .from ) }}
+  {{- end }}
+
+  # sentry settings
+  {{- with .Values.app.sentry }}
+  {{- include "app.configValue" ( dict "Key" "APP_SENTRY_DSN" "Value" .dsn ) }}
+  {{- include "app.configValue" ( dict "Key" "APP_SENTRY_ENVIRONMENT" "Value" ( default $.Release.Name .environment ) ) }}
+  {{- include "app.configValue" ( dict "Key" "APP_SENTRY_TRACING" "Value" .tracing ) }}
+  {{- include "app.configValue" ( dict "Key" "APP_SENTRY_TRACES_SAMPLE_RATE" "Value" .tracesSampleRate ) }}
+  {{- end }}

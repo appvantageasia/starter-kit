@@ -1,0 +1,37 @@
+{{- $selectorLabels := include "app.selectorLabels" . -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Release.Name }}-server"
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ include "app.deploymentReplicas" .Values.app.serverPodScaler }}
+  selector:
+    matchLabels:
+      {{- $selectorLabels | nindent 6 }}
+      app.local/role: server
+  template:
+    metadata:
+      labels:
+        {{- $selectorLabels | nindent 8 }}
+        app.local/role: server
+    spec:
+      {{- if .Values.app.imagePullSecrets }}
+      imagePullSecrets: {{ .Values.app.imagePullSecrets }}
+      {{- end }}
+      containers:
+        - name: server
+          image: "{{ .Values.app.image }}"
+          imagePullPolicy: {{ .Values.app.imagePullPolicy }}
+          command: ["dumb-init", "node", "serve"]
+          envFrom:
+            - configMapRef:
+                name: "{{ .Release.Name }}-app-configmap"
+            - secretRef:
+                name: "{{ .Release.Name }}-app-secrets"
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP

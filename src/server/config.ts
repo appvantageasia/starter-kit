@@ -10,6 +10,8 @@ const getPrefix = key => `${prefix}_${key}`;
 export type RuntimeConfig = {
     version: string;
 
+    port: number;
+
     publicPath: string;
 
     db: {
@@ -85,6 +87,7 @@ const version = getString('VERSION', '0.0.0-development');
 const config: RuntimeConfig = {
     version,
 
+    port: getNumber(getPrefix('PORT'), 3000),
     publicPath: getString(getPrefix('PUBLIC_PATH'), '/public/'),
 
     // internationalization

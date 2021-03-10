@@ -1,0 +1,97 @@
+# LMD settings
+app:
+    # docker image (including tag)
+    image: ''
+
+    # image pull secrets
+    imagePullSecrets: []
+
+    # image pull policy
+    imagePullPolicy: IfNotPresent
+
+    ingress:
+        # hostname on which the application is served
+        hostname: ''
+
+        # annotations to apply on the ingress
+        annotations: {}
+
+    # global configuration
+    global:
+        publicPath: ''
+
+    # redis settings
+    redis:
+        uri: 'redis://127.0.0.1:6379'
+
+    # database settings
+    database:
+        uri: ''
+        name: ''
+        pool: ''
+
+    # session settings
+    session:
+        secret: ''
+        lifetime: ''
+
+    # smtp settings
+    smtp:
+        host: ''
+        port: ''
+        user: ''
+        password: ''
+        secure: ''
+        from: ''
+
+    # storage settings
+    storage:
+        endpoint: ''
+        accessKey: ''
+        secretKey: ''
+        ssl: ''
+        port: ''
+        region: ''
+        bucket: ''
+
+    # sentry settings
+    sentry:
+        dsn: ''
+        environment: ''
+        tracing: ''
+        tracesSampleRate: ''
+
+    # HorizontalPodAutoscaler config for servers (api)
+    serverPodScaler:
+        enabled: false
+        minReplicas: 1
+        maxReplicas: 1
+        metrics: {}
+
+    # HorizontalPodAutoscaler for workers
+    workerPodScaler:
+        enabled: false
+        minReplicas: 1
+        maxReplicas: 1
+        metrics: {}
+
+# Redis settings
+redis:
+    # should the redis chart be deployed
+    enabled: true
+
+    # no password
+    usePassword: false
+
+    cluster:
+        # no cluster, standalone only
+        enabled: false
+
+# MongoDB settings
+# when using this sub chart
+# please provide information matching your application settings
+mongodb:
+    enabled: false
+
+    # architecture type
+    architecture: standalone

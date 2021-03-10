@@ -4,10 +4,11 @@ All settings are defined through environment variable.
 
 ## Global configuration
 
-| Name            | Type   | Default           | Comment                |
-| --------------- | ------ | ----------------- | ---------------------- |
-| VERSION         | String | 0.0.0-development | Application version    |
-| APP_PUBLIC_PATH | String | /public/          | Public path for assets |
+| Name            | Type   | Default           | Comment                    |
+| --------------- | ------ | ----------------- | -------------------------- |
+| VERSION         | String | 0.0.0-development | Application version        |
+| APP_PUBLIC_PATH | String | /public/          | Public path for assets     |
+| APP_PORT        | Number | 3000              | HTTP server listening port |
 
 ## Database configuration
 
