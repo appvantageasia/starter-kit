@@ -24,6 +24,7 @@ data:
   # sentry settings
   {{- with .Values.app.sentry }}
   {{- include "app.configValue" ( dict "Key" "APP_SENTRY_DSN" "Value" .dsn ) }}
+  {{- include "app.configValue" ( dict "Key" "APP_SENTRY_RELEASE" "Value" .release ) }}
   {{- include "app.configValue" ( dict "Key" "APP_SENTRY_ENVIRONMENT" "Value" ( default $.Release.Name .environment ) ) }}
   {{- include "app.configValue" ( dict "Key" "APP_SENTRY_TRACING" "Value" .tracing ) }}
   {{- include "app.configValue" ( dict "Key" "APP_SENTRY_TRACES_SAMPLE_RATE" "Value" .tracesSampleRate ) }}

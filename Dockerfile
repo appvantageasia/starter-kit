@@ -23,6 +23,10 @@ COPY --chown=node:node . .
 ARG VERSION
 ENV VERSION=${VERSION:-0.0.0-development}
 
+# set the sentry release if any
+ARG SENTRY_RELEASE
+ENV APP_SENTRY_RELEASE=$SENTRY_RELEASE
+
 # set user
 USER node
 

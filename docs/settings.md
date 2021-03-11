@@ -56,10 +56,10 @@ All settings are defined through environment variable.
 
 ## Sentry configuration
 
-| Name                          | Type    | Default  | Comment                               |
-| ----------------------------- | ------- | -------- | ------------------------------------- |
-| APP_SENTRY_DSN                | String  |          | Sentry DSN                            |
-| APP_SENTRY_VERSION            | String  | $VERSION | Sentry version                        |
-| APP_SENTRY_ENVIRONMENT        | String  |          | Sentry environment                    |
-| APP_SENTRY_TRACING            | Boolean | true     | Enable Sentry tracing                 |
-| APP_SENTRY_TRACES_SAMPLE_RATE | Number  | 1.0      | Sentry traces sample rate for tracing |
+| Name                          | Type    | Default | Comment                               |
+| ----------------------------- | ------- | ------- | ------------------------------------- |
+| APP_SENTRY_DSN                | String  |         | Sentry DSN                            |
+| APP_SENTRY_RELEASE            | String  |         | Sentry version                        |
+| APP_SENTRY_ENVIRONMENT        | String  |         | Sentry environment                    |
+| APP_SENTRY_TRACING            | Boolean | true    | Enable Sentry tracing                 |
+| APP_SENTRY_TRACES_SAMPLE_RATE | Number  | 1.0     | Sentry traces sample rate for tracing |

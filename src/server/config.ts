@@ -132,7 +132,7 @@ const config: RuntimeConfig = {
 
     sentry: {
         dsn: getString(getPrefix('SENTRY_DSN')),
-        release: getString(getPrefix('SENTRY_VERSION'), version),
+        release: getString(getPrefix('SENTRY_RELEASE')),
         environment: getString(getPrefix('SENTRY_ENVIRONMENT')),
         tracing: getBoolean(getPrefix('SENTRY_TRACING'), true),
         tracesSampleRate: getNumber(getPrefix('SENTRY_TRACES_SAMPLE_RATE'), 1.0),
