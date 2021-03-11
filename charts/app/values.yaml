@@ -22,7 +22,7 @@ app:
 
     # redis settings
     redis:
-        uri: 'redis://127.0.0.1:6379'
+        uri: ''
 
     # database settings
     database:
@@ -57,6 +57,7 @@ app:
     # sentry settings
     sentry:
         dsn: ''
+        release: ''
         environment: ''
         tracing: ''
         tracesSampleRate: ''

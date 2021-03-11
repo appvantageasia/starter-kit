@@ -17,3 +17,5 @@
     -   [Internationalization](i18n.md)
     -   [Emails](emails.md)
 -   [Guides](guides.md)
+-   [Releasing](releasing.md)
+-   [Helm chart](helm.md)
