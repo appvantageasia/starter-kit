@@ -42,7 +42,7 @@ jobs:
                   name: Install depdencies
                   command: yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
             - save_cache:
-                  key: yarn-cache-node14-{{ checksum "yarn.lock" }}
+                  key: yarn-cache-node14-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
                   paths:
                       - ~/.cache/yarn
             - persist_to_workspace:
