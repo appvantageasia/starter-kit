@@ -50,7 +50,25 @@ program
     .description('Start worker')
     .action(() => {
         initializeSentry();
-        startWorker();
+        const stopWorker = startWorker();
+
+        let stopPromise: Promise<void> | null = null;
+
+        const onExit = () => {
+            if (!stopPromise) {
+                stopPromise = stopWorker()
+                    .then(() => {
+                        process.exit(0);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        process.exit(1);
+                    });
+            }
+        };
+
+        process.on('SIGTERM', onExit);
+        process.on('SIGINT', onExit);
     });
 
 program
@@ -64,6 +82,15 @@ program
         httpServer.listen(config.port, () => {
             console.info(chalk.cyan('Server listening'));
         });
+
+        const onExit = () => {
+            httpServer.close(() => {
+                process.exit(0);
+            });
+        };
+
+        process.on('SIGTERM', onExit);
+        process.on('SIGINT', onExit);
     });
 
 if (process.isCLI) {
