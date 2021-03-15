@@ -183,7 +183,10 @@ const appConfig = {
 
         // hot reload with react refresh
         isBuildIntentDevelopment && new webpack.HotModuleReplacementPlugin(),
-        isBuildIntentDevelopment && new ReactRefreshWebpackPlugin(),
+        isBuildIntentDevelopment &&
+            new ReactRefreshWebpackPlugin({
+                sockIntegration: 'whm',
+            }),
 
         new MiniCssExtractPlugin({
             filename: 'static/css/[contenthash].css',
