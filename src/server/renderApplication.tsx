@@ -40,10 +40,7 @@ const execute = async (req: Request, res: Response): Promise<void> => {
         // create graphql context
         const graphqlContext = await createContext(req);
 
-        const { i18n } = createI18Instance({
-            currentLocale,
-            i18n: config.i18n,
-        });
+        const { i18n } = await createI18Instance(currentLocale);
 
         // get the element
         const routerContext: StaticRouterContext = {};
