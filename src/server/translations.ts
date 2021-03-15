@@ -23,17 +23,17 @@ export const getLazyTranslations = (language: string): GetTranslations => {
 
         if (!promise) {
             promise = new Promise((resolve, reject) => {
-                const { i18n, initPromise } = createI18nInstance({ currentLocale: language, i18n: config.i18n });
+                createI18nInstance(language)
+                    .then(({ i18n, initPromise }) =>
+                        initPromise.then(t => {
+                            // update the instance on local scope
+                            instance = { i18n, t };
+                            // set promise back to null
+                            promise = null;
 
-                initPromise
-                    .then(t => {
-                        // update the instance on local scope
-                        instance = { i18n, t };
-                        // set promise back to null
-                        promise = null;
-
-                        resolve(instance);
-                    })
+                            resolve(instance);
+                        })
+                    )
                     .catch(reject);
             });
         }

@@ -1,24 +1,45 @@
 import path from 'path';
-import i18n from 'i18next';
+import i18n, { i18n as I18n } from 'i18next';
 import i18nextFSBackend from 'i18next-fs-backend';
+import config from '../../server/config';
 import defaultConfig from './defaultConfig';
-import { InternalConfig, CreateClientReturn } from './types';
+import { CreateClientReturn } from './types';
 
-export default (config: InternalConfig): CreateClientReturn => {
-    const instance = i18n.createInstance();
+let cachedInstance: Promise<I18n> | null = null;
 
-    instance.use(i18nextFSBackend);
+const localesDirectory = path.resolve(process.cwd(), './public/locales/');
 
-    const initPromise = instance.init({
+const createInstance = async () => {
+    const instance = i18n.createInstance({
         ...defaultConfig,
-        lng: config.currentLocale || config.i18n.defaultLocale,
+        lng: config.i18n.defaultLocale,
         supportedLngs: config.i18n.locales,
 
         backend: {
-            loadPath: path.resolve(process.cwd(), './public/locales/{{lng}}/{{ns}}.json'),
-            addPath: path.resolve(process.cwd(), './public/locales/{{lng}}/{{ns}}.missing.json'),
+            loadPath: path.join(localesDirectory, '/{{lng}}/{{ns}}.json'),
+            addPath: path.join(localesDirectory, '/{{lng}}/{{ns}}.missing.json'),
         },
     });
+
+    instance.use(i18nextFSBackend);
+
+    await instance.init();
+
+    return instance;
+};
+
+export default async (language?: string): Promise<CreateClientReturn> => {
+    if (!cachedInstance) {
+        cachedInstance = createInstance();
+    }
+
+    const instance = (await cachedInstance).cloneInstance();
+
+    if (language && config.i18n.locales.includes(language)) {
+        instance.changeLanguage(language);
+    }
+
+    const initPromise = instance.init();
 
     return { i18n: instance, initPromise };
 };
