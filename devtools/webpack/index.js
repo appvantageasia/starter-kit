@@ -185,7 +185,9 @@ const appConfig = {
         isBuildIntentDevelopment && new webpack.HotModuleReplacementPlugin(),
         isBuildIntentDevelopment &&
             new ReactRefreshWebpackPlugin({
-                sockIntegration: 'whm',
+                overlay: {
+                    sockIntegration: 'whm',
+                },
             }),
 
         new MiniCssExtractPlugin({
