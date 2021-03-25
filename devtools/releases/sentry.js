@@ -1,9 +1,5 @@
 const SentryCli = require('@sentry/cli');
 
-// const org = 'appvantage';
-// const project = 'starter-kit';
-// const repo = 'appvantageasia/starter-kit';
-
 let _releaseName = null;
 
 const getReleaseName = () => _releaseName;
@@ -86,4 +82,4 @@ const publish = async (pluginConfig, context) => {
     await cli.releases.finalize(release);
 };
 
-module.exports = { verifyConditions, prepare, publish };
+module.exports = { verifyConditions, prepare, publish, getReleaseName };

@@ -1,4 +1,4 @@
-# LMD settings
+# Application settings
 app:
     # docker image (including tag)
     image: ''

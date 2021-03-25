@@ -38,7 +38,7 @@ const verifyConditions = (pluginConfig, context) => {
 };
 
 const publish = async (pluginConfig, context) => {
-    const { bucket, endPoint, port = 443, useSSL = true } = pluginConfig;
+    const { bucket, endPoint, port = 443, useSSL = true, region } = pluginConfig;
     const { logger, nextRelease } = context;
     const { version } = nextRelease;
 
@@ -48,12 +48,14 @@ const publish = async (pluginConfig, context) => {
         useSSL,
         accessKey: process.env.CDN_ACCESS_KEY,
         secretKey: process.env.CDN_SECRET_KEY,
+        region,
     });
 
     logger.log('Publish on %s (%s)', endPoint, bucket);
 
     const assets = glob.sync('**/*', {
-        cwd: path.join(__dirname, 'build/public'),
+        cwd: path.join(__dirname, '../../build/public'),
+        nodir: true,
     });
 
     await Promise.all(

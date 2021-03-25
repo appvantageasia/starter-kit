@@ -77,6 +77,12 @@ jobs:
             - run:
                 name: Build
                 command: yarn build
+                environment:
+                  NODE_ENV: production
+            - persist_to_workspace:
+                root: ~/project
+                paths:
+                  - build
             - store_artifacts:
                 path: ~/project/build
                 destination: build

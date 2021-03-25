@@ -25,7 +25,7 @@ spec:
         - name: server
           image: "{{ .Values.app.image }}"
           imagePullPolicy: {{ .Values.app.imagePullPolicy }}
-          command: ["dumb-init", "node", "serve"]
+          command: ["dumb-init", "node", "server.js", "serve"]
           envFrom:
             - configMapRef:
                 name: "{{ .Release.Name }}-app-configmap"

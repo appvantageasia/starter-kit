@@ -19,7 +19,7 @@ spec:
       containers:
         - name: "{{ .Release.Name }}-migrate"
           image: "{{ .Values.app.image }}"
-          command: ["dumb-init", "node", "migrate"]
+          command: ["dumb-init", "node", "server.js", "migrate"]
           imagePullPolicy: {{ .Values.app.imagePullPolicy }}
           envFrom:
             - configMapRef:

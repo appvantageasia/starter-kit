@@ -59,14 +59,16 @@ const prepare = async (pluginConfig, context) => {
     // get the new image name and its tag
     const versionTag = getImageName(version, image);
 
-    try {
-        // try to pull previous image
-        const previousTag = getImageName(lastVersion, image);
-        logger.log('Pull previous images from %s', previousTag);
-        await execCommand('docker', ['pull', previousTag]);
-    } catch (error) {
-        // skip it
-        logger.log('Could not pull previous image');
+    if (lastVersion) {
+        try {
+            // try to pull previous image
+            const previousTag = getImageName(lastVersion, image);
+            logger.log('Pull previous images from %s', previousTag);
+            await execCommand('docker', ['pull', previousTag]);
+        } catch (error) {
+            // skip it
+            logger.log('Could not pull previous image');
+        }
     }
 
     const buildArgs = ['build'];
@@ -118,4 +120,4 @@ const publish = async (pluginConfig, context) => {
     await execCommand('docker', ['push', channelTag]);
 };
 
-return { verifyConditions, prepare, publish };
+module.exports = { verifyConditions, prepare, publish };
