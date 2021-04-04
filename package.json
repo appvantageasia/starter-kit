@@ -46,7 +46,7 @@
         "@graphql-codegen/typescript-operations": "^1.17.13",
         "@graphql-codegen/typescript-react-apollo": "^2.2.1",
         "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
-        "@sentry/cli": "^1.63.1",
+        "@sentry/cli": "^1.63.2",
         "@testing-library/dom": "^7.29.4",
         "@testing-library/jest-dom": "^5.11.9",
         "@testing-library/react": "^11.2.5",
