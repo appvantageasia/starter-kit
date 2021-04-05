@@ -75,7 +75,7 @@
         "@types/react": "^17.0.0",
         "@types/react-helmet": "^6.1.0",
         "@types/react-router-dom": "^5.1.7",
-        "@types/styled-components": "^5.1.8",
+        "@types/styled-components": "^5.1.9",
         "@types/url-join": "^4.0.0",
         "@types/zxcvbn": "^4.4.1",
         "@typescript-eslint/eslint-plugin": "^4.18.0",
