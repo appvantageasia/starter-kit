@@ -17,7 +17,7 @@ export const isDuplicateErrorOnFields = (error: Error, ...fields: string[]) => {
 export const attachPublicPath = (url: string) => {
     if (url.startsWith('auto')) {
         // webpack manifest link
-        return url.replace('auto', config.publicPath);
+        return urlJoin(config.publicPath, url.replace('auto', ''));
     }
 
     // other links
