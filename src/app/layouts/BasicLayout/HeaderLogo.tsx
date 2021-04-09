@@ -1,13 +1,18 @@
 import { Link } from 'react-router-dom';
+import usePublic from '../../utilities/usePublic';
 import { LogoContainer } from './styled';
 
-const HeaderLogo = () => (
-    <LogoContainer>
-        <Link to="/">
-            <img alt="logo" src="/public/logo.svg" />
-            Next Starter
-        </Link>
-    </LogoContainer>
-);
+const HeaderLogo = () => {
+    const logo = usePublic('logo.svg');
+
+    return (
+        <LogoContainer>
+            <Link to="/">
+                <img alt="logo" src={logo} />
+                Next Starter
+            </Link>
+        </LogoContainer>
+    );
+};
 
 export default HeaderLogo;

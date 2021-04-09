@@ -1,7 +1,9 @@
 import { MjmlText } from 'mjml-react';
 import EmailLayout from './components/EmailLayout';
 
-export type DummyEmailProps = { text: string };
+export type DummyEmailProps = {
+    text: string;
+};
 
 const DummyEmail = ({ text }: DummyEmailProps) => (
     <EmailLayout>
