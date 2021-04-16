@@ -6,7 +6,7 @@ module.exports = {
 
     testMatch: ['<rootDir>/src/**/__tests__/**/*.{js,ts,tsx}'],
     testEnvironment: 'node',
-    testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/src/__tests__/helpers.ts'],
+    testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/src/__tests__/helpers/'],
 
     setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
 
