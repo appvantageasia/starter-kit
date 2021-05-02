@@ -170,7 +170,7 @@
         "jsonwebtoken": "^8.5.1",
         "lodash": "^4.17.21",
         "minio": "^7.0.18",
-        "mjml": "^4.8.1",
+        "mjml": "^4.9.3",
         "mjml-react": "^1.2.0",
         "mongodb": "^3.6.6",
         "node-fetch": "^2.6.1",
