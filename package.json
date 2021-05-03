@@ -49,7 +49,7 @@
         "@sentry/cli": "^1.63.2",
         "@testing-library/dom": "^7.29.4",
         "@testing-library/jest-dom": "^5.12.0",
-        "@testing-library/react": "^11.2.5",
+        "@testing-library/react": "^11.2.6",
         "@testing-library/user-event": "^13.0.6",
         "@types/accept-language-parser": "^1.5.1",
         "@types/antd": "^1.0.0",
