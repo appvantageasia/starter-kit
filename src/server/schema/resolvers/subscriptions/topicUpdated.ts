@@ -2,6 +2,7 @@ import { withFilter } from 'apollo-server';
 import { ObjectId } from 'mongodb';
 import { Topic } from '../../../database';
 import { Subscription } from '../../../pubSub';
+import { GraphQLSubscriptionResolvers } from '../definitions';
 
 type Args = {
     topicId: ObjectId;
@@ -13,7 +14,7 @@ type Payload = { topicUpdated: TopicUpdatedMessage };
 
 export const topicUpdatedSubscription = new Subscription<TopicUpdatedMessage>('gql.topicUpdated', 'topicUpdated');
 
-const resolver = {
+const resolver: GraphQLSubscriptionResolvers['topicUpdated'] = {
     subscribe: withFilter(
         () => topicUpdatedSubscription.subscribe(),
         (payload: Payload, variables: Args) =>

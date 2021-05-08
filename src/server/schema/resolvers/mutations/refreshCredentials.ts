@@ -1,7 +1,8 @@
-import { RootResolver } from '../../context';
 import { requiresLoggedUser } from '../../middlewares';
 import { getSessionToken } from '../../session';
+import { GraphQLMutationResolvers } from '../definitions';
 
-const mutation: RootResolver = async (root, args, { session }): Promise<string> => getSessionToken(session);
+const mutation: GraphQLMutationResolvers['refreshCredentials'] = async (root, args, { session }) =>
+    getSessionToken(session);
 
 export default requiresLoggedUser(mutation);

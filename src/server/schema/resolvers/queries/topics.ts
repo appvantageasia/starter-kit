@@ -1,15 +1,12 @@
 import { SortOptionObject } from 'mongodb';
 import { getDatabaseContext, Topic } from '../../../database';
-import { RootResolver } from '../../context';
+import { GraphQLQueryResolvers } from '../definitions';
 import { SortingOrder, TopicSortingField } from '../enums';
-import { Pagination } from '../inputs';
 
 type TopicSorting = {
     field: TopicSortingField;
     order: SortingOrder;
 };
-
-export type Args = { pagination?: Pagination; sorting?: TopicSorting };
 
 const getSorting = (sorting?: TopicSorting): SortOptionObject<Topic> => {
     const order = sorting?.order === SortingOrder.Asc ? 1 : -1;
@@ -24,7 +21,7 @@ const getSorting = (sorting?: TopicSorting): SortOptionObject<Topic> => {
     }
 };
 
-const query: RootResolver<Args> = async (root, { pagination, sorting }): Promise<Topic[]> => {
+const query: GraphQLQueryResolvers['topics'] = async (root, { pagination, sorting }) => {
     const { collections } = await getDatabaseContext();
 
     let cursor = collections.topics.find({}, { sort: getSorting(sorting) });

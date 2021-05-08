@@ -18,6 +18,7 @@ yarn generate:schema
 It will execute [code generation][gql-gen] and automatically output the following :
 
 -   It will aggregate your schema as one to `src/server/schema/typeDefs.graphql`
+-   It will generate typeScript types for your resolvers in `src/server/api/schema/resolvers/definitions.ts`
 -   It will generate TypeScript types related to your schema in `src/app/api/index.ts`
 -   It will parse graphql files from `src/app/api/**/*.graphql` to extract operations :
     -   TypeScript types for fragments and operations will be generated
@@ -41,6 +42,7 @@ The backend implementation is fully organized in the `src/server/schema` directo
     -   queries are grouped in the `queries` directory
     -   subscriptions are grouped in the `subscriptions` directory
     -   types and scalars are grouped in the `types` directory
+    -   **reminder:** resolver types are automatically generated in `src/server/api/schema/resolvers/definitions.ts`
 -   the GraphQL Context definitions and generation is in the `context.ts` file
 -   Common errors and helper will e in the `errors.ts` file
 
@@ -54,6 +56,35 @@ Among which you will find :
 
 We rely on [Data Loaders][data-loader] to batch our queries for the database and avoid duplicated queries.
 It's important to understand why we use such library and how.
+
+## Resolvers
+
+Resolver types are automatically generated in `src/server/api/schema/resolvers/definitions.ts`.
+However you may have to maintain the type mapper in `codegen.yml` (at the root directory).
+
+All enums exported in `src/server/schema/resolvers/enums.ts` will be automatically reused.
+But if you come to create a GraphQl type which mirrored a database type/document,
+you then need to link those together in your `codegen.yaml`.
+
+For example, if you create a database document `PrivateMessage` as well as a GraphQL type meant to represent those.
+You need to add the following in your configuration for code generation.
+
+```yaml
+# other config....
+generates:
+    # other config....
+    src/server/schema/resolvers/definitions.ts:
+        # other config....
+        config:
+            # other config....
+            mappers:
+                # other types....
+                PrivateMessage: ../../database#PrivateMessage
+```
+
+By doing so, your resolvers will translate the `PrivateMessage` GraphQL type as the `PrivateMessage` database type.
+
+After updating the configuration, you may run `yarn generate:schema` to execute the code generation.
 
 [data-loader]: https://github.com/graphql/dataloader
 
@@ -90,9 +121,9 @@ Let's create a resolver for our new query, which should be `src/server/schema/re
 
 ```typescript
 import { ObjectId } from 'mongodb';
-import { RootResolver } from '../../context';
+import { GraphQLQueryResolvers } from '../definitions';
 
-const query: RootResolver = () => {
+const query: GraphQLQueryResolvers['latestHeadline'] = () => {
     // here I return my headline
     return { title: 'new query available' };
 };
@@ -197,7 +228,9 @@ export const topicUpdatedSubscription = new Subscription<TopicUpdatedMessage>(
 Finally define your resolver for GraphQL and export it
 
 ```ts
-const resolver = {
+import { GraphQLSubscriptionResolvers } from '../definitions';
+
+const resolver: GraphQLSubscriptionResolvers['topicUpdated'] = {
     // with filter is optional and is a helper to filter events
     // you may read the official documentation on subscription from Apollo to understand more
     subscribe: withFilter(

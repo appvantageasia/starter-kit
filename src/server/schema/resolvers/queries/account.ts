@@ -1,6 +1,5 @@
-import { User } from '../../../database';
-import { RootResolver } from '../../context';
+import { GraphQLQueryResolvers } from '../definitions';
 
-const query: RootResolver = async (root, args, { getUser }): Promise<User | null> => getUser();
+const query: GraphQLQueryResolvers['account'] = async (root, args, { getUser }) => getUser();
 
 export default query;

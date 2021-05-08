@@ -1,8 +1,7 @@
-import { User } from '../../../database';
-import { TypeResolver } from '../../context';
 import { InvalidPermission } from '../../errors';
+import { GraphQLUserResolvers } from '../definitions';
 
-const UserGraphQL: TypeResolver<User> = {
+const UserGraphQL: GraphQLUserResolvers = {
     id: root => root._id,
     username: async (root, args, { getUser }) => {
         const user = await getUser();

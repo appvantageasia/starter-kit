@@ -1,15 +1,15 @@
 import { compare } from 'bcryptjs';
-import { getDatabaseContext, User } from '../../../database';
+import { getDatabaseContext } from '../../../database';
 import { authenticationRateLimiter } from '../../../rateLimiter';
-import { RootResolver } from '../../context';
 import { InvalidInput } from '../../errors';
 import { getSessionToken } from '../../session';
+import { GraphQLMutationResolvers } from '../definitions';
 
-type Args = { username: string; password: string };
-
-type Output = { user: User; token: string };
-
-const mutation: RootResolver<Args> = async (root, { username, password }, { getTranslations, ip }): Promise<Output> => {
+const mutation: GraphQLMutationResolvers['authenticate'] = async (
+    root,
+    { username, password },
+    { getTranslations, ip }
+) => {
     const { t } = await getTranslations(['errors']);
 
     try {

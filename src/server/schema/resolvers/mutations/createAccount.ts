@@ -3,10 +3,8 @@ import { ObjectId } from 'mongodb';
 import zxcvbn from 'zxcvbn';
 import { getDatabaseContext, User } from '../../../database';
 import { isDuplicateErrorOnFields } from '../../../utils';
-import { RootResolver } from '../../context';
 import { InvalidInput } from '../../errors';
-
-type Args = { username: string; password: string };
+import { GraphQLMutationResolvers } from '../definitions';
 
 const cryptPassword = async (password: string) => {
     const salt = await genSalt(10);
@@ -14,7 +12,11 @@ const cryptPassword = async (password: string) => {
     return hash(password, salt);
 };
 
-const mutation: RootResolver<Args> = async (root, { username, password }, { getTranslations }): Promise<User> => {
+const mutation: GraphQLMutationResolvers['createAccount'] = async (
+    root,
+    { username, password },
+    { getTranslations }
+) => {
     const { collections } = await getDatabaseContext();
     const { t } = await getTranslations(['errors']);
 

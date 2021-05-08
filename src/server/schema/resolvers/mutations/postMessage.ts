@@ -1,12 +1,10 @@
 import { ObjectId } from 'mongodb';
-import { getDatabaseContext, TopicMessage, Topic } from '../../../database';
-import { RootResolver } from '../../context';
+import { getDatabaseContext, TopicMessage } from '../../../database';
 import { requiresLoggedUser } from '../../middlewares';
+import { GraphQLMutationResolvers } from '../definitions';
 import { topicUpdatedSubscription } from '../subscriptions/topicUpdated';
 
-type Args = { topicId: ObjectId; body: string };
-
-const mutation: RootResolver<Args> = async (root, { topicId, body }, { getUser }): Promise<Topic | null> => {
+const mutation: GraphQLMutationResolvers['postMessage'] = async (root, { topicId, body }, { getUser }) => {
     const { collections } = await getDatabaseContext();
     const user = await getUser();
 
