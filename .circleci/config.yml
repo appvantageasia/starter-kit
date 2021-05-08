@@ -57,7 +57,7 @@ jobs:
             - attach_workspace:
                   at: ~/project
             - run:
-                  name: Linting
+                  name: Lint source code
                   command: yarn lint --format junit -o ./junit/js-lint-results.xml
             - run:
                   name: Type checking
@@ -122,6 +122,9 @@ jobs:
             - run:
                 name: Stop test server & worker
                 command: pkill -SIGQUIT node
+            - run:
+                name: Lint commit messages
+                command: node ./devtools/commands/lint-commits.js
             - store_test_results:
                   path: ~/project/junit/
             - store_artifacts:
