@@ -1,6 +1,7 @@
 import { IncomingMessage } from 'http';
 import { IResolverObject } from 'apollo-server';
 import { GraphQLFieldResolver } from 'graphql';
+import { FileUpload } from 'graphql-upload';
 import createLoaders, { Loaders } from '../loaders';
 import { getLanguage, getLazyTranslations, GetTranslations } from '../translations';
 import { getSessionDataFromRequest, SessionData } from './session';
@@ -14,6 +15,8 @@ export type Context = {
     getUser: GetLoggedUser;
     loaders: Loaders;
 };
+
+export type FileUploadPromise = Promise<FileUpload>;
 
 export type RootDocument = null;
 

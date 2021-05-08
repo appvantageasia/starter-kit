@@ -1,7 +1,6 @@
-import { TopicMessage } from '../../../database';
-import { TypeResolver } from '../../context';
+import { GraphQLTopicMessageResolvers } from '../definitions';
 
-const TopicMessageGraphQL: TypeResolver<TopicMessage> = {
+const TopicMessageGraphQL: GraphQLTopicMessageResolvers = {
     id: root => root._id,
     author: (root, args, { loaders }) => loaders.userById.load(root.authorId),
 };

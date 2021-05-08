@@ -1,13 +1,10 @@
-import { FileUpload } from 'graphql-upload';
 import { ObjectId } from 'mongodb';
 import { getDatabaseContext, Topic } from '../../../database';
 import { handleMultipleFileUpload } from '../../../storage';
-import { RootResolver } from '../../context';
 import { requiresLoggedUser } from '../../middlewares';
+import { GraphQLMutationResolvers } from '../definitions';
 
-type Args = { title: string; body: string; attachments?: Promise<FileUpload>[] | null };
-
-const mutation: RootResolver<Args> = async (root, { title, body, attachments }, { getUser }): Promise<Topic> => {
+const mutation: GraphQLMutationResolvers['createTopic'] = async (root, { title, body, attachments }, { getUser }) => {
     const { collections } = await getDatabaseContext();
     const user = await getUser();
 

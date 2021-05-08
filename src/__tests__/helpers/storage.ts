@@ -25,6 +25,7 @@ const emptyBucket = async (): Promise<void> => {
     });
 };
 
+// eslint-disable-next-line import/prefer-default-export
 export const setupEmptyBucket = async (): Promise<void> => {
     const alreadyExist = await minioClient.bucketExists(bucket);
 
