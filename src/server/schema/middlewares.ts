@@ -6,14 +6,16 @@ export type GraphQLMiddleware = <TSource, TContext = Context, TArgs = { [argName
     resolver: GraphQLFieldResolver<TSource, TContext, TArgs>
 ) => GraphQLFieldResolver<TSource, TContext, TArgs>;
 
-export const requiresLoggedUser = <TSource = any, TArgs = { [argName: string]: any }>(
-    resolver: GraphQLFieldResolver<TSource, Context, TArgs>
-): GraphQLFieldResolver<TSource, Context, TArgs> => async (root, args, context, info) => {
-    const user = await context.getUser();
+export const requiresLoggedUser =
+    <TSource = any, TArgs = { [argName: string]: any }>(
+        resolver: GraphQLFieldResolver<TSource, Context, TArgs>
+    ): GraphQLFieldResolver<TSource, Context, TArgs> =>
+    async (root, args, context, info) => {
+        const user = await context.getUser();
 
-    if (!user) {
-        throw new AuthenticationError('Not authenticated');
-    }
+        if (!user) {
+            throw new AuthenticationError('Not authenticated');
+        }
 
-    return resolver(root, args, context, info);
-};
+        return resolver(root, args, context, info);
+    };

@@ -13,27 +13,29 @@ export type SenderOptions<Props> = Omit<SendMailOptions, 'text' | 'html'> & {
 
 export const defaultMjmlOptions: Mjml2HtmlOptions = {};
 
-const createSender = <Props = any>(rootComponent: ComponentType<Props>) => (
-    { data, mjmlOptions = null, ...options }: SenderOptions<Props>,
-    transporter: Transporter = defaultTransporter
-): Promise<any> => {
-    const input = renderToStaticMarkup(createElement(rootComponent, data));
+const createSender =
+    <Props = any>(rootComponent: ComponentType<Props>) =>
+    (
+        { data, mjmlOptions = null, ...options }: SenderOptions<Props>,
+        transporter: Transporter = defaultTransporter
+    ): Promise<any> => {
+        const input = renderToStaticMarkup(createElement(rootComponent, data));
 
-    const { html, errors } = mjml2html(input, {
-        keepComments: false,
-        validationLevel: 'strict',
-        ...mjmlOptions,
-    });
+        const { html, errors } = mjml2html(input, {
+            keepComments: false,
+            validationLevel: 'strict',
+            ...mjmlOptions,
+        });
 
-    if (errors?.length) {
-        throw errors[0];
-    }
+        if (errors?.length) {
+            throw errors[0];
+        }
 
-    return transporter.sendMail({
-        sender: config.smtp.sender,
-        ...options,
-        html,
-    });
-};
+        return transporter.sendMail({
+            sender: config.smtp.sender,
+            ...options,
+            html,
+        });
+    };
 
 export default createSender;
