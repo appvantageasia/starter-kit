@@ -5,25 +5,27 @@ const { getReleaseName } = require('./sentry');
 // compute paths
 const cwd = path.resolve(__dirname, '../../');
 
-const makeExecCommand = logger => (cmd, args, options = {}) =>
-    new Promise((resolve, reject) => {
-        const child = spawn(cmd, args, {
-            ...options,
-            env: { ...process.env, ...options.env },
-        });
+const makeExecCommand =
+    logger =>
+    (cmd, args, options = {}) =>
+        new Promise((resolve, reject) => {
+            const child = spawn(cmd, args, {
+                ...options,
+                env: { ...process.env, ...options.env },
+            });
 
-        // pipe data
-        child.stdout.on('data', data => logger.log(data.toString()));
-        child.stderr.on('data', data => logger.log(data.toString()));
+            // pipe data
+            child.stdout.on('data', data => logger.log(data.toString()));
+            child.stderr.on('data', data => logger.log(data.toString()));
 
-        child.on('exit', code => {
-            if (code) {
-                reject();
-            } else {
-                resolve();
-            }
+            child.on('exit', code => {
+                if (code) {
+                    reject();
+                } else {
+                    resolve();
+                }
+            });
         });
-    });
 
 const getImageName = (tag, image) => `${image}:${tag}`;
 

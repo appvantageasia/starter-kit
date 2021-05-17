@@ -46,7 +46,8 @@ const leapYear = (year: number): boolean => (year % 4 === 0 && year % 100 !== 0)
 // - Leap seconds cannot be known in advance.
 export const validateTime = (time: string): boolean => {
     // eslint-disable-next-line max-len
-    const TIME_REGEX = /^([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])(\.\d{1,})?(([Z])|([+|-]([01][0-9]|2[0-3]):[0-5][0-9]))$/;
+    const TIME_REGEX =
+        /^([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])(\.\d{1,})?(([Z])|([+|-]([01][0-9]|2[0-3]):[0-5][0-9]))$/;
 
     return TIME_REGEX.test(time);
 };
