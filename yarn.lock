@@ -9727,10 +9727,10 @@ lcid@^1.0.0:
   dependencies:
     invert-kv "^1.0.0"
 
-less-loader@^8.0.0:
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/less-loader/-/less-loader-8.0.0.tgz#cd7f10e3c13ca8f71244a11ee396405ae3ce9c82"
-  integrity sha512-tnDs0ZdwPZgNOg0NGJ0sAD2KViG9TvOMDVibT33fH1bpLkT4xMo5Ue2FsbjFsVsUKtuRTlU0tYp2/lRizrycLg==
+less-loader@^9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/less-loader/-/less-loader-9.0.0.tgz#71a0b530174bddf89bb11a5019dd725f54df4791"
+  integrity sha512-bPen1xeGTZuYFFobcdz9kMUVgSSSDZQJtyhawtCtcz1QboQOwhkI7uCwp5UO+IZpO+LJS1W73YwxsufbBT6SBQ==
   dependencies:
     klona "^2.0.4"
 
