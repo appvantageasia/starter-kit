@@ -10,8 +10,6 @@
     -   [Unit testing (Jest)](unit-testing.md)
     -   [Functional testing (Cypress)](func-testing.md)
     -   [Code Quality (ESLint & Prettier)](code-quality.md)
-    -   [Semantic Release](sem-release.md)
-    -   [Bug tracking (Sentry)](sentry.md)
     -   [Rate Limiter](rate-limiter.md)
     -   [Caching](caching.md)
     -   [Internationalization](i18n.md)
