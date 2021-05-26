@@ -1,53 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title>AFC Documentation</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <meta name="description" content="Description">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
-  </head>
-  <body>
-    <div id="app">Loading ...</div>
-    <script>
-      window.$docsify = {
-        name: 'App',
-        auto2top: true,
-        coverpage: false,
-        executeScript: true,
-        loadSidebar: true,
-        loadNavbar: false,
-        mergeNavbar: true,
-        maxLevel: 4,
-        subMaxLevel: 2,
-        search: {
-          noData: {
-            '/': 'No results!'
-          },
-          paths: 'auto',
-          placeholder: {
-            '/': 'Search'
-          }
-        },
-      }
-    </script>
-    <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
-    <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-markdown.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-javascript.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-jsx.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-typescript.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-tsx.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-ignore.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-json.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-graphql.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-docker.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-hcl.min.js"></script>
-    <script src="//unpkg.com/mermaid/dist/mermaid.js"></script>
-    <script src="//unpkg.com/docsify-mermaid@latest/dist/docsify-mermaid.js"></script>
-    <script>mermaid.initialize({ startOnLoad: true });</script>
-  </body>
+    <head>
+        <meta charset="UTF-8" />
+        <title>AFC Documentation</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name="description" content="Description" />
+        <meta
+            name="viewport"
+            content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+        />
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css" />
+        <style>
+            .app-name {
+                padding: 0 15px 0 15px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app">Loading ...</div>
+        <script>
+            window.$docsify = {
+                name: 'App',
+                repo: 'https://github.com/appvantageasia/starter-kit',
+                auto2top: true,
+                coverpage: false,
+                executeScript: true,
+                loadSidebar: true,
+                loadNavbar: false,
+                mergeNavbar: true,
+                maxLevel: 4,
+                subMaxLevel: 2,
+                logo: 'logo.png',
+                search: {
+                    noData: {
+                        '/': 'No results!',
+                    },
+                    paths: 'auto',
+                    placeholder: {
+                        '/': 'Search',
+                    },
+                },
+            };
+        </script>
+        <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+        <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-markdown.min.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-javascript.min.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-jsx.min.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-typescript.min.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-tsx.min.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-ignore.min.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-json.min.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-graphql.min.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-docker.min.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.min.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-hcl.min.js"></script>
+        <script src="//unpkg.com/mermaid/dist/mermaid.js"></script>
+        <script src="//unpkg.com/docsify-mermaid@latest/dist/docsify-mermaid.js"></script>
+        <script>
+            mermaid.initialize({ startOnLoad: true });
+        </script>
+    </body>
 </html>
