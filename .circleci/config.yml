@@ -3,10 +3,10 @@ version: 2.1
 executors:
     node-standalone:
         docker:
-            - image: circleci/node:14.16.0
+            - image: circleci/node:16.2.0
     node-with-dependencies:
         docker:
-            - image: circleci/node:14.16.0
+            - image: circleci/node:16.2.0
               environment:
                   APP_DB_URI: mongodb://root:password@127.0.0.1:27017
                   APP_SESSION_SECRET: localSecret
@@ -35,14 +35,14 @@ jobs:
             - checkout
             - restore_cache:
                   keys:
-                      - yarn-cache-node14-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
-                      - yarn-cache-node14-{{ checksum "package.json" }}
-                      - yarn-cache-node14
+                      - yarn-cache-node16-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+                      - yarn-cache-node16-{{ checksum "package.json" }}
+                      - yarn-cache-node16
             - run:
                   name: Install depdencies
                   command: yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
             - save_cache:
-                  key: yarn-cache-node14-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+                  key: yarn-cache-node16-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
                   paths:
                       - ~/.cache/yarn
             - persist_to_workspace:
