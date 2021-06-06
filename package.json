@@ -108,7 +108,7 @@
         "eslint-plugin-react-hooks": "^4.2.0",
         "execa": "^5.0.0",
         "fetch-blob": "^2.1.1",
-        "formdata-node": "^2.4.0",
+        "formdata-node": "^3.5.2",
         "glob": "^7.1.6",
         "graphql-tag": "^2.11.0",
         "http-proxy": "^1.18.1",
