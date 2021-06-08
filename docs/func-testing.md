@@ -14,7 +14,7 @@ To run functional testing you need first to start the server on test mode
 
 ```bash
 # start the server
-NODE_ENV=test yarn:dev
+NODE_ENV=test yarn dev
 # then open cypress console
 # you may change the base URL if you are running it on a different location
 CYPRESS_BASE_URL="http://localhost:3000" yarn cypress:open
