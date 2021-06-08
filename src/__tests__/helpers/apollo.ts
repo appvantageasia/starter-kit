@@ -1,10 +1,9 @@
-import { createReadStream } from 'fs';
+import { Readable } from 'stream';
 import { ApolloClient, ApolloLink, from, InMemoryCache, NormalizedCacheObject } from '@apollo/client';
-import { createUploadLink } from 'apollo-upload-client';
-import Blob from 'fetch-blob';
-import FormData from 'form-data';
-import NodeFormData from 'formdata-node';
-import nodeFetch from 'node-fetch';
+import { createUploadLink, isExtractableFile } from 'apollo-upload-client';
+import { Encoder } from 'form-data-encoder';
+import { FormData, File } from 'formdata-node';
+import fetch from 'node-fetch';
 
 export type ApolloClientOptions = { authorizationToken?: string; language?: string };
 
@@ -31,34 +30,18 @@ export const getApolloClient = (uri: string, options?: ApolloClientOptions): Apo
 
     const httpLink = createUploadLink({
         uri: `${uri}/graphql`,
-        FormData: NodeFormData,
+        FormData,
+        isExtractableFile: value => isExtractableFile(value) || value instanceof File,
         fetch: async (url, options) => {
             const nextOptions = { ...options };
 
-            if (options?.body instanceof NodeFormData) {
-                // formdata-node is not fully supported by node-fetch
-                // at least on the v2.6.x (maybe on v3)
-                // therefore we are going to copy the entries to form-data instead
-                // we cannot directly use form-data for graphql-upload because it doesn't support node streams
-                const formData = options?.body as NodeFormData;
-                const nextFormData = new FormData();
-
-                // @ts-ignore
-                for (const [field, value] of formData.entries()) {
-                    const blob = value?.__content;
-
-                    if (blob instanceof Blob) {
-                        // @ts-ignore
-                        nextFormData.append(field, createReadStream(blob.__filePath));
-                    } else {
-                        nextFormData.append(field, value);
-                    }
-
-                    nextOptions.body = nextFormData;
-                }
+            if (options?.body instanceof FormData) {
+                const encoder = new Encoder(options.body);
+                nextOptions.headers = { ...nextOptions.headers, ...encoder.headers };
+                nextOptions.body = Readable.from(encoder);
             }
 
-            return nodeFetch(url, nextOptions);
+            return fetch(url, nextOptions);
         },
     });
 

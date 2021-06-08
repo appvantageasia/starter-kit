@@ -96,38 +96,27 @@ test('test', async () => {
 });
 ```
 
-## setupFormDataSupport
+## createBlobFrom
 
-You may get your environment ready to upload files from blob over GraphQL requests.
+You may  upload files over GraphQL requests by using `createBlobFrom`.
 
 ```typescript
-import { composeHandlers, setupFormDataSupport, setupWebService, cleanFormDataSupport } from './helpers';
+import { composeHandlers, setupWebService } from './helpers';
 import dummyFixtures from './dummy.fixture.json';
 
 const webService = setupWebService();
 
 // get things ready
-beforeEach(composeHandlers(setupFormDataSupport, webService.initialize));
+beforeEach(composeHandlers(webService.initialize));
 
 // then clean up
-afterEach(composeHandlers(cleanFormDataSupport, webService.cleanUp));
+afterEach(composeHandlers(webService.cleanUp));
 
 test('test image', async () => {
     // get the apollo client
     const client = getApolloClient(webService.url);
     // get the file ready for upload
-    const originalFile = await createBlobFrom(path.resolve(__dirname, './img.png'), 'image/png');
-    // add it to variable
-    const variables = { files: [originalFile] };
-    // execute
-    const { data } = await client.mutate({ mutation, variables });
-});
-
-test('test text', async () => {
-    // get the apollo client
-    const client = getApolloClient(webService.url);
-    // get the file ready for upload
-    const originalFile = await createBlobFrom('test', 'text/plain');
+    const originalFile = await createBlobFrom(path.resolve(__dirname, './img.png'));
     // add it to variable
     const variables = { files: [originalFile] };
     // execute
