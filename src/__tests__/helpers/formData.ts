@@ -1,27 +1,9 @@
 import fs from 'fs/promises';
 import { Server } from 'http';
-import Blob from 'fetch-blob';
-import FormData from 'form-data';
-import nodeFetch from 'node-fetch';
+import { basename } from 'path';
+import { File } from 'formdata-node';
 import listen from 'test-listen';
 import createWebServer from '../../server/createWebServer';
-
-const originalGlobals = { ...global };
-
-export const setupFormDataSupport = async (): Promise<void> => {
-    // @ts-ignore
-    global.fetch = nodeFetch;
-    // @ts-ignore
-    global.FormData = FormData;
-    // @ts-ignore
-    global.Blob = Blob;
-};
-
-export const cleanFormDataSupport = async (): Promise<void> => {
-    global.fetch = originalGlobals.fetch;
-    global.FormData = originalGlobals.FormData;
-    global.Blob = originalGlobals.Blob;
-};
 
 export const setupWebService = () => {
     let service: Server = null;
@@ -47,12 +29,8 @@ export const setupWebService = () => {
     };
 };
 
-export const createBlobFrom = async (path: string, type: string): Promise<Blob> => {
+export const createBlobFrom = async (path: string): Promise<File> => {
     const buffer = await fs.readFile(path);
-    const blob = new Blob([buffer], { type });
 
-    // @ts-ignore
-    blob.__filePath = path;
-
-    return blob;
+    return new File([buffer], basename(path));
 };

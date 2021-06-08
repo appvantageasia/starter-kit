@@ -12,8 +12,6 @@ import {
     getApolloClient,
     setupEmptyBucket,
     createBlobFrom,
-    setupFormDataSupport,
-    cleanFormDataSupport,
 } from '../helpers';
 import fixtures from './authenticate.fixture.json';
 
@@ -27,17 +25,9 @@ const mutation = gql`
 
 const webService = setupWebService();
 
-beforeEach(
-    composeHandlers(
-        setupFormDataSupport,
-        setupEmptyBucket,
-        setupDatabase,
-        loadFixtures(fixtures),
-        webService.initialize
-    )
-);
+beforeEach(composeHandlers(setupEmptyBucket, setupDatabase, loadFixtures(fixtures), webService.initialize));
 
-afterEach(composeHandlers(cleanFormDataSupport, cleanDatabase, webService.cleanUp));
+afterEach(composeHandlers(cleanDatabase, webService.cleanUp));
 
 test('Create topic requires authorizations', async () => {
     const client = getApolloClient(webService.url);
@@ -69,7 +59,7 @@ test('Create topic work successfully with attachments', async () => {
     const originalData: SessionData = { userId: new ObjectId('601f7ae763d6cfc2554f6b67') };
     const originalToken = await getSessionToken(originalData);
     const client = getApolloClient(webService.url, { authorizationToken: originalToken });
-    const originalFile = await createBlobFrom(path.resolve(__dirname, './img.png'), 'image/png');
+    const originalFile = await createBlobFrom(path.resolve(__dirname, './img.png'));
     const variables = { title: 'test', body: 'this is a test', files: [originalFile] };
     const { data } = await client.mutate({ mutation, variables });
     expect(data.createTopic).not.toBeNull();
