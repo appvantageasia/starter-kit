@@ -1,7 +1,6 @@
-import { ApolloClient, ApolloLink, from, InMemoryCache, NormalizedCacheObject } from '@apollo/client';
+import { ApolloClient, ApolloLink, from, InMemoryCache, NormalizedCacheObject, HttpLink } from '@apollo/client';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
-import { BatchHttpLink } from 'apollo-link-batch-http';
 import { createUploadLink } from 'apollo-upload-client';
 import { extractFiles } from 'extract-files';
 import { i18n as I18n } from 'i18next';
@@ -32,8 +31,7 @@ const createApolloClient = (
     const httpLink = ApolloLink.split(
         operation => extractFiles(operation).files.size > 0,
         createUploadLink({ uri: '/graphql' }),
-        // @ts-ignore
-        new BatchHttpLink({ uri: '/graphql' })
+        new HttpLink({ uri: '/graphql' })
     );
 
     // websocket link
