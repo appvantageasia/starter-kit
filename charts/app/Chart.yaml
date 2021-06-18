@@ -4,11 +4,15 @@ description: Helm chart for your amazing app
 type: application
 version: 0.1.0
 dependencies:
-  - name: mongodb
-    repository: https://charts.bitnami.com/bitnami
-    version: 10.10.1
-    condition: mongodb.enabled
-  - name: redis
-    repository: https://charts.bitnami.com/bitnami
-    version: 12.8.3
-    condition: redis.enabled
+    - name: mongodb
+      repository: https://charts.bitnami.com/bitnami
+      version: 10.10.1
+      condition: mongodb.enabled
+    - name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.8.3
+      condition: redis.enabled
+    - name: minio
+      repository: https://charts.bitnami.com/bitnami
+      version: 7.1.0
+      condition: minio.enabled
