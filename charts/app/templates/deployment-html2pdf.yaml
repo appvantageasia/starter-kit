@@ -1,0 +1,28 @@
+{{- $selectorLabels := include "app.selectorLabels" . -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Release.Name }}-html2pdf"
+  namespace: {{ .Release.Namespace }}
+  labels:
+  {{- include "app.labels" . | nindent 4 }}
+spec:
+  replicas: {{ include "app.deploymentReplicas" .Values.html2pdf.podScaler }}
+  selector:
+    matchLabels:
+      {{- $selectorLabels | nindent 6 }}
+      app.local/role: html2pdf
+  template:
+    metadata:
+      labels:
+        {{- $selectorLabels | nindent 8 }}
+        app.local/role: html2pdf
+    spec:
+      containers:
+        - name: html2pdf
+          image: "{{ .Values.html2pdf.image }}"
+          imagePullPolicy: {{ .Values.html2pdf.imagePullPolicy }}
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP

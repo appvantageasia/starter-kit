@@ -1,34 +1,37 @@
 version: '3.5'
 
 services:
-  mail:
-    image: mailhog/mailhog:v1.0.0
+    html2pdf:
+        image: appvantage/html2pdf-service:1.0.0
 
-  redis:
-    image: redis:6.0.5
-    command: redis-server --appendonly yes
-    volumes:
-      - redis:/data
+    mail:
+        image: mailhog/mailhog:v1.0.0
 
-  minio:
-    image: minio/minio:latest
-    environment:
-      MINIO_ACCESS_KEY: "AKIAIOSFODNN7EXAMPLE"
-      MINIO_SECRET_KEY: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-    command: server /data
-    volumes:
-      - minio:/data
+    redis:
+        image: redis:6.0.5
+        command: redis-server --appendonly yes
+        volumes:
+            - redis:/data
 
-  mongo:
-    image: mongo:latest
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: password
-    volumes:
-      - mongo:/data/db
+    minio:
+        image: minio/minio:latest
+        environment:
+            MINIO_ACCESS_KEY: 'AKIAIOSFODNN7EXAMPLE'
+            MINIO_SECRET_KEY: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
+        command: server /data
+        volumes:
+            - minio:/data
+
+    mongo:
+        image: mongo:latest
+        restart: always
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: password
+        volumes:
+            - mongo:/data/db
 
 volumes:
-  mongo:
-  redis:
-  minio:
+    mongo:
+    redis:
+    minio:

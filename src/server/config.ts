@@ -58,6 +58,10 @@ export type RuntimeConfig = {
         tracing: boolean;
         tracesSampleRate: number;
     };
+
+    html2pdf: {
+        endpoint: string;
+    };
 };
 
 const getSmtpSettings = (): RuntimeConfig['smtp']['transporter'] => {
@@ -136,6 +140,10 @@ const config: RuntimeConfig = {
         environment: getString(getPrefix('SENTRY_ENVIRONMENT')),
         tracing: getBoolean(getPrefix('SENTRY_TRACING'), true),
         tracesSampleRate: getNumber(getPrefix('SENTRY_TRACES_SAMPLE_RATE'), 1.0),
+    },
+
+    html2pdf: {
+        endpoint: getString(getPrefix('HTML2PDF_ENDPOINT')),
     },
 };
 

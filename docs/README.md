@@ -33,6 +33,10 @@ The default configuration is the following and to be placed in `docker-compose.o
 version: '3.5'
 
 services:
+    html2pdf:
+        ports:
+            - 4000:3000
+
     mail:
         ports:
             - 1025:1025

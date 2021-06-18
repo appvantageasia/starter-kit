@@ -29,3 +29,6 @@ data:
   {{- include "app.configValue" ( dict "Key" "APP_SENTRY_TRACING" "Value" .tracing ) }}
   {{- include "app.configValue" ( dict "Key" "APP_SENTRY_TRACES_SAMPLE_RATE" "Value" .tracesSampleRate ) }}
   {{- end }}
+
+  # html2pdf settings
+  APP_HTML2PDF_ENDPOINT: "http://{{ .Release.Name }}-html2pdf:3000/"
