@@ -1,10 +1,10 @@
 import { IncomingMessage } from 'http';
 import { AuthenticationError } from 'apollo-server';
 import { EJSON, Document } from 'bson';
-import jwt from 'jsonwebtoken';
 import { omit } from 'lodash/fp';
 import { ObjectId } from 'mongodb';
 import config from '../config';
+import { generateToken, consumeToken } from '../tokens';
 
 export type SessionData = {
     userId: ObjectId;
@@ -13,11 +13,11 @@ export type SessionData = {
 export const getSessionToken = async (data: SessionData) => {
     const rawData = EJSON.serialize(data);
 
-    return jwt.sign(rawData, config.session.secret, { expiresIn: config.session.lifetime });
+    return generateToken('session', rawData, config.session.lifetime);
 };
 
 export const readSessionToken = async (token: string): Promise<SessionData> => {
-    const rawData = (await jwt.verify(token, config.session.secret)) as Document;
+    const rawData = await consumeToken<Document>('session', token);
     const data = EJSON.deserialize(rawData) as SessionData & { iat: number; exp: number };
 
     return omit(['iat', 'exp'], data);
