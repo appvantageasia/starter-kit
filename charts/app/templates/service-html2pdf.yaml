@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Release.Name }}-html2pdf"
+  namespace: {{ .Release.Namespace }}
+  labels:
+  {{- include "app.labels" . | nindent 4 }}
+spec:
+  ports:
+    - port: 3000
+      targetPort: 3000
+  selector:
+    {{- include "app.selectorLabels" .| nindent 4 }}
+    app.local/role: html2pdf
+  type: ClusterIP

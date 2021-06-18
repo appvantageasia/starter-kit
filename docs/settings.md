@@ -63,3 +63,9 @@ All settings are defined through environment variable.
 | APP_SENTRY_ENVIRONMENT        | String  |         | Sentry environment                    |
 | APP_SENTRY_TRACING            | Boolean | true    | Enable Sentry tracing                 |
 | APP_SENTRY_TRACES_SAMPLE_RATE | Number  | 1.0     | Sentry traces sample rate for tracing |
+
+## HTML2PDF configuration
+
+| Name                  | Type   | Default | Comment                       |
+| --------------------- | ------ | ------- | ----------------------------- |
+| APP_HTML2PDF_ENDPOINT | String |         | Endpoint for the html2pdf API |

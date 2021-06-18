@@ -1,0 +1,17 @@
+{{- if .Values.html2pdf.podScaler.enabled }}
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: "{{ .Release.Name }}-html2pdf"
+  namespace: {{ .Release.Namespace }}
+  labels:
+  {{- include "app.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: "{{ .Release.Name }}-html2pdf"
+  minReplicas: {{ .Values.html2pdf.podScaler.minReplicas }}
+  maxReplicas: {{ .Values.html2pdf.podScaler.maxReplicas }}
+  metrics: {{ .Values.html2pdf.podScaler.metrics }}
+{{- end }}

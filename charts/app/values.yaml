@@ -76,6 +76,21 @@ app:
         maxReplicas: 1
         metrics: {}
 
+# html2pdf settings
+html2pdf:
+    # docker image (including tag)
+    image: 'appvantage/html2pdf-service:1.0.0'
+
+    # image pull policy
+    imagePullPolicy: IfNotPresent
+
+    # pod scaler
+    podScaler:
+        enabled: false
+        minReplicas: 1
+        maxReplicas: 1
+        metrics: { }
+
 # Redis settings
 redis:
     # should the redis chart be deployed
