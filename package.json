@@ -178,6 +178,7 @@
         "mjml": "^4.9.3",
         "mjml-react": "^1.2.0",
         "mongodb": "^3.6.6",
+        "nanoid": "^3.1.23",
         "node-fetch": "^2.6.1",
         "nodemailer": "^6.5.0",
         "rate-limiter-flexible": "^2.2.1",
