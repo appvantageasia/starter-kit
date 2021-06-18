@@ -111,3 +111,13 @@ mongodb:
 
     # architecture type
     architecture: standalone
+
+# Minion settings
+minio:
+    enabled: false
+
+    # server mode
+    mode: standalone
+
+    # bucket to automatically create
+    defaultBuckets: "app"
