@@ -3015,10 +3015,10 @@
   resolved "https://registry.yarnpkg.com/@types/mjml-core/-/mjml-core-4.7.0.tgz#8fc4510ac7927795be1218042222f3dd98cee433"
   integrity sha512-sjdnVUQCZMRCXNuIve6OmB/pyoCV0wPbc5UV+VDNE/qTrM5ObJiOGpSVjwh2Kv7AEvPMP3hBh+xB6ERdN/ZPvg==
 
-"@types/mjml-react@^1.0.6":
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/@types/mjml-react/-/mjml-react-1.0.8.tgz#72512ab967f6e37c642597ec8172450f09a7adf1"
-  integrity sha512-yiKVOCZXD1duYlt0bAh64zekBle5O+n/msjCPTtPu/0IhCpPhletLBqafDv+ldOEByxtwOgR+7PQM6yk164Vow==
+"@types/mjml-react@^1.0.9":
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/@types/mjml-react/-/mjml-react-1.0.9.tgz#1e0f00d28e378aee4041d219e2c3a7c20400be1a"
+  integrity sha512-miXI6Pq/zWoLbLMBphAgGrxnkz6eyCKO1erMKWdTNSmsarCHC8dibUR8FmHXoq7ewJmpi63BBfeYCPEAWEFW8g==
   dependencies:
     "@types/react" "*"
 
