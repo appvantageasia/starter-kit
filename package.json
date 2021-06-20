@@ -144,7 +144,7 @@
     "dependencies": {
         "@ant-design/icons": "^4.5.0",
         "@apollo/client": "^3.3.12",
-        "@babel/runtime": "^7.14.0",
+        "@babel/runtime": "^7.14.6",
         "@sentry/node": "^6.3.6",
         "@sentry/react": "^6.3.6",
         "@sentry/tracing": "^6.6.0",
