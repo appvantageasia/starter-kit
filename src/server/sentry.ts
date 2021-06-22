@@ -1,5 +1,7 @@
+import { RewriteFrames } from '@sentry/integrations';
 import * as Sentry from '@sentry/node';
 import * as Tracing from '@sentry/tracing';
+import { Integration } from '@sentry/types';
 import { ApolloError } from 'apollo-server';
 import { Express } from 'express';
 import config from './config';
@@ -12,6 +14,8 @@ export const initializeSentry = ({ app }: { app?: Express } = {}) => {
         return;
     }
 
+    const integrations: Integration[] = [new RewriteFrames()];
+
     const sentryInitOptions: Sentry.NodeOptions = {
         release: sentryConfig.release,
         dsn: sentryConfig.dsn,
@@ -22,11 +26,14 @@ export const initializeSentry = ({ app }: { app?: Express } = {}) => {
     if (sentryConfig.tracing) {
         sentryInitOptions.tracesSampleRate = sentryConfig.tracesSampleRate;
 
-        sentryInitOptions.integrations = [
-            app && new Tracing.Integrations.Express({ app }),
-            new Tracing.Integrations.Mongo(),
-        ].filter(Boolean);
+        if (app) {
+            integrations.push(new Tracing.Integrations.Express({ app }));
+        }
+
+        integrations.push(new Tracing.Integrations.Mongo());
     }
+
+    sentryInitOptions.integrations = integrations;
 
     Sentry.init(sentryInitOptions);
 };
