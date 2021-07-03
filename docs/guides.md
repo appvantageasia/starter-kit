@@ -95,7 +95,7 @@ jobs:
                   command: yarn semantic-release
 ```
 
-Finally update your semantic release configuration. 
+Finally update your semantic release configuration.
 To deploy on Sentry you will however require `SENTRY_AUTH_TOKEN` in your secrets,
 
 ```javascript
@@ -300,3 +300,25 @@ spec:
         privateKeySecretRef:
             name: 'letsencrypt'
 ```
+
+## Ingress Nginx & AWS
+
+If the application requires to get the real client IP and is behind a load balancer,
+you will need to enable the proxy protocol on your ingress nginx.
+
+However, it also requires to use NLB rather than ELB.
+
+You may use the following values for your ingress-nginx release.
+
+```yaml
+service:
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
+      service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
+      service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*"
+      service.beta.kubernetes.io/aws-load-balancer-type: nlb
+  config:
+    use-proxy-protocol: "true"
+```
+
+**notice: you may eventually have to manually enable the proxy protocol v2 on the target groups from the console or with AWS CLi**

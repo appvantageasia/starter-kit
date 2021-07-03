@@ -69,3 +69,9 @@ All settings are defined through environment variable.
 | Name                  | Type   | Default | Comment                       |
 | --------------------- | ------ | ------- | ----------------------------- |
 | APP_HTML2PDF_ENDPOINT | String |         | Endpoint for the html2pdf API |
+
+## Limiter configuration
+
+| Name            | Type   | Default | Comment                                   |
+| --------------- | ------ | ------- | ----------------------------------------- |
+| APP_LIMITER_API | Number | 1000    | Rate limiter per second per IP on the API |

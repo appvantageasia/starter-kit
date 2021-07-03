@@ -1,10 +1,11 @@
 import { RateLimiterRedis } from 'rate-limiter-flexible';
+import config from './config';
 import getRedisInstance from './redis';
 
 // rate limiter for any web request for other than assets
 export const expressRateLimiter = new RateLimiterRedis({
     storeClient: getRedisInstance(),
-    points: 10, // 10 requests per second max
+    points: config.limiter.api, // n requests per second max
     duration: 1, // reset every seconds
     keyPrefix: 'expressRlfx',
 });

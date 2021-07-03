@@ -62,6 +62,10 @@ export type RuntimeConfig = {
     html2pdf: {
         endpoint: string;
     };
+
+    limiter: {
+        api: number;
+    };
 };
 
 const getSmtpSettings = (): RuntimeConfig['smtp']['transporter'] => {
@@ -144,6 +148,10 @@ const config: RuntimeConfig = {
 
     html2pdf: {
         endpoint: getString(getPrefix('HTML2PDF_ENDPOINT')),
+    },
+
+    limiter: {
+        api: getNumber(getPrefix('LIMITER_API'), 1000),
     },
 };
 

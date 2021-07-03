@@ -30,5 +30,10 @@ data:
   {{- include "app.configValue" ( dict "Key" "APP_SENTRY_TRACES_SAMPLE_RATE" "Value" .tracesSampleRate ) }}
   {{- end }}
 
+  # limiter settings
+  {{- with .Values.app.limiter }}
+  {{- include "app.configValue" ( dict "Key" "APP_LIMITER_API" "Value" .api ) }}
+  {{- end }}
+
   # html2pdf settings
   APP_HTML2PDF_ENDPOINT: "http://{{ .Release.Name }}-html2pdf:3000/"
