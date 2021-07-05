@@ -1,3 +1,4 @@
+import * as domain from 'domain';
 import * as Sentry from '@sentry/node';
 import { Document, EJSON } from 'bson';
 import BullQueue, { Queue, Job, JobOptions } from 'bull';
@@ -68,39 +69,59 @@ export class QueueHandler<Message = any> {
     }
 
     private async handleJob(job: Job<Document>) {
-        const transaction = Sentry.startTransaction({
-            op: 'task',
-            name: this.queueName,
-        });
+        const local = domain.create();
 
-        let message: Message = null;
-
-        try {
-            message = EJSON.deserialize(job.data) as Message;
-
-            const promise = this.processFunction(message, job);
-
-            if (promise instanceof Promise) {
-                await promise;
-            }
-        } catch (error) {
+        local.on('error', error => {
             // print it for debug purposes
             console.info(chalk.red(`Failed to execute ${this.queueName}`));
             console.error(error);
 
-            Sentry.withScope(scope => {
-                if (message) {
-                    scope.setExtra('message', message);
-                }
+            // capture with Sentry too
+            Sentry.captureException(error);
 
-                Sentry.captureException(error);
+            // move the job to failed
+            job.moveToFailed(error);
+        });
+
+        return local.run(async () => {
+            const transaction = Sentry.startTransaction({
+                op: 'task',
+                name: this.queueName,
             });
 
-            // set the job as failed
-            await job.moveToFailed(error);
-        } finally {
-            transaction.finish();
-        }
+            Sentry.configureScope(scope => {
+                scope.setSpan(transaction);
+            });
+
+            let message: Message = null;
+
+            try {
+                message = EJSON.deserialize(job.data) as Message;
+
+                const promise = this.processFunction(message, job);
+
+                if (promise instanceof Promise) {
+                    await promise;
+                }
+            } catch (error) {
+                // print it for debug purposes
+                console.info(chalk.red(`Failed to execute ${this.queueName}`));
+                console.error(error);
+
+                Sentry.withScope(scope => {
+                    if (message) {
+                        scope.setExtra('message', message);
+                    }
+
+                    Sentry.captureException(error);
+                });
+
+                // set the job as failed
+                await job.moveToFailed(error);
+            } finally {
+                transaction.finish();
+            }
+        });
     }
 
     public setupWorker(plans?: QueuePeriodicPlans<Message>[] | false): QueueHandler<Message> {
