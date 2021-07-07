@@ -1,12 +1,13 @@
 // create http server
 import http, { Server } from 'http';
 import * as Sentry from '@sentry/node';
-import { ApolloServer } from 'apollo-server-express';
+import { ApolloServer, ApolloServerExpressConfig } from 'apollo-server-express';
 import compression from 'compression';
 import express, { Express, Handler, Request } from 'express';
 import { graphqlUploadExpress } from 'graphql-upload';
 import { ExecutionParams } from 'subscriptions-transport-ws';
 import config from './config';
+import { ApolloMetricsPlugin } from './prometheus';
 import { expressRateLimiter } from './rateLimiter';
 import renderApplication from './renderApplication';
 import schema from './schema';
@@ -31,6 +32,12 @@ const rateLimiterMiddleware: Handler = (req, res, next) => {
 };
 
 const createWebServer = (): WebServerCreation => {
+    const plugins: ApolloServerExpressConfig['plugins'] = [ApolloSentryPlugin];
+
+    if (config.prometheus.enabled) {
+        plugins.push(ApolloMetricsPlugin);
+    }
+
     const apolloServer = new ApolloServer({
         schema,
         // do not use the build-in upload types
@@ -56,7 +63,7 @@ const createWebServer = (): WebServerCreation => {
         // provide a custom root document
         rootValue: (): RootDocument => null,
 
-        plugins: [ApolloSentryPlugin],
+        plugins,
     });
 
     const expressServer = express();

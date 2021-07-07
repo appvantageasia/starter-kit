@@ -9,6 +9,13 @@ app:
     # image pull policy
     imagePullPolicy: IfNotPresent
 
+    # pods specs
+    pods:
+        # annotations for pods running the server
+        serverAnnotations: {}
+        # annotations for pods running the worker
+        workerAnnotations: {}
+
     ingress:
         # hostname on which the application is served
         hostname: ''
@@ -65,6 +72,15 @@ app:
     # limiter settings
     limiter:
         api: ''
+
+    # prometheus settings
+    prometheus:
+        enabled: ''
+        internal: ''
+        internalPort: ''
+        external: ''
+        externalPath: ''
+        prefix: ''
 
     # HorizontalPodAutoscaler config for servers (api)
     serverPodScaler:
