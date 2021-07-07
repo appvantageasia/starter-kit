@@ -1,0 +1,497 @@
+{
+    "annotations": {
+        "list": [
+            {
+                "builtIn": 1,
+                "datasource": "-- Grafana --",
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "type": "dashboard"
+            }
+        ]
+    },
+    "editable": true,
+    "gnetId": null,
+    "graphTooltip": 0,
+    "id": 4,
+    "iteration": 1625734527307,
+    "links": [],
+    "panels": [
+        {
+            "datasource": null,
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 21,
+                        "gradientMode": "hue",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "lineInterpolation": "smooth",
+                        "lineStyle": {
+                            "fill": "solid"
+                        },
+                        "lineWidth": 1,
+                        "pointSize": 1,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "normal"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "decimals": 2,
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "reqps"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 12,
+                "x": 0,
+                "y": 0
+            },
+            "id": 4,
+            "options": {
+                "legend": {
+                    "calcs": ["lastNotNull", "mean"],
+                    "displayMode": "list",
+                    "placement": "bottom"
+                },
+                "tooltip": {
+                    "mode": "single"
+                }
+            },
+            "pluginVersion": "8.0.3",
+            "targets": [
+                {
+                    "exemplar": true,
+                    "expr": "sum(rate(app_http_request_duration_milliseconds_count{environment=~\"$environment\"}[$__rate_interval])) by (environment)",
+                    "instant": false,
+                    "interval": "1m",
+                    "legendFormat": "{{environment}}",
+                    "refId": "A"
+                }
+            ],
+            "title": "Requests",
+            "type": "timeseries"
+        },
+        {
+            "cards": {
+                "cardPadding": null,
+                "cardRound": null
+            },
+            "color": {
+                "cardColor": "#73BF69",
+                "colorScale": "sqrt",
+                "colorScheme": "interpolateSpectral",
+                "exponent": 0.5,
+                "max": null,
+                "min": null,
+                "mode": "opacity"
+            },
+            "dataFormat": "tsbuckets",
+            "datasource": null,
+            "gridPos": {
+                "h": 9,
+                "w": 12,
+                "x": 12,
+                "y": 0
+            },
+            "heatmap": {},
+            "hideZeroBuckets": true,
+            "highlightCards": true,
+            "id": 2,
+            "legend": {
+                "show": false
+            },
+            "pluginVersion": "8.0.3",
+            "reverseYBuckets": false,
+            "targets": [
+                {
+                    "exemplar": true,
+                    "expr": "sum(rate(app_http_request_duration_milliseconds_bucket{environment=~\"$environment\",path=\"/graphql\"}[$__rate_interval])) by (le)",
+                    "format": "heatmap",
+                    "instant": false,
+                    "interval": "1m",
+                    "legendFormat": "{{le}}",
+                    "refId": "A"
+                }
+            ],
+            "title": "API Latencies",
+            "tooltip": {
+                "show": true,
+                "showHistogram": false
+            },
+            "tooltipDecimals": 0,
+            "type": "heatmap",
+            "xAxis": {
+                "show": true
+            },
+            "xBucketNumber": null,
+            "xBucketSize": null,
+            "yAxis": {
+                "decimals": null,
+                "format": "ms",
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true,
+                "splitFactor": null
+            },
+            "yBucketBound": "auto",
+            "yBucketNumber": null,
+            "yBucketSize": null
+        },
+        {
+            "datasource": null,
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "lineInterpolation": "smooth",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": true,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            }
+                        ]
+                    },
+                    "unit": "ms"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 12,
+                "x": 0,
+                "y": 9
+            },
+            "id": 6,
+            "options": {
+                "legend": {
+                    "calcs": ["lastNotNull", "mean"],
+                    "displayMode": "list",
+                    "placement": "bottom"
+                },
+                "tooltip": {
+                    "mode": "single"
+                }
+            },
+            "pluginVersion": "8.0.3",
+            "targets": [
+                {
+                    "exemplar": true,
+                    "expr": "sum(rate(app_http_request_duration_milliseconds_sum{environment=~\"$environment\"}[$__rate_interval])) by (environment) / sum(rate(app_http_request_duration_milliseconds_count{environment=~\"$environment\"}[$__rate_interval])) by (environment)",
+                    "instant": false,
+                    "interval": "1m",
+                    "legendFormat": "{{environment}}",
+                    "refId": "A"
+                }
+            ],
+            "title": "Latencies",
+            "type": "timeseries"
+        },
+        {
+            "datasource": null,
+            "description": "",
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "decimals": 2,
+                    "mappings": [],
+                    "noValue": "-",
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 100
+                            }
+                        ]
+                    },
+                    "unit": "reqps"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 12,
+                "x": 12,
+                "y": 9
+            },
+            "id": 8,
+            "interval": null,
+            "maxDataPoints": null,
+            "options": {
+                "reduceOptions": {
+                    "calcs": ["lastNotNull"],
+                    "fields": "",
+                    "values": false
+                },
+                "showThresholdLabels": false,
+                "showThresholdMarkers": true,
+                "text": {}
+            },
+            "pluginVersion": "8.0.3",
+            "targets": [
+                {
+                    "exemplar": true,
+                    "expr": "sort(round(sum(irate(app_http_requests_total{environment=~\"$environment\"}[5m])) by (environment), 0.01))",
+                    "instant": true,
+                    "interval": "",
+                    "legendFormat": "{{environment}}",
+                    "refId": "A"
+                }
+            ],
+            "timeFrom": null,
+            "title": "Incoming requests",
+            "type": "gauge"
+        },
+        {
+            "datasource": null,
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "fixedColor": "green",
+                        "mode": "fixed"
+                    },
+                    "decimals": 2,
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            }
+                        ]
+                    },
+                    "unit": "reqps"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 24,
+                "x": 0,
+                "y": 18
+            },
+            "id": 12,
+            "interval": "1m",
+            "options": {
+                "reduceOptions": {
+                    "calcs": ["lastNotNull"],
+                    "fields": "",
+                    "values": false
+                },
+                "showThresholdLabels": false,
+                "showThresholdMarkers": true,
+                "text": {}
+            },
+            "pluginVersion": "8.0.3",
+            "targets": [
+                {
+                    "exemplar": true,
+                    "expr": "sort(sum(irate(app_graphql_request_milliseconds_count{environment=~\"$environment\",typename=~\"Query|Mutation\"}[5m])) by (key) != 0)",
+                    "instant": true,
+                    "interval": "",
+                    "legendFormat": "{{key}}",
+                    "refId": "A"
+                }
+            ],
+            "title": "Incoming operations",
+            "transformations": [],
+            "type": "gauge"
+        },
+        {
+            "datasource": null,
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "custom": {
+                        "fillOpacity": 70,
+                        "lineWidth": 1
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "#6ED0E0",
+                                "value": 100
+                            },
+                            {
+                                "color": "#EAB839",
+                                "value": 200
+                            },
+                            {
+                                "color": "#EF843C",
+                                "value": 300
+                            },
+                            {
+                                "color": "#E24D42",
+                                "value": 400
+                            }
+                        ]
+                    },
+                    "unit": "ms"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 13,
+                "w": 24,
+                "x": 0,
+                "y": 26
+            },
+            "id": 10,
+            "interval": null,
+            "options": {
+                "colWidth": 0.9,
+                "legend": {
+                    "displayMode": "hidden",
+                    "placement": "bottom"
+                },
+                "rowHeight": 0.9,
+                "showValue": "never",
+                "tooltip": {
+                    "mode": "single"
+                }
+            },
+            "pluginVersion": "8.0.3",
+            "targets": [
+                {
+                    "exemplar": true,
+                    "expr": "(sum(rate(app_graphql_request_milliseconds_sum{environment=~\"$environment\",typename=~\"Query|Mutation\"}[$__rate_interval])) by (key) / sum(rate(app_graphql_request_milliseconds_count{environment=~\"$environment\",typename=~\"Query|Mutation\"}[$__rate_interval])) by (key)) > 0",
+                    "instant": false,
+                    "interval": "1m",
+                    "legendFormat": "{{key}}",
+                    "refId": "A"
+                }
+            ],
+            "timeFrom": null,
+            "title": "Operations latencies",
+            "transformations": [],
+            "type": "status-history"
+        }
+    ],
+    "refresh": "5s",
+    "schemaVersion": 30,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+        "list": [
+            {
+                "allValue": null,
+                "current": {
+                    "selected": false,
+                    "text": "All",
+                    "value": "$__all"
+                },
+                "datasource": null,
+                "definition": "label_values(app_http_requests_total, environment) ",
+                "description": null,
+                "error": null,
+                "hide": 0,
+                "includeAll": true,
+                "label": null,
+                "multi": false,
+                "name": "environment",
+                "options": [],
+                "query": {
+                    "query": "label_values(app_http_requests_total, environment) ",
+                    "refId": "StandardVariableQuery"
+                },
+                "refresh": 1,
+                "regex": "",
+                "skipUrlSync": false,
+                "sort": 1,
+                "type": "query"
+            }
+        ]
+    },
+    "time": {
+        "from": "now-1h",
+        "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "Application Metrics",
+    "uid": "qJUM-eknk",
+    "version": 47
+}

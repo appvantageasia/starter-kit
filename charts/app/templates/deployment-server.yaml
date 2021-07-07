@@ -17,6 +17,12 @@ spec:
       labels:
         {{- $selectorLabels | nindent 8 }}
         app.local/role: server
+      {{- if .Values.app.pods.serverAnnotations }}
+      annotations:
+        {{- with .Values.app.pods.serverAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- end }}
     spec:
       {{- if .Values.app.imagePullSecrets }}
       imagePullSecrets: {{ .Values.app.imagePullSecrets }}

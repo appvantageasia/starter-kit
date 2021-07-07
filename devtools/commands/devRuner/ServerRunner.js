@@ -17,7 +17,7 @@ class ServerRunner {
 
     async start({ createWebServer }) {
         // create http server
-        this.server = createWebServer().httpServer;
+        this.server = (await createWebServer()).httpServer;
         this.serverPromiseResolve(this.server);
     }
 

@@ -35,5 +35,15 @@ data:
   {{- include "app.configValue" ( dict "Key" "APP_LIMITER_API" "Value" .api ) }}
   {{- end }}
 
+  # prometheus settings
+  {{- with .Values.app.prometheus }}
+  {{- include "app.configValue" ( dict "Key" "APP_PROMETHEUS_ENABLED" "Value" .enabled ) }}
+  {{- include "app.configValue" ( dict "Key" "APP_PROMETHEUS_INTERNAL" "Value" .internal ) }}
+  {{- include "app.configValue" ( dict "Key" "APP_PROMETHEUS_INTERNAL_PORT" "Value" .internalPort ) }}
+  {{- include "app.configValue" ( dict "Key" "APP_PROMETHEUS_EXTERNAL" "Value" .external ) }}
+  {{- include "app.configValue" ( dict "Key" "APP_PROMETHEUS_EXTERNAL_PATH" "Value" .externalPath ) }}
+  {{- include "app.configValue" ( dict "Key" "APP_PROMETHEUS_PREFIX" "Value" .prefix ) }}
+  {{- end }}
+
   # html2pdf settings
   APP_HTML2PDF_ENDPOINT: "http://{{ .Release.Name }}-html2pdf:3000/"

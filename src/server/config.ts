@@ -1,5 +1,4 @@
 import chalk from 'chalk';
-import { Region } from 'minio';
 import { SMTPSettings } from './emails';
 import { getString, getBoolean, getInteger, getNumber } from './env';
 
@@ -7,68 +6,7 @@ const prefix = 'APP';
 
 const getPrefix = key => `${prefix}_${key}`;
 
-export type RuntimeConfig = {
-    version: string;
-
-    port: number;
-
-    publicPath: string;
-
-    db: {
-        uri: string;
-        name: string;
-        pool: number;
-    };
-
-    redis: {
-        uri: string;
-    };
-
-    session: {
-        secret: string;
-        lifetime: string;
-    };
-
-    i18n: {
-        locales: string[];
-        defaultLocale: string;
-    };
-
-    smtp: {
-        transporter: SMTPSettings;
-        sender: string;
-    };
-
-    storage: {
-        provider: {
-            endPoint: string;
-            accessKey: string;
-            secretKey: string;
-            useSSL?: boolean;
-            port?: number;
-            region: Region;
-        };
-        bucket: string;
-    };
-
-    sentry: {
-        dsn?: string;
-        release?: string;
-        environment?: string;
-        tracing: boolean;
-        tracesSampleRate: number;
-    };
-
-    html2pdf: {
-        endpoint: string;
-    };
-
-    limiter: {
-        api: number;
-    };
-};
-
-const getSmtpSettings = (): RuntimeConfig['smtp']['transporter'] => {
+const getSmtpSettings = (): SMTPSettings => {
     const base = {
         host: getString(getPrefix('SMTP_HOST'), 'localhost'),
         port: getInteger(getPrefix('SMTP_PORT'), 465),
@@ -92,7 +30,7 @@ const getSmtpSettings = (): RuntimeConfig['smtp']['transporter'] => {
 
 const version = getString('VERSION', '0.0.0-development');
 
-const config: RuntimeConfig = {
+const config = {
     version,
 
     port: getNumber(getPrefix('PORT'), 3000),
@@ -153,7 +91,18 @@ const config: RuntimeConfig = {
     limiter: {
         api: getNumber(getPrefix('LIMITER_API'), 1000),
     },
+
+    prometheus: {
+        enabled: getBoolean(getPrefix('PROMETHEUS_ENABLED'), false),
+        internal: getBoolean(getPrefix('PROMETHEUS_INTERNAL'), false),
+        internalPort: getInteger(getPrefix('PROMETHEUS_INTERNAL_PORT'), 7788),
+        external: getBoolean(getPrefix('PROMETHEUS_EXTERNAL'), false),
+        externalPath: getString(getPrefix('PROMETHEUS_EXTERNAL_PATH'), '/metrics'),
+        prefix: getString(getPrefix('PROMETHEUS_PREFIX'), 'app_'),
+    },
 };
+
+export type RuntimeConfig = typeof config;
 
 const exitOnError = (error: string): void => {
     console.error(error);
