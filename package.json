@@ -178,7 +178,7 @@
         "lodash": "^4.17.21",
         "minio": "^7.0.18",
         "mjml": "^4.9.3",
-        "mjml-react": "^1.2.0",
+        "mjml-react": "^2.0.0",
         "mongodb": "^3.6.10",
         "nanoid": "^3.1.23",
         "node-fetch": "^2.6.1",
