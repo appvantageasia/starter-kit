@@ -1,5 +1,5 @@
 # production image, copy all the files and run next
-FROM node:14.16.0-alpine3.12
+FROM node:16.4.2-alpine3.14
 
 # add dumb-init
 RUN apk add dumb-init

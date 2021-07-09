@@ -3,10 +3,10 @@ version: 2.1
 executors:
     node-standalone:
         docker:
-            - image: circleci/node:16.2.0
+            - image: circleci/node:16.4.2
     node-with-dependencies:
         docker:
-            - image: circleci/node:16.2.0
+            - image: circleci/node:16.4.2
               environment:
                   APP_DB_URI: mongodb://root:password@127.0.0.1:27017
                   APP_SESSION_SECRET: localSecret
