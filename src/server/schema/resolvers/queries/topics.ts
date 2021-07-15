@@ -1,5 +1,5 @@
-import { SortOptionObject } from 'mongodb';
-import { getDatabaseContext, Topic } from '../../../database';
+import { Sort } from 'mongodb';
+import { getDatabaseContext } from '../../../database';
 import { GraphQLQueryResolvers } from '../definitions';
 import { SortingOrder, TopicSortingField } from '../enums';
 
@@ -8,7 +8,7 @@ type TopicSorting = {
     order: SortingOrder;
 };
 
-const getSorting = (sorting?: TopicSorting): SortOptionObject<Topic> => {
+const getSorting = (sorting?: TopicSorting): Sort => {
     const order = sorting?.order === SortingOrder.Asc ? 1 : -1;
 
     switch (sorting?.field) {

@@ -20,7 +20,7 @@ const mutation: GraphQLMutationResolvers['postMessage'] = async (root, { topicId
     const operation = await collections.topics.findOneAndUpdate(
         { _id: topicId },
         { $push: { messages: document }, $set: { updatedAt: now } },
-        { returnOriginal: false }
+        { returnDocument: 'after' }
     );
 
     if (operation.value) {

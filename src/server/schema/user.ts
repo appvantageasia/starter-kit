@@ -3,7 +3,7 @@ import { getDatabaseContext, User } from '../database';
 
 export type GetLoggedUser = () => Promise<User | null>;
 
-export const getUser = async (userId): Promise<User | null> => {
+export const getUser = async (userId: ObjectId): Promise<User | null> => {
     const { collections } = await getDatabaseContext();
 
     return collections.users.findOne({ _id: userId });
