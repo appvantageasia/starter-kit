@@ -29,8 +29,7 @@ export const getDatabaseContext = async (): Promise<DatabaseContext> => {
     if (!global.mongo.promise) {
         // get mongodb options
         const options: MongoClientOptions = {
-            useUnifiedTopology: true,
-            poolSize: config.db.pool,
+            maxPoolSize: config.db.pool,
         };
 
         // get the promise
