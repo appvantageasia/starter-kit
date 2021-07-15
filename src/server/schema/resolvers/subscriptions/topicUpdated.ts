@@ -1,4 +1,4 @@
-import { withFilter } from 'apollo-server';
+import { withFilter } from 'graphql-subscriptions';
 import { ObjectId } from 'mongodb';
 import { Topic } from '../../../database';
 import { Subscription } from '../../../pubSub';

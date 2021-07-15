@@ -1,5 +1,4 @@
 import { IncomingMessage } from 'http';
-import { IResolverObject } from 'apollo-server';
 import { GraphQLFieldResolver } from 'graphql';
 import { FileUpload } from 'graphql-upload';
 import createLoaders, { Loaders } from '../loaders';
@@ -21,8 +20,6 @@ export type FileUploadPromise = Promise<FileUpload>;
 export type RootDocument = null;
 
 export type RootResolver<TArgs = { [argName: string]: any }> = GraphQLFieldResolver<RootDocument, Context, TArgs>;
-
-export type TypeResolver<TSource = any> = IResolverObject<TSource, Context>;
 
 const getIp = (req: IncomingMessage): string | undefined =>
     (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress;

@@ -18,7 +18,7 @@ export const setupWebService = () => {
         },
         initialize: async () => {
             // create micro service first
-            service = createWebServer().httpServer;
+            service = (await createWebServer()).httpServer;
             // then get the url
             url = await listen(service);
         },
