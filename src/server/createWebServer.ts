@@ -4,10 +4,11 @@ import * as Sentry from '@sentry/node';
 import { ApolloServer, ApolloServerExpressConfig } from 'apollo-server-express';
 import compression from 'compression';
 import express, { Express, Handler, Request } from 'express';
+import { execute, subscribe } from 'graphql';
 import { graphqlUploadExpress } from 'graphql-upload';
-import { ExecutionParams } from 'subscriptions-transport-ws';
+import { SubscriptionServer } from 'subscriptions-transport-ws';
 import config from './config';
-import { ApolloMetricsPlugin } from './prometheus';
+import setupPrometheusMetrics, { ApolloMetricsPlugin } from './prometheus';
 import { expressRateLimiter } from './rateLimiter';
 import renderApplication from './renderApplication';
 import schema from './schema';
@@ -31,47 +32,41 @@ const rateLimiterMiddleware: Handler = (req, res, next) => {
         });
 };
 
-const createWebServer = (): WebServerCreation => {
+const createWebServer = async (): Promise<WebServerCreation> => {
+    // prepare plugins for apollo
     const plugins: ApolloServerExpressConfig['plugins'] = [ApolloSentryPlugin];
 
     if (config.prometheus.enabled) {
         plugins.push(ApolloMetricsPlugin);
     }
 
+    // create apollo server
     const apolloServer = new ApolloServer({
         schema,
-        // do not use the build-in upload types
-        uploads: false,
-
-        // enable tracing for development purposes
-        tracing: !!process.isDev,
-        playground: !!process.isDev,
 
         // provide a custom context
-        context: ({ req, connection }: { req: Request; connection: ExecutionParams }): Promise<Context> => {
-            if (connection) {
-                return connection?.context;
-            }
-
-            return createContext(req);
-        },
-
-        subscriptions: {
-            onConnect: async (connectionParams, webSocket, context): Promise<Context> => createContext(context.request),
-        },
+        context: ({ req }: { req: Request }): Promise<Context> => createContext(req),
 
         // provide a custom root document
         rootValue: (): RootDocument => null,
 
+        // apollo plugins
         plugins,
     });
 
+    // start apollo server
+    await apolloServer.start();
+
+    // create express server
     const expressServer = express();
     expressServer.disable('x-powered-by');
     expressServer.use(compression());
     expressServer.use(express.json());
     expressServer.use(express.urlencoded({ extended: true }));
     expressServer.use(Sentry.Handlers.requestHandler());
+
+    // setup prometheus metrics
+    await setupPrometheusMetrics(expressServer);
 
     if (config.sentry.tracing) {
         expressServer.use(Sentry.Handlers.tracingHandler());
@@ -91,13 +86,8 @@ const createWebServer = (): WebServerCreation => {
     );
 
     // otherwise fallback on the application
-    expressServer.use((req, res, next) => {
-        if (req.method !== 'GET') {
-            // only accept GET requests
-            next();
-        } else {
-            renderApplication(req, res, next);
-        }
+    expressServer.get('*', (req, res, next) => {
+        renderApplication(req, res, next);
     });
 
     // sse the sentry error handler before any other error handler
@@ -114,7 +104,30 @@ const createWebServer = (): WebServerCreation => {
     const httpServer = http.createServer(expressServer);
 
     // install websocket support
-    apolloServer.installSubscriptionHandlers(httpServer);
+    const subscriptionServer = SubscriptionServer.create(
+        {
+            schema,
+
+            // coming from graphql
+            execute,
+            subscribe,
+
+            // provide a custom context
+            onConnect: (connectionParams, webSocket, context): Promise<Context> => createContext(context.request),
+
+            // provide a custom root document
+            rootValue: (): RootDocument => null,
+        },
+        {
+            server: httpServer,
+            path: '/graphql',
+        }
+    );
+
+    // close subscription server whenever http server closes
+    httpServer.on('close', () => {
+        subscriptionServer.close();
+    });
 
     return { httpServer, apolloServer, expressServer };
 };

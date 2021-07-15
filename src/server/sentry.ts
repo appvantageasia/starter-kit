@@ -3,6 +3,7 @@ import * as Sentry from '@sentry/node';
 import * as Tracing from '@sentry/tracing';
 import { Integration } from '@sentry/types';
 import { ApolloError } from 'apollo-server';
+import { ApolloServerExpressConfig } from 'apollo-server-express';
 import { Express } from 'express';
 import config from './config';
 import { APIError } from './schema/errors';
@@ -38,12 +39,12 @@ export const initializeSentry = ({ app }: { app?: Express } = {}) => {
     Sentry.init(sentryInitOptions);
 };
 
-export const ApolloSentryPlugin = {
-    requestDidStart(_) {
+export const ApolloSentryPlugin: ApolloServerExpressConfig['plugins'][0] = {
+    async requestDidStart(_) {
         /* Within this returned object, define functions that respond
            to request-specific lifecycle events. */
         return {
-            didEncounterErrors(ctx) {
+            async didEncounterErrors(ctx) {
                 // If we couldn't parse the operation, don't
                 // do anything here
                 if (!ctx.operation) {

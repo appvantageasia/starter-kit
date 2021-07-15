@@ -176,7 +176,11 @@ class MainRunner {
         const httpServer = http.createServer(app);
 
         httpServer.on('upgrade', async (req, socket, head) => {
-            proxy.ws(req, socket, head, { target: await this.serverRunner.getUrl() });
+            try {
+                proxy.ws(req, socket, head, { target: await this.serverRunner.getUrl() });
+            } catch (error) {
+                // do nothing about it
+            }
         });
 
         httpServer.listen(this.port);

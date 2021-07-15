@@ -65,9 +65,9 @@ export const startPrometheusServer = async () => {
 };
 
 export const ApolloMetricsPlugin: ApolloServerExpressConfig['plugins'][0] = {
-    requestDidStart() {
+    async requestDidStart() {
         return {
-            executionDidStart(requestContext) {
+            async executionDidStart(requestContext) {
                 return {
                     willResolveField({ info }) {
                         const start = process.hrtime();
