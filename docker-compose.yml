@@ -8,7 +8,7 @@ services:
         image: mailhog/mailhog:v1.0.0
 
     redis:
-        image: redis:6.0.5
+        image: redis:6.2.4
         command: redis-server --appendonly yes
         volumes:
             - redis:/data
