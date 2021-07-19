@@ -184,7 +184,7 @@
         "minio": "^7.0.18",
         "mjml": "^4.9.3",
         "mjml-react": "^2.0.0",
-        "mongodb": "^3.6.10",
+        "mongodb": "^4.0.0",
         "nanoid": "^3.1.23",
         "node-fetch": "^2.6.1",
         "nodemailer": "^6.5.0",
