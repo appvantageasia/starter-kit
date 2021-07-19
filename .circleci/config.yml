@@ -21,11 +21,11 @@ executors:
               environment:
                   MONGO_INITDB_ROOT_USERNAME: root
                   MONGO_INITDB_ROOT_PASSWORD: password
-            - image: minio/minio:latest
+            - image: minio/minio:RELEASE.2021-07-08T01-15-01Z
               command: server /data
               environment:
-                  MINIO_ACCESS_KEY: 'AKIAIOSFODNN7EXAMPLE'
-                  MINIO_SECRET_KEY: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
+                  MINIO_ROOT_USER: 'AKIAIOSFODNN7EXAMPLE'
+                  MINIO_ROOT_PASSWORD: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
             - image: circleci/redis:6.0.5-alpine
               command: redis-server --appendonly yes
             - image: appvantage/html2pdf-service:1.0.0

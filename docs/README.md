@@ -53,6 +53,7 @@ services:
     minio:
         ports:
             - 9000:9000
+            - 9001:9001
 ```
 
 Environment is already setup but may be changed at will (see the environment configuration section to know more about it).
