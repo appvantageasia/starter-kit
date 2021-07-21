@@ -30,16 +30,23 @@ export class QueueHandler<Message = any> {
 
     private readonly processFunction: ProcessFunction<Message>;
 
-    public constructor(queueName: string, processFunction: ProcessFunction<Message>) {
+    private readonly jobOptions?: JobOptions;
+
+    public constructor(
+        queueName: string,
+        processFunction: ProcessFunction<Message>,
+        jobOptions?: Omit<JobOptions, 'repeat'>
+    ) {
         this.queueName = queueName;
         this.queue = new BullQueue(queueName, config.redis.uri);
         this.processFunction = processFunction;
+        this.jobOptions = { removeOnComplete: true, ...jobOptions };
     }
 
     public add(message: Message, options?: JobOptions): Promise<Job<Document>> {
         const serializedMessage = EJSON.serialize(message);
 
-        return this.queue.add(serializedMessage, options);
+        return this.queue.add(serializedMessage, { ...this.jobOptions, ...options });
     }
 
     private async setupPeriodicPlan(plans: QueuePeriodicPlans<Message>[] = []) {
@@ -55,7 +62,7 @@ export class QueueHandler<Message = any> {
 
                 if (!matchingJob) {
                     // add a new job
-                    this.add(plan.message, { repeat: plan.repeat });
+                    this.add(plan.message, { repeat: plan.repeat, ...this.jobOptions });
                 }
 
                 return matchingJob ? repeatJobKey : undefined;
