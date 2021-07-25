@@ -151,7 +151,7 @@
         "@graphql-tools/schema": "^7.1.5",
         "@promster/express": "^5.0.3",
         "@promster/server": "^6.0.2",
-        "@sentry/integrations": "^6.7.2",
+        "@sentry/integrations": "^6.10.0",
         "@sentry/node": "^6.3.6",
         "@sentry/react": "^6.3.6",
         "@sentry/tracing": "^6.6.0",
