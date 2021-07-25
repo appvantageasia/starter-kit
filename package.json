@@ -42,7 +42,7 @@
         "@babel/preset-env": "^7.13.5",
         "@babel/preset-react": "^7.13.13",
         "@babel/preset-typescript": "^7.13.0",
-        "@commitlint/cli": "^12.1.1",
+        "@commitlint/cli": "^13.1.0",
         "@commitlint/config-conventional": "^12.1.1",
         "@graphql-codegen/add": "^2.0.2",
         "@graphql-codegen/cli": "^1.21.1",
