@@ -4,9 +4,11 @@ import * as documents from './documents';
 export type Collections = {
     users: Collection<documents.User>;
     topics: Collection<documents.Topic>;
+    lives: Collection<documents.Life>;
 };
 
 export const getCollections = (db: Db): Collections => ({
     users: db.collection<documents.User>('users'),
     topics: db.collection<documents.Topic>('topics'),
+    lives: db.collection<documents.Life>('lives'),
 });

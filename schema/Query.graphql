@@ -14,5 +14,5 @@ type Query {
     """
     Fetch user document for the logged in user, returns null otherwise for anonymous
     """
-    account: User
+    account: User Id
 }
