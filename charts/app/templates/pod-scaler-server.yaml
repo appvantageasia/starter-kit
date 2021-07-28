@@ -1,5 +1,5 @@
 {{- if .Values.app.serverPodScaler.enabled }}
-apiVersion: autoscaling/v2beta1
+apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
   name: "{{ .Release.Name }}-server"
@@ -13,5 +13,14 @@ spec:
     name: "{{ .Release.Name }}-server"
   minReplicas: {{ .Values.app.serverPodScaler.minReplicas }}
   maxReplicas: {{ .Values.app.serverPodScaler.maxReplicas }}
+  {{- if .Values.app.serverPodScaler.metrics }}
   metrics: {{ .Values.app.serverPodScaler.metrics }}
+  {{- else }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          averageValue: 50m
+  {{-end }}
 {{- end }}
