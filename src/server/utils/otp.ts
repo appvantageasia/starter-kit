@@ -1,8 +1,8 @@
 import { EJSON } from 'bson';
 import dayjs from 'dayjs';
 import { customAlphabet } from 'nanoid';
-import getRedisInstance from './redis';
-import { consumeToken, generateToken } from './tokens';
+import getRedisInstance from '../core/redis';
+import { consumeToken, generateToken } from '../core/tokens';
 
 const tokenAlphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 const tokenGenerator = customAlphabet(tokenAlphabet, 21);

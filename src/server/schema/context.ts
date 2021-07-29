@@ -1,8 +1,8 @@
 import { IncomingMessage } from 'http';
 import { GraphQLFieldResolver } from 'graphql';
 import { FileUpload } from 'graphql-upload';
+import { getLanguage, getLazyTranslations, GetTranslations } from '../core/translations';
 import createLoaders, { Loaders } from '../loaders';
-import { getLanguage, getLazyTranslations, GetTranslations } from '../translations';
 import { getSessionDataFromRequest, SessionData } from './session';
 import { getLazyLoggedUser, GetLoggedUser } from './user';
 

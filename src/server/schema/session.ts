@@ -3,8 +3,8 @@ import { AuthenticationError } from 'apollo-server';
 import { EJSON, Document } from 'bson';
 import { omit } from 'lodash/fp';
 import { ObjectId } from 'mongodb';
-import config from '../config';
-import { generateToken, consumeToken } from '../tokens';
+import config from '../core/config';
+import { generateToken, consumeToken } from '../core/tokens';
 
 export type SessionData = {
     userId: ObjectId;

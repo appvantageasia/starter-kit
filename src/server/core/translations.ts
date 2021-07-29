@@ -1,7 +1,7 @@
 import { IncomingMessage } from 'http';
 import languageParser from 'accept-language-parser';
 import { i18n, TFunction } from 'i18next';
-import createI18nInstance from '../shared/createI18nInstance/node';
+import createI18nInstance from '../../shared/createI18nInstance/node';
 import config from './config';
 
 export type I18nContext = { i18n: i18n; t: TFunction };

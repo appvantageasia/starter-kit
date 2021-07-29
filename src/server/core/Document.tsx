@@ -1,8 +1,8 @@
 import { ReactElement } from 'react';
 import { HelmetData } from 'react-helmet';
-import { RuntimeConfig } from '../app/runtimeConfig';
+import { RuntimeConfig } from '../../app/runtimeConfig';
+import { attachPublicPath } from '../utils';
 import config from './config';
-import { attachPublicPath } from './utils';
 
 type DocumentProps = {
     htmlAttrs?: { [prop: string]: any };

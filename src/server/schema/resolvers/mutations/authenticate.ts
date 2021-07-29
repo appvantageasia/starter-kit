@@ -1,6 +1,6 @@
 import { compare } from 'bcryptjs';
+import { authenticationRateLimiter } from '../../../core/rateLimiter';
 import { getDatabaseContext } from '../../../database';
-import { authenticationRateLimiter } from '../../../rateLimiter';
 import { InvalidInput } from '../../errors';
 import { getSessionToken } from '../../session';
 import { GraphQLMutationResolvers } from '../definitions';

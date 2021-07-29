@@ -1,5 +1,5 @@
 import { gql, ApolloError } from '@apollo/client';
-import { authenticationRateLimiter } from '../../server/rateLimiter';
+import { authenticationRateLimiter } from '../../server/core/rateLimiter';
 import { readSessionToken } from '../../server/schema/session';
 import {
     composeHandlers,

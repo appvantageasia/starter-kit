@@ -3,7 +3,7 @@ import { Server } from 'http';
 import { basename } from 'path';
 import { File } from 'formdata-node';
 import listen from 'test-listen';
-import createWebServer from '../../server/createWebServer';
+import createWebServer from '../../server/core/createWebServer';
 
 export const setupWebService = () => {
     let service: Server = null;

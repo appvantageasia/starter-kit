@@ -3,7 +3,7 @@ import * as Sentry from '@sentry/node';
 import { Document, EJSON } from 'bson';
 import BullQueue, { Queue, Job, JobOptions } from 'bull';
 import chalk from 'chalk';
-import config from '../config';
+import config from '../core/config';
 
 /* comes from BullJS
  * https://github.com/OptimalBits/bull/blob/46fcba14bc01885c1ca518b3399ec474bb88b71d/lib/repeatable.js#L177

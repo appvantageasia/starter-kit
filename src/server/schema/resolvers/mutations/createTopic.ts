@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
+import { handleMultipleFileUpload } from '../../../core/storage';
 import { getDatabaseContext, Topic } from '../../../database';
-import { handleMultipleFileUpload } from '../../../storage';
 import { requiresLoggedUser } from '../../middlewares';
 import { GraphQLMutationResolvers } from '../definitions';
 

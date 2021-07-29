@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 import { ComponentType, createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import config from '../config';
+import config from '../core/config';
 
 const createRender =
     <Props = any>(rootComponent: ComponentType<Props>) =>
