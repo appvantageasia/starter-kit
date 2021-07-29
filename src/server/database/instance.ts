@@ -1,5 +1,5 @@
 import { MongoClient, Db, MongoClientOptions } from 'mongodb';
-import config from '../config';
+import config from '../core/config';
 import { Collections, getCollections } from './collections';
 
 export type DatabaseContext = {

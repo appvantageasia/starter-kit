@@ -1,7 +1,7 @@
 import { keys, xor } from 'lodash/fp';
 import { MongoError } from 'mongodb';
 import urlJoin from 'url-join';
-import config from './config';
+import config from '../core/config';
 
 export const isDuplicateErrorOnFields = (error: Error, ...fields: string[]) => {
     if (!(error instanceof MongoError) || error.code !== 11000) {

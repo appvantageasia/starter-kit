@@ -3,7 +3,7 @@ import { Mjml2HtmlOptions } from 'mjml-react';
 import { Transporter, SendMailOptions } from 'nodemailer';
 import { ComponentType, createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import config from '../config';
+import config from '../core/config';
 import { defaultTransporter } from './transporters';
 
 export type SenderOptions<Props> = Omit<SendMailOptions, 'text' | 'html'> & {

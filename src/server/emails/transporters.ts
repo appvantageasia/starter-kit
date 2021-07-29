@@ -1,5 +1,5 @@
 import { createTransport, Transporter } from 'nodemailer';
-import config from '../config';
+import config from '../core/config';
 
 export type SMTPSettings = {
     host: string;

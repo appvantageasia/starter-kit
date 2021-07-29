@@ -1,10 +1,10 @@
 import chalk from 'chalk';
-import { SMTPSettings } from './emails';
+import type { SMTPSettings } from '../emails';
 import { getString, getBoolean, getInteger, getNumber } from './env';
 
 const prefix = 'APP';
 
-const getPrefix = key => `${prefix}_${key}`;
+const getPrefix = (key: string) => `${prefix}_${key}`;
 
 const getSmtpSettings = (): SMTPSettings => {
     const base = {

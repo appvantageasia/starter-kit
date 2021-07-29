@@ -7,12 +7,12 @@ import express, { Express, Handler, Request } from 'express';
 import { execute, subscribe } from 'graphql';
 import { graphqlUploadExpress } from 'graphql-upload';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
+import schema from '../schema';
+import createContext, { Context, RootDocument } from '../schema/context';
 import config from './config';
 import setupPrometheusMetrics, { ApolloMetricsPlugin } from './prometheus';
 import { expressRateLimiter } from './rateLimiter';
 import renderApplication from './renderApplication';
-import schema from './schema';
-import createContext, { Context, RootDocument } from './schema/context';
 import { ApolloSentryPlugin } from './sentry';
 
 export type WebServerCreation = {

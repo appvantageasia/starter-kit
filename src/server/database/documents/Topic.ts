@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { UploadedFile } from '../../storage';
+import { UploadedFile } from '../../core/storage';
 
 export type TopicMessage = {
     _id: ObjectId;

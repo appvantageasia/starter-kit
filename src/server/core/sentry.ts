@@ -5,8 +5,8 @@ import { Integration } from '@sentry/types';
 import { ApolloError } from 'apollo-server';
 import { ApolloServerExpressConfig } from 'apollo-server-express';
 import { Express } from 'express';
+import { APIError } from '../schema/errors';
 import config from './config';
-import { APIError } from './schema/errors';
 
 const { sentry: sentryConfig } = config;
 

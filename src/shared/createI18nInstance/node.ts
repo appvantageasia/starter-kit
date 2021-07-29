@@ -1,7 +1,7 @@
 import path from 'path';
 import i18n, { i18n as I18n } from 'i18next';
 import i18nextFSBackend from 'i18next-fs-backend';
-import config from '../../server/config';
+import config from '../../server/core/config';
 import defaultConfig from './defaultConfig';
 import { CreateClientReturn } from './types';
 

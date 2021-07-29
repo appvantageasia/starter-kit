@@ -1,7 +1,7 @@
 import { withFilter } from 'graphql-subscriptions';
 import { ObjectId } from 'mongodb';
+import { Subscription } from '../../../core/pubSub';
 import { Topic } from '../../../database';
-import { Subscription } from '../../../pubSub';
 import { GraphQLSubscriptionResolvers } from '../definitions';
 
 type Args = {

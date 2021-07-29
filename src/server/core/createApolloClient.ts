@@ -1,7 +1,7 @@
 import { ApolloClient, InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import { SchemaLink } from '@apollo/client/link/schema';
-import schema from './schema';
-import { Context } from './schema/context';
+import schema from '../schema';
+import { Context } from '../schema/context';
 
 const createApolloClient = (context: Context) => (): ApolloClient<NormalizedCacheObject> => {
     // create a schema link

@@ -1,9 +1,9 @@
 import { program } from 'commander';
-import { composeCommand, executeDataMigration, startServerCommand, startWorkerCommand } from './commands';
-import config, { runValidityChecks } from './config';
-import createWebServer from './createWebServer';
+import { composeCommand, executeDataMigration, startServerCommand, startWorkerCommand } from './core/commands';
+import config, { runValidityChecks } from './core/config';
+import createWebServer from './core/createWebServer';
+import { startPrometheusServer } from './core/prometheus';
 import { listPendingMigrations } from './database';
-import { startPrometheusServer } from './prometheus';
 import { setup as startWorker } from './queues';
 
 runValidityChecks();

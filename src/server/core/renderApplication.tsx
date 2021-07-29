@@ -5,14 +5,14 @@ import Helmet from 'react-helmet';
 import { StaticRouterContext } from 'react-router';
 import { StaticRouter } from 'react-router-dom';
 import { ServerStyleSheet } from 'styled-components';
-import App from '../app/App';
-import { RuntimeConfig } from '../app/runtimeConfig';
-import createI18Instance from '../shared/createI18nInstance/node';
+import App from '../../app/App';
+import { RuntimeConfig } from '../../app/runtimeConfig';
+import createI18Instance from '../../shared/createI18nInstance/node';
+import createContext from '../schema/context';
 import Document from './Document';
 import config from './config';
 import createApolloClient from './createApolloClient';
 import getManifest from './getManifest';
-import createContext from './schema/context';
 
 const externalCdn = config.publicPath.startsWith('http')
     ? // we are using a CDN for serving the assets

@@ -1,8 +1,8 @@
 import chalk from 'chalk';
+import { getDatabaseContext, migrate } from '../database';
+import { setup as startWorker } from '../queues';
 import config from './config';
 import createWebServer from './createWebServer';
-import { getDatabaseContext, migrate } from './database';
-import { setup as startWorker } from './queues';
 import { initializeSentry } from './sentry';
 
 export const startServerCommand = async () => {

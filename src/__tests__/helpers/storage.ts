@@ -1,5 +1,5 @@
-import config from '../../server/config';
-import { minioClient } from '../../server/storage';
+import config from '../../server/core/config';
+import { minioClient } from '../../server/core/storage';
 
 const { bucket } = config.storage;
 
