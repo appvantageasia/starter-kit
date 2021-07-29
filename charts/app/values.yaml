@@ -99,7 +99,7 @@ app:
 # html2pdf settings
 html2pdf:
     # docker image (including tag)
-    image: 'appvantage/html2pdf-service:1.0.0'
+    image: 'appvantage/html2pdf-service:1.2.1'
 
     # image pull policy
     imagePullPolicy: IfNotPresent
