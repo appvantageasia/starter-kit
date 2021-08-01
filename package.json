@@ -51,7 +51,7 @@
         "@graphql-codegen/typescript-operations": "^1.17.16",
         "@graphql-codegen/typescript-react-apollo": "^2.2.3",
         "@graphql-codegen/typescript-resolvers": "^1.19.0",
-        "@octokit/rest": "^18.5.3",
+        "@octokit/rest": "^18.7.2",
         "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
         "@promster/types": "^3.0.1",
         "@sentry/cli": "^1.67.1",
