@@ -21,6 +21,6 @@ spec:
       resource:
         name: cpu
         target:
-          averageValue: 50m
+          averageValue: 500m
   {{-end }}
 {{- end }}
