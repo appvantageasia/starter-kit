@@ -3,6 +3,20 @@ schema {
     mutation: Mutation
     subscription: Subscription
 }
+
+type AuthenticationSuccessful {
+    """
+    User authenticated
+    """
+    user: User!
+    """
+    Json Web Token
+    """
+    token: String!
+}
+
+scalar DateTime
+
 type Mutation {
     """
     Create a new account/user
@@ -37,6 +51,20 @@ type Mutation {
     """
     refreshCredentials: String!
 }
+
+scalar ObjectID
+
+input Pagination {
+    """
+    Offset to apply when fetching a list
+    """
+    offset: Int!
+    """
+    Number of items to fetch from a list
+    """
+    limit: Int!
+}
+
 type Query {
     """
     List topics
@@ -53,26 +81,16 @@ type Query {
     """
     account: User
 }
-type Subscription {
-    topicUpdated(topicId: ObjectID!): Topic!
-}
-scalar ObjectID
-scalar DateTime
-scalar Upload
-input Pagination {
-    """
-    Offset to apply when fetching a list
-    """
-    offset: Int!
-    """
-    Number of items to fetch from a list
-    """
-    limit: Int!
-}
+
 enum SortingOrder {
     Asc
     Desc
 }
+
+type Subscription {
+    topicUpdated(topicId: ObjectID!): Topic!
+}
+
 type Topic {
     id: ObjectID
     title: String!
@@ -89,20 +107,26 @@ type Topic {
     createdAt: DateTime!
     updatedAt: DateTime!
 }
+
 type TopicMessage {
     id: ObjectID
     body: String!
     author: User!
     createdAt: DateTime!
 }
-enum TopicSortingField {
-    CreateDate
-    UpdateDate
-}
+
 input TopicSorting {
     field: TopicSortingField!
     order: SortingOrder!
 }
+
+enum TopicSortingField {
+    CreateDate
+    UpdateDate
+}
+
+scalar Upload
+
 type User {
     id: ObjectID!
     username: String!
@@ -114,14 +138,4 @@ type User {
     List of topic authored by the user
     """
     topics: Topic!
-}
-type AuthenticationSuccessful {
-    """
-    User authenticated
-    """
-    user: User!
-    """
-    Json Web Token
-    """
-    token: String!
 }

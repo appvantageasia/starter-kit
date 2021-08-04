@@ -14,9 +14,17 @@ export type Scalars = {
     Boolean: boolean;
     Int: number;
     Float: number;
-    ObjectID: string;
     DateTime: string | Date;
+    ObjectID: string;
     Upload: File;
+};
+
+export type AuthenticationSuccessful = {
+    __typename?: 'AuthenticationSuccessful';
+    /** User authenticated */
+    user: User;
+    /** Json Web Token */
+    token: Scalars['String'];
 };
 
 export type Mutation = {
@@ -76,6 +84,13 @@ export type MutationAuthenticateArgs = {
     password: Scalars['String'];
 };
 
+export type Pagination = {
+    /** Offset to apply when fetching a list */
+    offset: Scalars['Int'];
+    /** Number of items to fetch from a list */
+    limit: Scalars['Int'];
+};
+
 export type Query = {
     __typename?: 'Query';
     /**
@@ -99,6 +114,11 @@ export type QueryTopicArgs = {
     id: Scalars['ObjectID'];
 };
 
+export enum SortingOrder {
+    Asc = 'Asc',
+    Desc = 'Desc',
+}
+
 export type Subscription = {
     __typename?: 'Subscription';
     topicUpdated: Topic;
@@ -107,18 +127,6 @@ export type Subscription = {
 export type SubscriptionTopicUpdatedArgs = {
     topicId: Scalars['ObjectID'];
 };
-
-export type Pagination = {
-    /** Offset to apply when fetching a list */
-    offset: Scalars['Int'];
-    /** Number of items to fetch from a list */
-    limit: Scalars['Int'];
-};
-
-export enum SortingOrder {
-    Asc = 'Asc',
-    Desc = 'Desc',
-}
 
 export type Topic = {
     __typename?: 'Topic';
@@ -142,15 +150,15 @@ export type TopicMessage = {
     createdAt: Scalars['DateTime'];
 };
 
-export enum TopicSortingField {
-    CreateDate = 'CreateDate',
-    UpdateDate = 'UpdateDate',
-}
-
 export type TopicSorting = {
     field: TopicSortingField;
     order: SortingOrder;
 };
+
+export enum TopicSortingField {
+    CreateDate = 'CreateDate',
+    UpdateDate = 'UpdateDate',
+}
 
 export type User = {
     __typename?: 'User';
@@ -162,27 +170,19 @@ export type User = {
     topics: Topic;
 };
 
-export type AuthenticationSuccessful = {
-    __typename?: 'AuthenticationSuccessful';
-    /** User authenticated */
-    user: User;
-    /** Json Web Token */
-    token: Scalars['String'];
-};
-
 export type TopicPreviewDataFragment = {
     __typename?: 'Topic';
     id?: Maybe<string>;
     title: string;
     messagesCount: number;
-    author: { __typename?: 'User' } & UserPreviewDataFragment;
+    author: { __typename?: 'User'; id: string; displayName: string };
 };
 
 export type TopicMessageDataFragment = {
     __typename?: 'TopicMessage';
     id?: Maybe<string>;
     body: string;
-    author: { __typename?: 'User' } & UserPreviewDataFragment;
+    author: { __typename?: 'User'; id: string; displayName: string };
 };
 
 export type TopicFullDataFragment = {
@@ -190,8 +190,13 @@ export type TopicFullDataFragment = {
     id?: Maybe<string>;
     title: string;
     body: string;
-    messages: Array<{ __typename?: 'TopicMessage' } & TopicMessageDataFragment>;
-    author: { __typename?: 'User' } & UserPreviewDataFragment;
+    messages: Array<{
+        __typename?: 'TopicMessage';
+        id?: Maybe<string>;
+        body: string;
+        author: { __typename?: 'User'; id: string; displayName: string };
+    }>;
+    author: { __typename?: 'User'; id: string; displayName: string };
 };
 
 export type GetTopicsQueryVariables = Exact<{
@@ -201,14 +206,35 @@ export type GetTopicsQueryVariables = Exact<{
 
 export type GetTopicsQuery = {
     __typename?: 'Query';
-    topics: Array<{ __typename?: 'Topic' } & TopicPreviewDataFragment>;
+    topics: Array<{
+        __typename?: 'Topic';
+        id?: Maybe<string>;
+        title: string;
+        messagesCount: number;
+        author: { __typename?: 'User'; id: string; displayName: string };
+    }>;
 };
 
 export type GetTopicQueryVariables = Exact<{
     id: Scalars['ObjectID'];
 }>;
 
-export type GetTopicQuery = { __typename?: 'Query'; topic?: Maybe<{ __typename?: 'Topic' } & TopicFullDataFragment> };
+export type GetTopicQuery = {
+    __typename?: 'Query';
+    topic?: Maybe<{
+        __typename?: 'Topic';
+        id?: Maybe<string>;
+        title: string;
+        body: string;
+        messages: Array<{
+            __typename?: 'TopicMessage';
+            id?: Maybe<string>;
+            body: string;
+            author: { __typename?: 'User'; id: string; displayName: string };
+        }>;
+        author: { __typename?: 'User'; id: string; displayName: string };
+    }>;
+};
 
 export type CreateTopicMutationVariables = Exact<{
     title: Scalars['String'];
@@ -217,7 +243,19 @@ export type CreateTopicMutationVariables = Exact<{
 
 export type CreateTopicMutation = {
     __typename?: 'Mutation';
-    createTopic: { __typename?: 'Topic' } & TopicFullDataFragment;
+    createTopic: {
+        __typename?: 'Topic';
+        id?: Maybe<string>;
+        title: string;
+        body: string;
+        messages: Array<{
+            __typename?: 'TopicMessage';
+            id?: Maybe<string>;
+            body: string;
+            author: { __typename?: 'User'; id: string; displayName: string };
+        }>;
+        author: { __typename?: 'User'; id: string; displayName: string };
+    };
 };
 
 export type PostMessageMutationVariables = Exact<{
@@ -227,7 +265,19 @@ export type PostMessageMutationVariables = Exact<{
 
 export type PostMessageMutation = {
     __typename?: 'Mutation';
-    postMessage: { __typename?: 'Topic' } & TopicFullDataFragment;
+    postMessage: {
+        __typename?: 'Topic';
+        id?: Maybe<string>;
+        title: string;
+        body: string;
+        messages: Array<{
+            __typename?: 'TopicMessage';
+            id?: Maybe<string>;
+            body: string;
+            author: { __typename?: 'User'; id: string; displayName: string };
+        }>;
+        author: { __typename?: 'User'; id: string; displayName: string };
+    };
 };
 
 export type OnTopicUpdatesSubscriptionVariables = Exact<{
@@ -259,7 +309,7 @@ export type UpdateDisplayNameMutation = {
     updateDisplayName: { __typename?: 'User'; id: string; displayName: string };
 };
 
-export const UserPreviewDataFragmentDoc: DocumentNode = /* #__PURE__ */ {
+export const UserPreviewDataFragmentDoc = /* #__PURE__ */ {
     kind: 'Document',
     definitions: [
         {
@@ -275,8 +325,8 @@ export const UserPreviewDataFragmentDoc: DocumentNode = /* #__PURE__ */ {
             },
         },
     ],
-};
-export const TopicPreviewDataFragmentDoc: DocumentNode = /* #__PURE__ */ {
+} as unknown as DocumentNode;
+export const TopicPreviewDataFragmentDoc = /* #__PURE__ */ {
     kind: 'Document',
     definitions: [
         {
@@ -313,8 +363,8 @@ export const TopicPreviewDataFragmentDoc: DocumentNode = /* #__PURE__ */ {
             },
         },
     ],
-};
-export const TopicMessageDataFragmentDoc: DocumentNode = /* #__PURE__ */ {
+} as unknown as DocumentNode;
+export const TopicMessageDataFragmentDoc = /* #__PURE__ */ {
     kind: 'Document',
     definitions: [
         {
@@ -350,8 +400,8 @@ export const TopicMessageDataFragmentDoc: DocumentNode = /* #__PURE__ */ {
             },
         },
     ],
-};
-export const TopicFullDataFragmentDoc: DocumentNode = /* #__PURE__ */ {
+} as unknown as DocumentNode;
+export const TopicFullDataFragmentDoc = /* #__PURE__ */ {
     kind: 'Document',
     definitions: [
         {
@@ -416,8 +466,8 @@ export const TopicFullDataFragmentDoc: DocumentNode = /* #__PURE__ */ {
             },
         },
     ],
-};
-export const UserFullDataFragmentDoc: DocumentNode = /* #__PURE__ */ {
+} as unknown as DocumentNode;
+export const UserFullDataFragmentDoc = /* #__PURE__ */ {
     kind: 'Document',
     definitions: [
         {
@@ -434,8 +484,8 @@ export const UserFullDataFragmentDoc: DocumentNode = /* #__PURE__ */ {
             },
         },
     ],
-};
-export const GetTopicsDocument: DocumentNode = /* #__PURE__ */ {
+} as unknown as DocumentNode;
+export const GetTopicsDocument = /* #__PURE__ */ {
     kind: 'Document',
     definitions: [
         {
@@ -514,7 +564,7 @@ export const GetTopicsDocument: DocumentNode = /* #__PURE__ */ {
             },
         },
     ],
-};
+} as unknown as DocumentNode;
 
 /**
  * __useGetTopicsQuery__
@@ -548,7 +598,7 @@ export function useGetTopicsLazyQuery(
 export type GetTopicsQueryHookResult = ReturnType<typeof useGetTopicsQuery>;
 export type GetTopicsLazyQueryHookResult = ReturnType<typeof useGetTopicsLazyQuery>;
 export type GetTopicsQueryResult = Apollo.QueryResult<GetTopicsQuery, GetTopicsQueryVariables>;
-export const GetTopicDocument: DocumentNode = /* #__PURE__ */ {
+export const GetTopicDocument = /* #__PURE__ */ {
     kind: 'Document',
     definitions: [
         {
@@ -648,7 +698,7 @@ export const GetTopicDocument: DocumentNode = /* #__PURE__ */ {
             },
         },
     ],
-};
+} as unknown as DocumentNode;
 
 /**
  * __useGetTopicQuery__
@@ -679,7 +729,7 @@ export function useGetTopicLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetTopicQueryHookResult = ReturnType<typeof useGetTopicQuery>;
 export type GetTopicLazyQueryHookResult = ReturnType<typeof useGetTopicLazyQuery>;
 export type GetTopicQueryResult = Apollo.QueryResult<GetTopicQuery, GetTopicQueryVariables>;
-export const CreateTopicDocument: DocumentNode = /* #__PURE__ */ {
+export const CreateTopicDocument = /* #__PURE__ */ {
     kind: 'Document',
     definitions: [
         {
@@ -786,7 +836,7 @@ export const CreateTopicDocument: DocumentNode = /* #__PURE__ */ {
             },
         },
     ],
-};
+} as unknown as DocumentNode;
 export type CreateTopicMutationFn = Apollo.MutationFunction<CreateTopicMutation, CreateTopicMutationVariables>;
 
 /**
@@ -817,7 +867,7 @@ export function useCreateTopicMutation(
 export type CreateTopicMutationHookResult = ReturnType<typeof useCreateTopicMutation>;
 export type CreateTopicMutationResult = Apollo.MutationResult<CreateTopicMutation>;
 export type CreateTopicMutationOptions = Apollo.BaseMutationOptions<CreateTopicMutation, CreateTopicMutationVariables>;
-export const PostMessageDocument: DocumentNode = /* #__PURE__ */ {
+export const PostMessageDocument = /* #__PURE__ */ {
     kind: 'Document',
     definitions: [
         {
@@ -927,7 +977,7 @@ export const PostMessageDocument: DocumentNode = /* #__PURE__ */ {
             },
         },
     ],
-};
+} as unknown as DocumentNode;
 export type PostMessageMutationFn = Apollo.MutationFunction<PostMessageMutation, PostMessageMutationVariables>;
 
 /**
@@ -958,7 +1008,7 @@ export function usePostMessageMutation(
 export type PostMessageMutationHookResult = ReturnType<typeof usePostMessageMutation>;
 export type PostMessageMutationResult = Apollo.MutationResult<PostMessageMutation>;
 export type PostMessageMutationOptions = Apollo.BaseMutationOptions<PostMessageMutation, PostMessageMutationVariables>;
-export const OnTopicUpdatesDocument: DocumentNode = /* #__PURE__ */ {
+export const OnTopicUpdatesDocument = /* #__PURE__ */ {
     kind: 'Document',
     definitions: [
         {
@@ -997,7 +1047,7 @@ export const OnTopicUpdatesDocument: DocumentNode = /* #__PURE__ */ {
             },
         },
     ],
-};
+} as unknown as DocumentNode;
 
 /**
  * __useOnTopicUpdatesSubscription__
@@ -1027,7 +1077,7 @@ export function useOnTopicUpdatesSubscription(
 }
 export type OnTopicUpdatesSubscriptionHookResult = ReturnType<typeof useOnTopicUpdatesSubscription>;
 export type OnTopicUpdatesSubscriptionResult = Apollo.SubscriptionResult<OnTopicUpdatesSubscription>;
-export const CreateNewAccountDocument: DocumentNode = /* #__PURE__ */ {
+export const CreateNewAccountDocument = /* #__PURE__ */ {
     kind: 'Document',
     definitions: [
         {
@@ -1073,7 +1123,7 @@ export const CreateNewAccountDocument: DocumentNode = /* #__PURE__ */ {
             },
         },
     ],
-};
+} as unknown as DocumentNode;
 export type CreateNewAccountMutationFn = Apollo.MutationFunction<
     CreateNewAccountMutation,
     CreateNewAccountMutationVariables
@@ -1113,7 +1163,7 @@ export type CreateNewAccountMutationOptions = Apollo.BaseMutationOptions<
     CreateNewAccountMutation,
     CreateNewAccountMutationVariables
 >;
-export const UpdateDisplayNameDocument: DocumentNode = /* #__PURE__ */ {
+export const UpdateDisplayNameDocument = /* #__PURE__ */ {
     kind: 'Document',
     definitions: [
         {
@@ -1152,7 +1202,7 @@ export const UpdateDisplayNameDocument: DocumentNode = /* #__PURE__ */ {
             },
         },
     ],
-};
+} as unknown as DocumentNode;
 export type UpdateDisplayNameMutationFn = Apollo.MutationFunction<
     UpdateDisplayNameMutation,
     UpdateDisplayNameMutationVariables

@@ -21,9 +21,16 @@ export type Scalars = {
     Boolean: boolean;
     Int: number;
     Float: number;
-    ObjectID: ObjectId;
     DateTime: Date;
+    ObjectID: ObjectId;
     Upload: FileUploadPromise;
+};
+
+export type GraphQLAuthenticationSuccessful = {
+    /** User authenticated */
+    user: GraphQLUser;
+    /** Json Web Token */
+    token: Scalars['String'];
 };
 
 export type GraphQLMutation = {
@@ -82,6 +89,13 @@ export type GraphQLMutationAuthenticateArgs = {
     password: Scalars['String'];
 };
 
+export type GraphQLPagination = {
+    /** Offset to apply when fetching a list */
+    offset: Scalars['Int'];
+    /** Number of items to fetch from a list */
+    limit: Scalars['Int'];
+};
+
 export type GraphQLQuery = {
     /**
      * List topics
@@ -104,6 +118,8 @@ export type GraphQLQueryTopicArgs = {
     id: Scalars['ObjectID'];
 };
 
+export { SortingOrder };
+
 export type GraphQLSubscription = {
     topicUpdated: GraphQLTopic;
 };
@@ -111,15 +127,6 @@ export type GraphQLSubscription = {
 export type GraphQLSubscriptionTopicUpdatedArgs = {
     topicId: Scalars['ObjectID'];
 };
-
-export type GraphQLPagination = {
-    /** Offset to apply when fetching a list */
-    offset: Scalars['Int'];
-    /** Number of items to fetch from a list */
-    limit: Scalars['Int'];
-};
-
-export { SortingOrder };
 
 export type GraphQLTopic = {
     id?: Maybe<Scalars['ObjectID']>;
@@ -141,12 +148,12 @@ export type GraphQLTopicMessage = {
     createdAt: Scalars['DateTime'];
 };
 
-export { TopicSortingField };
-
 export type GraphQLTopicSorting = {
     field: TopicSortingField;
     order: SortingOrder;
 };
+
+export { TopicSortingField };
 
 export type GraphQLUser = {
     id: Scalars['ObjectID'];
@@ -157,16 +164,14 @@ export type GraphQLUser = {
     topics: GraphQLTopic;
 };
 
-export type GraphQLAuthenticationSuccessful = {
-    /** User authenticated */
-    user: GraphQLUser;
-    /** Json Web Token */
-    token: Scalars['String'];
-};
-
 export type ResolverTypeWrapper<T> = Promise<T> | T;
 
-export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> = ResolverFn<TResult, TParent, TContext, TArgs>;
+export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
+    resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
+};
+export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
+    | ResolverFn<TResult, TParent, TContext, TArgs>
+    | ResolverWithResolve<TResult, TParent, TContext, TArgs>;
 
 export type ResolverFn<TResult, TParent, TContext, TArgs> = (
     parent: TParent,
@@ -231,47 +236,60 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type GraphQLResolversTypes = {
-    Mutation: ResolverTypeWrapper<RootDocument>;
-    String: ResolverTypeWrapper<Scalars['String']>;
-    Query: ResolverTypeWrapper<RootDocument>;
-    Subscription: ResolverTypeWrapper<RootDocument>;
-    ObjectID: ResolverTypeWrapper<Scalars['ObjectID']>;
-    DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
-    Upload: ResolverTypeWrapper<Scalars['Upload']>;
-    Pagination: GraphQLPagination;
-    Int: ResolverTypeWrapper<Scalars['Int']>;
-    SortingOrder: SortingOrder;
-    Topic: ResolverTypeWrapper<Topic>;
-    TopicMessage: ResolverTypeWrapper<TopicMessage>;
-    TopicSortingField: TopicSortingField;
-    TopicSorting: GraphQLTopicSorting;
-    User: ResolverTypeWrapper<User>;
     AuthenticationSuccessful: ResolverTypeWrapper<
         Omit<GraphQLAuthenticationSuccessful, 'user'> & { user: GraphQLResolversTypes['User'] }
     >;
+    String: ResolverTypeWrapper<Scalars['String']>;
+    DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
+    Mutation: ResolverTypeWrapper<RootDocument>;
+    ObjectID: ResolverTypeWrapper<Scalars['ObjectID']>;
+    Pagination: GraphQLPagination;
+    Int: ResolverTypeWrapper<Scalars['Int']>;
+    Query: ResolverTypeWrapper<RootDocument>;
+    SortingOrder: SortingOrder;
+    Subscription: ResolverTypeWrapper<RootDocument>;
+    Topic: ResolverTypeWrapper<Topic>;
+    TopicMessage: ResolverTypeWrapper<TopicMessage>;
+    TopicSorting: GraphQLTopicSorting;
+    TopicSortingField: TopicSortingField;
+    Upload: ResolverTypeWrapper<Scalars['Upload']>;
+    User: ResolverTypeWrapper<User>;
     Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type GraphQLResolversParentTypes = {
-    Mutation: RootDocument;
-    String: Scalars['String'];
-    Query: RootDocument;
-    Subscription: RootDocument;
-    ObjectID: Scalars['ObjectID'];
-    DateTime: Scalars['DateTime'];
-    Upload: Scalars['Upload'];
-    Pagination: GraphQLPagination;
-    Int: Scalars['Int'];
-    Topic: Topic;
-    TopicMessage: TopicMessage;
-    TopicSorting: GraphQLTopicSorting;
-    User: User;
     AuthenticationSuccessful: Omit<GraphQLAuthenticationSuccessful, 'user'> & {
         user: GraphQLResolversParentTypes['User'];
     };
+    String: Scalars['String'];
+    DateTime: Scalars['DateTime'];
+    Mutation: RootDocument;
+    ObjectID: Scalars['ObjectID'];
+    Pagination: GraphQLPagination;
+    Int: Scalars['Int'];
+    Query: RootDocument;
+    Subscription: RootDocument;
+    Topic: Topic;
+    TopicMessage: TopicMessage;
+    TopicSorting: GraphQLTopicSorting;
+    Upload: Scalars['Upload'];
+    User: User;
     Boolean: Scalars['Boolean'];
 };
+
+export type GraphQLAuthenticationSuccessfulResolvers<
+    ContextType = Context,
+    ParentType extends GraphQLResolversParentTypes['AuthenticationSuccessful'] = GraphQLResolversParentTypes['AuthenticationSuccessful']
+> = {
+    user?: Resolver<GraphQLResolversTypes['User'], ParentType, ContextType>;
+    token?: Resolver<GraphQLResolversTypes['String'], ParentType, ContextType>;
+    __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export interface GraphQLDateTimeScalarConfig extends GraphQLScalarTypeConfig<GraphQLResolversTypes['DateTime'], any> {
+    name: 'DateTime';
+}
 
 export type GraphQLMutationResolvers<
     ContextType = Context,
@@ -310,6 +328,10 @@ export type GraphQLMutationResolvers<
     refreshCredentials?: Resolver<GraphQLResolversTypes['String'], ParentType, ContextType>;
 };
 
+export interface GraphQLObjectIdScalarConfig extends GraphQLScalarTypeConfig<GraphQLResolversTypes['ObjectID'], any> {
+    name: 'ObjectID';
+}
+
 export type GraphQLQueryResolvers<
     ContextType = Context,
     ParentType extends GraphQLResolversParentTypes['Query'] = GraphQLResolversParentTypes['Query']
@@ -329,6 +351,11 @@ export type GraphQLQueryResolvers<
     account?: Resolver<Maybe<GraphQLResolversTypes['User']>, ParentType, ContextType>;
 };
 
+export type GraphQLSortingOrderResolvers = EnumResolverSignature<
+    { Asc?: any; Desc?: any },
+    GraphQLResolversTypes['SortingOrder']
+>;
+
 export type GraphQLSubscriptionResolvers<
     ContextType = Context,
     ParentType extends GraphQLResolversParentTypes['Subscription'] = GraphQLResolversParentTypes['Subscription']
@@ -341,23 +368,6 @@ export type GraphQLSubscriptionResolvers<
         RequireFields<GraphQLSubscriptionTopicUpdatedArgs, 'topicId'>
     >;
 };
-
-export interface GraphQLObjectIdScalarConfig extends GraphQLScalarTypeConfig<GraphQLResolversTypes['ObjectID'], any> {
-    name: 'ObjectID';
-}
-
-export interface GraphQLDateTimeScalarConfig extends GraphQLScalarTypeConfig<GraphQLResolversTypes['DateTime'], any> {
-    name: 'DateTime';
-}
-
-export interface GraphQLUploadScalarConfig extends GraphQLScalarTypeConfig<GraphQLResolversTypes['Upload'], any> {
-    name: 'Upload';
-}
-
-export type GraphQLSortingOrderResolvers = EnumResolverSignature<
-    { Asc?: any; Desc?: any },
-    GraphQLResolversTypes['SortingOrder']
->;
 
 export type GraphQLTopicResolvers<
     ContextType = Context,
@@ -390,6 +400,10 @@ export type GraphQLTopicSortingFieldResolvers = EnumResolverSignature<
     GraphQLResolversTypes['TopicSortingField']
 >;
 
+export interface GraphQLUploadScalarConfig extends GraphQLScalarTypeConfig<GraphQLResolversTypes['Upload'], any> {
+    name: 'Upload';
+}
+
 export type GraphQLUserResolvers<
     ContextType = Context,
     ParentType extends GraphQLResolversParentTypes['User'] = GraphQLResolversParentTypes['User']
@@ -401,26 +415,17 @@ export type GraphQLUserResolvers<
     __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type GraphQLAuthenticationSuccessfulResolvers<
-    ContextType = Context,
-    ParentType extends GraphQLResolversParentTypes['AuthenticationSuccessful'] = GraphQLResolversParentTypes['AuthenticationSuccessful']
-> = {
-    user?: Resolver<GraphQLResolversTypes['User'], ParentType, ContextType>;
-    token?: Resolver<GraphQLResolversTypes['String'], ParentType, ContextType>;
-    __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type GraphQLResolvers<ContextType = Context> = {
-    Mutation?: GraphQLMutationResolvers<ContextType>;
-    Query?: GraphQLQueryResolvers<ContextType>;
-    Subscription?: GraphQLSubscriptionResolvers<ContextType>;
-    ObjectID?: GraphQLScalarType;
+    AuthenticationSuccessful?: GraphQLAuthenticationSuccessfulResolvers<ContextType>;
     DateTime?: GraphQLScalarType;
-    Upload?: GraphQLScalarType;
+    Mutation?: GraphQLMutationResolvers<ContextType>;
+    ObjectID?: GraphQLScalarType;
+    Query?: GraphQLQueryResolvers<ContextType>;
     SortingOrder?: GraphQLSortingOrderResolvers;
+    Subscription?: GraphQLSubscriptionResolvers<ContextType>;
     Topic?: GraphQLTopicResolvers<ContextType>;
     TopicMessage?: GraphQLTopicMessageResolvers<ContextType>;
     TopicSortingField?: GraphQLTopicSortingFieldResolvers;
+    Upload?: GraphQLScalarType;
     User?: GraphQLUserResolvers<ContextType>;
-    AuthenticationSuccessful?: GraphQLAuthenticationSuccessfulResolvers<ContextType>;
 };
