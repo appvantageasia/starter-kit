@@ -1,12 +1,1 @@
-{
-  "name": "GraphQL API",
-  "projects": {
-    "source": {
-      "includes": ["schema/**/*.graphql"]
-    },
-    "code": {
-      "includes": ["src/**/*.graphql"],
-      "excludes": ["src/server/schema/typeDefs.graphql"]
-    }
-  }
-}
+./.graphqlrc.json
