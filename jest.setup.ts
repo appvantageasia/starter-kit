@@ -1,7 +1,7 @@
 /* eslint-env jest */
 /* eslint-disable import/no-extraneous-dependencies */
 import '@testing-library/jest-dom';
-import loadEnvConfig from './devtools/env';
+import loadEnvConfig from './devtools/env.cjs';
 
 // load environment
 loadEnvConfig(__dirname, true, false);

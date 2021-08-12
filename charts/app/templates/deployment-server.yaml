@@ -30,7 +30,7 @@ spec:
         - name: server
           image: {{ include "app.image" .Values.app.image }}
           imagePullPolicy: {{ .Values.app.image.pullPolicy }}
-          command: ["dumb-init", "node", "server.js", "serve"]
+          command: ["dumb-init", "yarn", "node", "server.js", "serve"]
           envFrom:
             - configMapRef:
                 name: "{{ .Release.Name }}-app-configmap"

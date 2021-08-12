@@ -2,7 +2,7 @@
 /// <reference types="cypress" />
 import fs from 'fs';
 import path from 'path';
-import loadEnvConfig from '../../devtools/env';
+import loadEnvConfig from '../../devtools/env.cjs';
 import PluginEvents = Cypress.PluginEvents;
 import PluginConfigOptions = Cypress.PluginConfigOptions;
 

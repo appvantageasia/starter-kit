@@ -170,7 +170,7 @@ export default {
     // A map from regular expressions to paths to transformers
     transform: {
         '\\.graphql$': 'jest-transform-graphql',
-        '^.+\\.(js|jsx|ts|tsx)$': '<rootDir>/node_modules/babel-jest',
+        '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest',
     },
 
     // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation

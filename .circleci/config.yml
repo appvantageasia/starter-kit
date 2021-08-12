@@ -38,20 +38,19 @@ jobs:
             - checkout
             - restore_cache:
                   keys:
-                      - yarn-cache-node16-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
-                      - yarn-cache-node16-{{ checksum "package.json" }}
-                      - yarn-cache-node16
+                      - yarn-pnp-node16-{{ checksum "yarn.lock" }}
+                      - yarn-pnp-node16
             - run:
                   name: Install depdencies
-                  command: yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
+                  command: yarn install --immutable --immutable-cache --check-cache
             - save_cache:
-                  key: yarn-cache-node16-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+                  key: yarn-pnp-node16-{{ checksum "yarn.lock" }}
                   paths:
-                      - ~/.cache/yarn
+                    - .yarn/unplugged
             - persist_to_workspace:
                   root: ~/project
                   paths:
-                      - node_modules
+                      - .yarn
 
     validate-project:
         executor: node-with-dependencies
@@ -100,12 +99,12 @@ jobs:
                       yarn cypress install
             - run:
                   name: Start server
-                  command: node server.js serve
+                  command: yarn node server.js serve
                   background: true
                   working_directory: ~/project/build
             - run:
                   name: Start worker
-                  command: node server.js worker
+                  command: yarn node server.js worker
                   background: true
                   working_directory: ~/project/build
             - run:
@@ -127,7 +126,7 @@ jobs:
                   command: pkill -SIGQUIT node
             - run:
                   name: Lint commit messages
-                  command: node ./devtools/commands/lint-commits.js
+                  command: yarn node ./devtools/commands/lint-commits.js
             - store_test_results:
                   path: ~/project/junit/
             - store_artifacts:
