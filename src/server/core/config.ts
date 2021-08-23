@@ -36,6 +36,9 @@ const config = {
     port: getNumber(getPrefix('PORT'), 3000),
     publicPath: getString(getPrefix('PUBLIC_PATH'), '/public/'),
 
+    // gzip module
+    gzip: getBoolean(getPrefix('GZIP'), true),
+
     // internationalization
     i18n: {
         locales: ['en'],

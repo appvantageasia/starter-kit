@@ -59,10 +59,21 @@ const createWebServer = async (): Promise<WebServerCreation> => {
 
     // create express server
     const expressServer = express();
+
+    // disable informational headers
     expressServer.disable('x-powered-by');
-    expressServer.use(compression());
+
+    if (config.gzip) {
+        // enable compression
+        // we might want to disable it it's delegated to a reverse proxy
+        expressServer.use(compression());
+    }
+
+    // enable JSON and url encoded support
     expressServer.use(express.json());
     expressServer.use(express.urlencoded({ extended: true }));
+
+    // enable Sentry scope
     expressServer.use(Sentry.Handlers.requestHandler());
 
     // setup prometheus metrics
