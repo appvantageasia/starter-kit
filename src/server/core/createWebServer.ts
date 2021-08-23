@@ -3,6 +3,7 @@ import http, { Server } from 'http';
 import * as Sentry from '@sentry/node';
 import { ApolloServer, ApolloServerExpressConfig } from 'apollo-server-express';
 import compression from 'compression';
+import cors from 'cors';
 import express, { Express, Handler, Request } from 'express';
 import { execute, subscribe } from 'graphql';
 import { graphqlUploadExpress } from 'graphql-upload';
@@ -30,6 +31,25 @@ const rateLimiterMiddleware: Handler = (req, res, next) => {
         .catch(() => {
             res.status(429).send('Too Many Requests');
         });
+};
+
+const protectGraphQLEndpoint: Handler = (req, res, next) => {
+    // prevent XSS attacks
+    res.set({ 'X-Content-Type-Options': 'nosniff' });
+
+    // move on
+    next();
+};
+
+const disableCaching: Handler = (req, res, next) => {
+    // update headers
+    res.set({
+        'Cache-control': 'no-store',
+        Pragma: 'no-cache',
+    });
+
+    // move on
+    next();
 };
 
 const createWebServer = async (): Promise<WebServerCreation> => {
@@ -86,12 +106,29 @@ const createWebServer = async (): Promise<WebServerCreation> => {
     // serve static files
     expressServer.use('/public', express.static('public'));
 
+    // apply cors
+    expressServer.use(
+        cors((req, callback) => {
+            // in production we expect the application to be served behind a reverse proxy such as the ingress controller
+            // if so we rely on those information which are trust worthy as those are defined by the proxy itself
+            const host = req.header('X-Forwarded-Host');
+            const scheme = req.header('X-Forwarded-Scheme') || 'https';
+
+            // apply cors
+            callback(null, { origin: host ? `${scheme}://${host}` : false });
+        })
+    );
+
     // then from here use rate limiter
     expressServer.use(rateLimiterMiddleware);
+
+    // update cache policy
+    expressServer.use(disableCaching);
 
     // serve graphql API
     expressServer.use(
         '/graphql',
+        protectGraphQLEndpoint,
         graphqlUploadExpress(),
         apolloServer.getMiddleware({ bodyParserConfig: { limit: '50mb' }, path: '/' })
     );
