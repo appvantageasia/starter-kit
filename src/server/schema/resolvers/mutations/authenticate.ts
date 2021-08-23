@@ -12,15 +12,23 @@ const mutation: GraphQLMutationResolvers['authenticate'] = async (
 ) => {
     const { t } = await getTranslations(['errors']);
 
-    try {
-        // consume 2 points for a maximum of 5 tries per minute
-        await authenticationRateLimiter.consume(username, 2);
-        // consume 1 point for a maximum of 10 tries per minutes
-        await authenticationRateLimiter.consume(ip, 1);
-    } catch (error) {
+    // get current limiters
+    const usernameLimit = await authenticationRateLimiter.get(username);
+    const ipLimit = await authenticationRateLimiter.get(ip);
+
+    if ((usernameLimit && usernameLimit.remainingPoints <= 0) || (ipLimit && ipLimit.remainingPoints <= 0)) {
         // maximum tries reached
         throw new InvalidInput({ password: t('errors:invalidCredentials') });
     }
+
+    const reject = async (): Promise<never> => {
+        // consume 2 points for a maximum of 5 tries per minute
+        await authenticationRateLimiter.penalty(username, 2);
+        // consume 1 point for a maximum of 10 tries per minutes
+        await authenticationRateLimiter.penalty(ip, 1);
+
+        throw new InvalidInput({ password: t('errors:invalidCredentials') });
+    };
 
     const { collections } = await getDatabaseContext();
 
@@ -28,13 +36,13 @@ const mutation: GraphQLMutationResolvers['authenticate'] = async (
     const user = await collections.users.findOne({ username });
 
     if (!user) {
-        throw new InvalidInput({ password: t('errors:invalidCredentials') });
+        return reject();
     }
 
     const isValid = await compare(password, user.password);
 
     if (!isValid) {
-        throw new InvalidInput({ password: t('errors:invalidCredentials') });
+        return reject();
     }
 
     const token = await getSessionToken({ userId: user._id });
