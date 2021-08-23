@@ -13,3 +13,4 @@ spec:
     {{- include "app.selectorLabels" .| nindent 4 }}
     app.local/role: server
   type: ClusterIP
+  clusterIP: None
