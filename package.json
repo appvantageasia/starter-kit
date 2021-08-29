@@ -198,7 +198,7 @@
         "styled-components": "^5.2.1",
         "subscriptions-transport-ws": "^0.9.18",
         "url-join": "^4.0.1",
-        "ws": "^7.5.3",
+        "ws": "^8.2.1",
         "zxcvbn": "^4.4.2"
     }
 }
