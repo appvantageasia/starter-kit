@@ -72,3 +72,9 @@ export const handleMultipleFileUpload = async (
     uploads: FileUpload[],
     metadata?: ItemBucketMetadata
 ): Promise<UploadedFile[]> => Promise.all(uploads.map(upload => handleFileUpload(dirName, upload, metadata)));
+
+export const cloneFile = async (
+    dirName: string,
+    upload: UploadedFile,
+    metadata?: ItemBucketMetadata
+): Promise<UploadedFile> => uploadFile(dirName, upload.filename, await getFileStream(upload), metadata);
