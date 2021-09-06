@@ -11,12 +11,12 @@ spec:
   selector:
     matchLabels:
       {{- $selectorLabels | nindent 6 }}
-      app.local/role: worker
+      app.kubernetes.io/component: worker
   template:
     metadata:
       labels:
         {{- $selectorLabels | nindent 8 }}
-        app.local/role: worker
+        app.kubernetes.io/component: worker
       {{- if .Values.app.pods.workerAnnotations }}
       annotations:
         {{- with .Values.app.pods.workerAnnotations }}

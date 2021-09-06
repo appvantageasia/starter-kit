@@ -11,12 +11,12 @@ spec:
   selector:
     matchLabels:
       {{- $selectorLabels | nindent 6 }}
-      app.local/role: server
+      app.kubernetes.io/component: server
   template:
     metadata:
       labels:
         {{- $selectorLabels | nindent 8 }}
-        app.local/role: server
+        app.kubernetes.io/component: server
       {{- if .Values.app.pods.serverAnnotations }}
       annotations:
         {{- with .Values.app.pods.serverAnnotations }}

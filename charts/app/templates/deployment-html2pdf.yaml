@@ -11,12 +11,12 @@ spec:
   selector:
     matchLabels:
       {{- $selectorLabels | nindent 6 }}
-      app.local/role: html2pdf
+      app.kubernetes.io/component: html2pdf
   template:
     metadata:
       labels:
         {{- $selectorLabels | nindent 8 }}
-        app.local/role: html2pdf
+        app.kubernetes.io/component: html2pdf
     spec:
       containers:
         - name: html2pdf
