@@ -1,0 +1,26 @@
+The application has been deployed successfully.
+
+It's recommended to manually applying network policy to isolate your application.
+
+    apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      name: {{ .Release.Name }}-isolation
+      namespace: {{ .Release.Namespace }}
+    spec:
+      podSelector: {}
+      policyTypes:
+        - Ingress
+      ingress:
+        - from:
+          # example for the ingress controller for the ingress-nginx
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: ingress-nginx
+            podSelector:
+              matchLabels:
+                app.kubernetes.io/component: controller
+          # allow traffic for the same namespace
+          - namespaceSelector:
+              matchLabels:
+                kubernetes.io/metadata.name: {{ .Release.Namespace }}
