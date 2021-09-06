@@ -11,9 +11,14 @@ app:
 
     # pods specs
     pods:
-        # annotations for pods running the server
+        ## Annotations for server pods
+        ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+        ##
         serverAnnotations: {}
-        # annotations for pods running the worker
+
+        ## Annotations for worker pods
+        ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+        ##
         workerAnnotations: {}
 
     ingress:
@@ -142,3 +147,18 @@ minio:
 
     # bucket to automatically create
     defaultBuckets: 'app'
+
+## Affinity for pod assignment.
+## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+##
+affinity: {}
+
+## Node labels for pod assignment.
+## ref: https://kubernetes.io/docs/user-guide/node-selection/
+##
+nodeSelector: {}
+
+## Tolerations for pod assignment.
+## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+##
+tolerations: []
