@@ -19,9 +19,7 @@ spec:
         app.kubernetes.io/component: server
       {{- if .Values.app.pods.serverAnnotations }}
       annotations:
-        {{- with .Values.app.pods.serverAnnotations }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
+        {{- toYaml .Values.app.pods.serverAnnotations | nindent 8 }}
       {{- end }}
     spec:
       {{- if .Values.app.imagePullSecrets }}
@@ -41,3 +39,15 @@ spec:
             - name: http
               containerPort: 3000
               protocol: TCP
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
