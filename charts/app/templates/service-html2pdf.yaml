@@ -11,5 +11,5 @@ spec:
       targetPort: 3000
   selector:
     {{- include "app.selectorLabels" .| nindent 4 }}
-    app.local/role: html2pdf
+    app.kubernetes.io/component: html2pdf
   type: ClusterIP
