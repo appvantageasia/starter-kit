@@ -1,13 +1,28 @@
 import { Readable } from 'stream';
 import { ApolloClient, ApolloLink, from, InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import { createUploadLink, isExtractableFile } from 'apollo-upload-client';
+import cookie from 'cookie';
 import { Encoder } from 'form-data-encoder';
 import { FormData, File } from 'formdata-node';
 import fetch from 'node-fetch';
 
-export type ApolloClientOptions = { authorizationToken?: string; language?: string };
+export type ApolloClientOptions = {
+    authorizationToken?: string;
+    language?: string;
+    csrf?: string;
+};
 
-export const getApolloClient = (uri: string, options?: ApolloClientOptions): ApolloClient<NormalizedCacheObject> => {
+export type CSRFGetter = () => string;
+
+export const getApolloClient = (
+    uri: string,
+    options?: ApolloClientOptions
+): {
+    client: ApolloClient<NormalizedCacheObject>;
+    getCSRF: CSRFGetter;
+} => {
+    let rawCookie = options?.csrf ? cookie.serialize('CSRF', options.csrf, { httpOnly: true, sameSite: 'strict' }) : '';
+
     const authLink = new ApolloLink((operation, forward) => {
         operation.setContext(({ headers }) => {
             const customHeaders = { ...headers };
@@ -18,6 +33,10 @@ export const getApolloClient = (uri: string, options?: ApolloClientOptions): Apo
 
             if (options?.authorizationToken) {
                 customHeaders.Authorization = `Bearer ${options?.authorizationToken}`;
+            }
+
+            if (rawCookie) {
+                customHeaders.Cookie = rawCookie;
             }
 
             return {
@@ -41,12 +60,24 @@ export const getApolloClient = (uri: string, options?: ApolloClientOptions): Apo
                 nextOptions.body = Readable.from(encoder);
             }
 
-            return fetch(url, nextOptions);
+            const response = await fetch(url, nextOptions);
+
+            // update cookies
+            const newCookies = response.headers.get('Set-Cookie');
+
+            if (newCookies) {
+                rawCookie = newCookies;
+            }
+
+            return response;
         },
     });
 
-    return new ApolloClient({
-        link: from([authLink, httpLink]),
-        cache: new InMemoryCache(),
-    });
+    return {
+        getCSRF: () => cookie.parse(rawCookie)?.CSRF || '',
+        client: new ApolloClient({
+            link: from([authLink, httpLink]),
+            cache: new InMemoryCache(),
+        }),
+    };
 };

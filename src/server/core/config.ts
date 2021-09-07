@@ -36,6 +36,9 @@ const config = {
     port: getNumber(getPrefix('PORT'), 3000),
     publicPath: getString(getPrefix('PUBLIC_PATH'), '/public/'),
 
+    // secure cookies
+    secureCookie: getBoolean(getPrefix('SECURE_COOKIE'), true),
+
     // gzip module
     gzip: getBoolean(getPrefix('GZIP'), true),
 

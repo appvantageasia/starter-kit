@@ -30,7 +30,7 @@ beforeEach(composeHandlers(setupEmptyBucket, setupDatabase, loadFixtures(fixture
 afterEach(composeHandlers(cleanDatabase, webService.cleanUp));
 
 test('Create topic requires authorizations', async () => {
-    const client = getApolloClient(webService.url);
+    const { client } = getApolloClient(webService.url);
     const variables = { title: 'test', body: 'this is a test' };
     const promise = client.mutate({ mutation, variables });
     await expect(promise).rejects.toBeInstanceOf(ApolloError);
@@ -40,8 +40,8 @@ test('Create topic requires authorizations', async () => {
 
 test('Create topic work successfully without attachments', async () => {
     const originalData: SessionData = { userId: new ObjectId('601f7ae763d6cfc2554f6b67') };
-    const originalToken = await getSessionToken(originalData);
-    const client = getApolloClient(webService.url, { authorizationToken: originalToken });
+    const { token: originalToken, csrf } = await getSessionToken(originalData);
+    const { client } = getApolloClient(webService.url, { authorizationToken: originalToken, csrf });
     const variables = { title: 'test', body: 'this is a test' };
     const { data } = await client.mutate({ mutation, variables });
     expect(data.createTopic).not.toBeNull();
@@ -57,8 +57,8 @@ test('Create topic work successfully without attachments', async () => {
 
 test('Create topic work successfully with attachments', async () => {
     const originalData: SessionData = { userId: new ObjectId('601f7ae763d6cfc2554f6b67') };
-    const originalToken = await getSessionToken(originalData);
-    const client = getApolloClient(webService.url, { authorizationToken: originalToken });
+    const { token: originalToken, csrf } = await getSessionToken(originalData);
+    const { client } = getApolloClient(webService.url, { authorizationToken: originalToken, csrf });
     const originalFile = await createBlobFrom(path.resolve(__dirname, './img.png'));
     const variables = { title: 'test', body: 'this is a test', files: [originalFile] };
     const { data } = await client.mutate({ mutation, variables });

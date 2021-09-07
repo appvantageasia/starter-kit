@@ -10,6 +10,7 @@ data:
   {{- with .Values.app.global }}
   {{- include "app.configValue" ( dict "Key" "APP_PUBLIC_PATH" "Value" .publicPath ) }}
   {{- include "app.configValue" ( dict "Key" "APP_GZIP" "Value" .gzip ) }}
+  {{- include "app.configValue" ( dict "Key" "APP_SECURE_COOKIE" "Value" .secureCookie ) }}
   {{- end }}
 
   # session settings

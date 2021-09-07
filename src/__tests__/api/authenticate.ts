@@ -35,7 +35,7 @@ beforeEach(composeHandlers(setupDatabase, loadFixtures(fixtures), webService.ini
 afterEach(composeHandlers(cleanDatabase, webService.cleanUp));
 
 test('Authentication rejects invalid credentials because the user does not exist', async () => {
-    const client = getApolloClient(webService.url);
+    const { client } = getApolloClient(webService.url);
     const variables = { username: 'unknown', password: 'something' };
     const promise = client.mutate({ mutation, variables });
     await expect(promise).rejects.toBeInstanceOf(ApolloError);
@@ -44,7 +44,7 @@ test('Authentication rejects invalid credentials because the user does not exist
 });
 
 test('Authentication rejects invalid credentials because the password does not match', async () => {
-    const client = getApolloClient(webService.url);
+    const { client } = getApolloClient(webService.url);
     const variables = { username: 'x', password: 'something' };
     const promise = client.mutate({ mutation, variables });
     await expect(promise).rejects.toBeInstanceOf(ApolloError);
@@ -53,10 +53,10 @@ test('Authentication rejects invalid credentials because the password does not m
 });
 
 test('Authentication returns the user and token on valid credentials', async () => {
-    const client = getApolloClient(webService.url);
+    const { client, getCSRF } = getApolloClient(webService.url);
     const variables = { username: 'x', password: 'y' };
     const { data } = await client.mutate({ mutation, variables });
     expect(data.authenticate.user).toMatchSnapshot();
-    const sessionData = await readSessionToken(data.authenticate.token);
+    const sessionData = await readSessionToken(data.authenticate.token, getCSRF());
     expect(sessionData.userId).toMatchSnapshot();
 });

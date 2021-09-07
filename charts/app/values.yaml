@@ -27,6 +27,7 @@ app:
     global:
         publicPath: ''
         gzip: ''
+        secureCookie: ''
 
     # redis settings
     redis:
