@@ -200,6 +200,50 @@ jobs:
                   update-repositories: false
 ```
 
+If you want to rely on AWS IAM instead, you may use the following,
+please refer to the orb [aws-cli] for more information on the environment variable to provide.
+
+[aws-cli]: https://circleci.com/developer/orbs/orb/circleci/aws-cli
+
+```yaml
+obs:
+    helm: circleci/helm@1.2.0
+    aws-cli: circleci/aws-cli@2.0.3
+
+jobs:
+    deploy-with-iam:
+        executor: node-standalone
+        parameters:
+            namespace:
+                description: Namespace the release is in
+                type: string
+            release-name:
+                description: Name of the release
+                type: string
+            cluster-name:
+                description: Name of the cluster
+                type: string
+        steps:
+            - checkout
+            - helm/install-helm-client:
+                  version: v3.4.0
+            - aws-cli/install
+            - aws-cli/setup
+            - run:
+                  name: setup kube config
+                  environment:
+                      CLUSTER_NAME: << parameters.cluster-name >>
+                  command: aws eks --region $AWS_DEFAULT_REGION update-kubeconfig --name $CLUSTER_NAME
+            - helm/upgrade-helm-chart:
+                  chart: ./charts/app
+                  reuse-values: true
+                  namespace: << parameters.namespace >>
+                  release-name: << parameters.release-name >>
+                  helm-version: v3.4.0
+                  values-to-override: app.image=ACCOUNT_ID.dkr.ecr.ap-southeast-1.amazonaws.com/PROJECT:${CIRCLE_TAG:1},app.global.publicPath=https://CLOUDID.cloudfront.net/${CIRCLE_TAG:1}
+                  update-repositories: false
+```
+
 This job is generic enough to be reused for all targets (Production, UAT, Staging etc..).
 You must however properly updates `values-to-override` to match your resources & settings.
 
@@ -274,7 +318,40 @@ Carefully update the settings to match your needs.
 
 We recommend using [ingress-nginx] for your ingress controllers.
 
+You may also want to disable the compression on the application layer and rely on the nginx to do so.
+
+```yaml
+controller:
+    config:
+        use-gzip: 'true'
+```
+
 [ingress-nginx]: https://kubernetes.github.io/ingress-nginx/
+
+## Ingress Nginx & AWS
+
+If the application requires to get the real client IP and is behind a load balancer,
+you will need to enable the proxy protocol on your ingress nginx.
+
+However, it also requires to use NLB rather than ELB.
+
+You may use the following values for your ingress-nginx release.
+
+```yaml
+service:
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
+      service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
+      service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*"
+      service.beta.kubernetes.io/aws-load-balancer-type: nlb
+  config:
+    use-proxy-protocol: "true"
+```
+
+**notice: you may eventually have to manually enable the proxy protocol v2 on the target groups from the console or with AWS CLi**
+
+**notice: if you are running your application in private subnets, ensure there's public subnet in your VPC for the load balancer to properly bind.
+Please refer to the ELB/NLB documentation for more understanding.**
 
 ## Kubernetes Cert manager
 
@@ -301,24 +378,5 @@ spec:
             name: 'letsencrypt'
 ```
 
-## Ingress Nginx & AWS
-
-If the application requires to get the real client IP and is behind a load balancer,
-you will need to enable the proxy protocol on your ingress nginx.
-
-However, it also requires to use NLB rather than ELB.
-
-You may use the following values for your ingress-nginx release.
-
-```yaml
-service:
-    annotations:
-      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
-      service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
-      service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*"
-      service.beta.kubernetes.io/aws-load-balancer-type: nlb
-  config:
-    use-proxy-protocol: "true"
-```
-
-**notice: you may eventually have to manually enable the proxy protocol v2 on the target groups from the console or with AWS CLi**
+Based on your needs and cluster usage, you are free to use the `ClusterIsser` or `Issuer`,
+whichever is the most suitable.
