@@ -1,23 +1,28 @@
 import { IncomingMessage } from 'http';
 import { AuthenticationError } from 'apollo-server';
 import { EJSON, Document } from 'bson';
-import { omit } from 'lodash/fp';
+import cookie from 'cookie';
+import { omit, getOr } from 'lodash/fp';
 import { ObjectId } from 'mongodb';
 import config from '../core/config';
-import { generateToken, consumeToken } from '../core/tokens';
+import { generateToken, consumeToken, csrfGenerator } from '../core/tokens';
 
 export type SessionData = {
     userId: ObjectId;
 };
 
 export const getSessionToken = async (data: SessionData) => {
+    const csrf = csrfGenerator();
     const rawData = EJSON.serialize(data);
 
-    return generateToken('session', rawData, config.session.lifetime);
+    return {
+        token: generateToken('session', rawData, config.session.lifetime, csrf),
+        csrf,
+    };
 };
 
-export const readSessionToken = async (token: string): Promise<SessionData> => {
-    const rawData = await consumeToken<Document>('session', token);
+export const readSessionToken = async (token: string, csrf: string): Promise<SessionData> => {
+    const rawData = await consumeToken<Document>('session', token, csrf);
     const data = EJSON.deserialize(rawData) as SessionData & { iat: number; exp: number };
 
     return omit(['iat', 'exp'], data);
@@ -41,7 +46,10 @@ export const getSessionDataFromRequest = async (req: IncomingMessage): Promise<S
     }
 
     try {
-        return await readSessionToken(token);
+        const requestCookie = req.headers?.cookie;
+        const csrf: string = requestCookie ? getOr('', 'CSRF', cookie.parse(requestCookie)) : '';
+
+        return await readSessionToken(token, csrf);
     } catch (error) {
         // print the error
         console.error(error);

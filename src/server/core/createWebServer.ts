@@ -4,7 +4,7 @@ import * as Sentry from '@sentry/node';
 import { ApolloServer, ApolloServerExpressConfig } from 'apollo-server-express';
 import compression from 'compression';
 import cors from 'cors';
-import express, { Express, Handler, Request } from 'express';
+import express, { Express, Handler, Request, Response } from 'express';
 import { execute, subscribe } from 'graphql';
 import { graphqlUploadExpress } from 'graphql-upload';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
@@ -65,7 +65,7 @@ const createWebServer = async (): Promise<WebServerCreation> => {
         schema,
 
         // provide a custom context
-        context: ({ req }: { req: Request }): Promise<Context> => createContext(req),
+        context: ({ req, res }: { req: Request; res: Response }): Promise<Context> => createContext(req, res),
 
         // provide a custom root document
         rootValue: (): RootDocument => null,
@@ -109,7 +109,7 @@ const createWebServer = async (): Promise<WebServerCreation> => {
     // apply cors
     expressServer.use(
         cors((req, callback) => {
-            // in production we expect the application to be served behind a reverse proxy such as the ingress controller
+            // in production we expect the app to be served behind a reverse proxy such as the ingress controller
             // if so we rely on those information which are trust worthy as those are defined by the proxy itself
             const host = req.header('X-Forwarded-Host');
             const scheme = req.header('X-Forwarded-Scheme') || 'https';
@@ -130,7 +130,7 @@ const createWebServer = async (): Promise<WebServerCreation> => {
         '/graphql',
         protectGraphQLEndpoint,
         graphqlUploadExpress(),
-        apolloServer.getMiddleware({ bodyParserConfig: { limit: '50mb' }, path: '/' })
+        apolloServer.getMiddleware({ bodyParserConfig: { limit: '50mb' }, path: '/', cors: false })
     );
 
     // otherwise fallback on the application
@@ -161,7 +161,8 @@ const createWebServer = async (): Promise<WebServerCreation> => {
             subscribe,
 
             // provide a custom context
-            onConnect: (connectionParams, webSocket, context): Promise<Context> => createContext(context.request),
+            onConnect: (connectionParams, webSocket, context): Promise<Context> =>
+                createContext(context.request, context.response),
 
             // provide a custom root document
             rootValue: (): RootDocument => null,

@@ -30,8 +30,8 @@ const createApolloClient = (
     // otherwise use the batch http link
     const httpLink = ApolloLink.split(
         operation => extractFiles(operation).files.size > 0,
-        createUploadLink({ uri: '/graphql' }),
-        new HttpLink({ uri: '/graphql' })
+        createUploadLink({ uri: '/graphql', credentials: 'include' }),
+        new HttpLink({ uri: '/graphql', credentials: 'include' })
     );
 
     // websocket link

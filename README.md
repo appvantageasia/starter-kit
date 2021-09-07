@@ -36,7 +36,7 @@ List of features embedded with this SK
 | Code Generation based on GraphQL schema           | Docker Compose for local development | Unit testing (jest, code coverage)                |
 | Server Side Rendering support                     | Prometheus Metrics                   | Functional testing (Cypress with video recording) |
 | Fully configurable over environment variables     | Guidelines for k8s setup             | Typescript checks                                 |
-| Sentry implementation & tracking                  | DSN support for static assets        | Eslint/Prettier checks                            |
+| Sentry implementation & tracking                  | CDN support for static assets        | ESlint/Prettier checks                            |
 | Asynchronous worker & scheduler (bull)            |                                      | Commit messages checks                            |
 | Hot reload on the whole stack                     |                                      | Build check (reporting on bundle)                 |
 | Cache server (redis)                              |                                      | Docker build & push                               |
@@ -48,6 +48,10 @@ List of features embedded with this SK
 | DataLoader for GraphQL resolvers                  |                                      |                                                   |
 | Object Storage support                            |                                      |                                                   |
 | I18n module (with i18next)                        |                                      |                                                   |
+
+Security practices have been applied on this project based on experiences and feedbacks.
+However, this is only a starter-kit as an helper to boostrap your project.
+We do not hold responsibilities nor guarantee the security of your application.
 
 ## The Appvantage distinction
 

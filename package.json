@@ -165,6 +165,7 @@
         "chalk": "^4.1.0",
         "commander": "^8.0.0",
         "compression": "^1.7.4",
+        "cookie": "^0.4.1",
         "cors": "^2.8.5",
         "dataloader": "^2.0.0",
         "dayjs": "^1.10.6",

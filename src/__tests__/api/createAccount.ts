@@ -27,7 +27,7 @@ beforeEach(composeHandlers(setupDatabase, loadFixtures(fixtures), webService.ini
 afterEach(composeHandlers(cleanDatabase, webService.cleanUp));
 
 test('Create account rejects weak passwords', async () => {
-    const client = getApolloClient(webService.url);
+    const { client } = getApolloClient(webService.url);
     const variables = { username: 'x', password: 'y' };
     const promise = client.mutate({ mutation, variables });
     await expect(promise).rejects.toBeInstanceOf(ApolloError);
@@ -36,7 +36,7 @@ test('Create account rejects weak passwords', async () => {
 });
 
 test('Create account rejects on duplicate username', async () => {
-    const client = getApolloClient(webService.url);
+    const { client } = getApolloClient(webService.url);
     const variables = { username: 'x', password: 'super0923582357word' };
     const promise = client.mutate({ mutation, variables });
     await expect(promise).rejects.toBeInstanceOf(ApolloError);
@@ -45,7 +45,7 @@ test('Create account rejects on duplicate username', async () => {
 });
 
 test('Create account successfully create a new user on valid inputs', async () => {
-    const client = getApolloClient(webService.url);
+    const { client } = getApolloClient(webService.url);
     const variables = { username: 'newUser', password: 'super0923582357word' };
     const { data } = await client.mutate({ mutation, variables });
     const userId = new ObjectId(data.createAccount.id);

@@ -8,7 +8,7 @@ import { GraphQLMutationResolvers } from '../definitions';
 const mutation: GraphQLMutationResolvers['authenticate'] = async (
     root,
     { username, password },
-    { getTranslations, ip }
+    { getTranslations, ip, setCSRF }
 ) => {
     const { t } = await getTranslations(['errors']);
 
@@ -45,7 +45,10 @@ const mutation: GraphQLMutationResolvers['authenticate'] = async (
         return reject();
     }
 
-    const token = await getSessionToken({ userId: user._id });
+    const { token, csrf } = await getSessionToken({ userId: user._id });
+
+    // update cookies
+    setCSRF(csrf);
 
     return { user, token };
 };

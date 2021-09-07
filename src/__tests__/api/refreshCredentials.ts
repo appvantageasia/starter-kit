@@ -24,7 +24,7 @@ beforeEach(composeHandlers(setupDatabase, loadFixtures(fixtures), webService.ini
 afterEach(composeHandlers(cleanDatabase, webService.cleanUp));
 
 test('Refresh credentials requires authorizations', async () => {
-    const client = getApolloClient(webService.url);
+    const { client } = getApolloClient(webService.url);
     const promise = client.mutate({ mutation });
     await expect(promise).rejects.toBeInstanceOf(ApolloError);
     const error: ApolloError = await promise.catch(error => error);
@@ -33,9 +33,9 @@ test('Refresh credentials requires authorizations', async () => {
 
 test('Refresh credentials returns a new token with the same payload', async () => {
     const originalData: SessionData = { userId: new ObjectId('601f7ae763d6cfc2554f6b67') };
-    const originalToken = await getSessionToken(originalData);
-    const client = getApolloClient(webService.url, { authorizationToken: originalToken });
+    const { token: originalToken, csrf } = await getSessionToken(originalData);
+    const { client, getCSRF } = getApolloClient(webService.url, { authorizationToken: originalToken, csrf });
     const response = await client.mutate({ mutation });
-    const sessionData = await readSessionToken(response.data.refreshCredentials);
+    const sessionData = await readSessionToken(response.data.refreshCredentials, getCSRF());
     expect(sessionData.userId.toHexString()).toStrictEqual(originalData.userId.toHexString());
 });

@@ -1,6 +1,8 @@
-import { IncomingMessage } from 'http';
+import { IncomingMessage, OutgoingMessage } from 'http';
+import cookie from 'cookie';
 import { GraphQLFieldResolver } from 'graphql';
 import { FileUpload } from 'graphql-upload';
+import config from '../core/config';
 import { getLanguage, getLazyTranslations, GetTranslations } from '../core/translations';
 import createLoaders, { Loaders } from '../loaders';
 import { getSessionDataFromRequest, SessionData } from './session';
@@ -13,6 +15,7 @@ export type Context = {
     session: SessionData | null;
     getUser: GetLoggedUser;
     loaders: Loaders;
+    setCSRF: (value: string) => void;
 };
 
 export type FileUploadPromise = Promise<FileUpload>;
@@ -24,7 +27,7 @@ export type RootResolver<TArgs = { [argName: string]: any }> = GraphQLFieldResol
 const getIp = (req: IncomingMessage): string | undefined =>
     (req.headers['x-forwarded-for'] as string) || req.socket.remoteAddress;
 
-const createContext = async (req: IncomingMessage): Promise<Context> => {
+const createContext = async (req: IncomingMessage, res: OutgoingMessage): Promise<Context> => {
     const session = await getSessionDataFromRequest(req);
     const language = getLanguage(req);
 
@@ -35,6 +38,16 @@ const createContext = async (req: IncomingMessage): Promise<Context> => {
         getTranslations: getLazyTranslations(language),
         getUser: getLazyLoggedUser(session?.userId),
         loaders: createLoaders(),
+        setCSRF: value => {
+            res.setHeader(
+                'Set-Cookie',
+                cookie.serialize('CSRF', value, {
+                    sameSite: 'strict',
+                    httpOnly: true,
+                    secure: config.secureCookie,
+                })
+            );
+        },
     };
 };
 

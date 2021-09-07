@@ -38,7 +38,7 @@ const execute = async (req: Request, res: Response): Promise<void> => {
         };
 
         // create graphql context
-        const graphqlContext = await createContext(req);
+        const graphqlContext = await createContext(req, res);
 
         const { i18n } = await createI18Instance(currentLocale);
 
