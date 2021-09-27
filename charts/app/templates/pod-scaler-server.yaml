@@ -22,5 +22,5 @@ spec:
         name: cpu
         target:
           averageValue: 500m
-  {{-end }}
+  {{- end }}
 {{- end }}

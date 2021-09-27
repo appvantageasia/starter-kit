@@ -120,8 +120,11 @@ redis:
     # no password
     usePassword: false
 
-    cluster:
-        # no cluster, standalone only
+    # architecture type
+    architecture: standalone
+
+    auth:
+        # no password/authentication
         enabled: false
 
 # MongoDB settings
