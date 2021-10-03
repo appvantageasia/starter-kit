@@ -6740,11 +6740,6 @@ fd-slicer@~1.1.0:
   dependencies:
     pend "~1.2.0"
 
-fetch-blob@2.1.2:
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/fetch-blob/-/fetch-blob-2.1.2.tgz#a7805db1361bd44c1ef62bb57fb5fe8ea173ef3c"
-  integrity sha512-YKqtUDwqLyfyMnmbw8XD6Q8j9i/HggKtPEI+pZ1+8bvheBu78biSmNaXWusx1TauGqtUUGx/cBb1mKdq2rLYow==
-
 fetch-blob@^3.0.0:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/fetch-blob/-/fetch-blob-3.1.2.tgz#6bc438675f3851ecea51758ac91f6a1cd1bacabd"
@@ -6915,11 +6910,6 @@ fork-ts-checker-webpack-plugin@4.1.6:
     tapable "^1.0.0"
     worker-rpc "^0.1.0"
 
-form-data-encoder@1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/form-data-encoder/-/form-data-encoder-1.4.0.tgz#41ce230b45a923543ffbf521d42170e026f6a09a"
-  integrity sha512-H54s9sqy0YkwaTtiPjce9GmmpVCuM9gu09lx4hkEBna2zmEBwVUz8XCpoIC2lhTuM9grpNgUc4AiBXScDffMOQ==
-
 form-data-encoder@^1.0.0:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/form-data-encoder/-/form-data-encoder-1.4.1.tgz#4cda5f893426f2cb5f3c730b83984d181403e866"
@@ -6952,14 +6942,13 @@ form-data@~2.3.2:
     combined-stream "^1.0.6"
     mime-types "^2.1.12"
 
-formdata-node@^3.5.2:
-  version "3.6.3"
-  resolved "https://registry.yarnpkg.com/formdata-node/-/formdata-node-3.6.3.tgz#d074cc048a347dd5bceb2448ec8aaf65f3636bb4"
-  integrity sha512-1kuwXsWIgTV9k5hL6i2cW5KOuQqmbkOMqYMw2XB+WRKBVq/RFMJvu/8qc3fjPFcBImBIGkSwIJim1JbAZVOFuQ==
+formdata-node@^4.2.4:
+  version "4.2.4"
+  resolved "https://registry.yarnpkg.com/formdata-node/-/formdata-node-4.2.4.tgz#864e91b3be93aafedf6f3514ae0d641a9241c471"
+  integrity sha512-18A6RPKZ88/vL5jkn/kMSVD7/qq5Pv+IO81DO1dXM6Ae8Y3lsRTsHzHTEx6dp5j0Lze4LwF1Rg+SWBlrq10I/A==
   dependencies:
-    fetch-blob "2.1.2"
-    form-data-encoder "1.4.0"
     node-domexception "1.0.0"
+    web-streams-polyfill "4.0.0-beta.1"
 
 forwarded@0.2.0:
   version "0.2.0"
@@ -14882,6 +14871,11 @@ web-resource-inliner@^5.0.0:
     mime "^2.4.6"
     node-fetch "^2.6.0"
     valid-data-url "^3.0.0"
+
+web-streams-polyfill@4.0.0-beta.1:
+  version "4.0.0-beta.1"
+  resolved "https://registry.yarnpkg.com/web-streams-polyfill/-/web-streams-polyfill-4.0.0-beta.1.tgz#3b19b9817374b7cee06d374ba7eeb3aeb80e8c95"
+  integrity sha512-3ux37gEX670UUphBF9AMCq8XM6iQ8Ac6A+DSRRjDoRBm1ufCkaCDdNVbaqq60PsEkdNlLKrGtv/YBP4EJXqNtQ==
 
 web-streams-polyfill@^3.0.3:
   version "3.1.0"
