@@ -185,7 +185,7 @@
         "mjml": "^4.9.3",
         "mjml-react": "^2.0.0",
         "mongodb": "^4.0.0",
-        "nanoid": "^3.1.23",
+        "nanoid": "^3.1.30",
         "node-fetch": "^2.6.1",
         "nodemailer": "^6.5.0",
         "prom-client": "^13.1.0",
