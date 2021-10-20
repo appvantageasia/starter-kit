@@ -30,7 +30,10 @@ export const uploadFile = async (
     const objectName = path.join(dirName, `${fileId}${ext}`);
 
     // upload it at first
-    const etag = await minioClient.putObject(bucket, objectName, stream, { ...metadata, _id: fileId.toHexString() });
+    const { etag } = await minioClient.putObject(bucket, objectName, stream, {
+        ...metadata,
+        _id: fileId.toHexString(),
+    });
 
     // get stats from it
     const stats = await minioClient.statObject(bucket, objectName);

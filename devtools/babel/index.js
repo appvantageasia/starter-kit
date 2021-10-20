@@ -116,6 +116,7 @@ module.exports = (api, options = {}) => {
             // Always compile numeric separator because the resulting number is
             // smaller.
             require.resolve('@babel/plugin-proposal-numeric-separator'),
+            require.resolve('@babel/plugin-transform-modules-commonjs'),
         ].filter(Boolean),
     };
 };

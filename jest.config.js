@@ -11,7 +11,6 @@ module.exports = {
     setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
 
     transformIgnorePatterns: ['<rootDir>/node_modules/'],
-
     transform: {
         '\\.graphql$': 'jest-transform-graphql',
         '^.+\\.(js|jsx|ts|tsx)$': '<rootDir>/node_modules/babel-jest',
