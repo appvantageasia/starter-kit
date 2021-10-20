@@ -139,6 +139,10 @@ redis:
 mongodb:
     enabled: false
 
+    # image to use
+    image:
+        tag: 5.0.3-debian-10-r19
+
     # architecture type
     architecture: standalone
 

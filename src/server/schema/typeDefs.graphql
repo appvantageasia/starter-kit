@@ -6,80 +6,80 @@ schema {
 
 type AuthenticationSuccessful {
     """
-    User authenticated
-    """
-    user: User!
-    """
     Json Web Token
     """
     token: String!
+    """
+    User authenticated
+    """
+    user: User!
 }
 
 scalar DateTime
 
 type Mutation {
     """
+    Validate credentials (username/password) and return a Json Web Token
+    """
+    authenticate(password: String!, username: String!): AuthenticationSuccessful!
+    """
     Create a new account/user
     """
-    createAccount(username: String!, password: String!): User!
-    """
-    Update the display name for the logged in user
-
-    Authentication is required
-    """
-    updateDisplayName(displayName: String!): User!
+    createAccount(password: String!, username: String!): User!
     """
     Create a new topic
 
     Authentication is required
     """
-    createTopic(title: String!, body: String!, attachments: [Upload!]): Topic!
+    createTopic(attachments: [Upload!], body: String!, title: String!): Topic!
     """
     Post a message on a new topicd
 
     Authentication is required
     """
-    postMessage(topicId: ObjectID!, body: String!): Topic!
-    """
-    Validate credentials (username/password) and return a Json Web Token
-    """
-    authenticate(username: String!, password: String!): AuthenticationSuccessful!
+    postMessage(body: String!, topicId: ObjectID!): Topic!
     """
     Take the Json Web Token (JWT) from headers and returns a new one with a renewed lifetime
 
     Authentication is required
     """
     refreshCredentials: String!
+    """
+    Update the display name for the logged in user
+
+    Authentication is required
+    """
+    updateDisplayName(displayName: String!): User!
 }
 
 scalar ObjectID
 
 input Pagination {
     """
-    Offset to apply when fetching a list
-    """
-    offset: Int!
-    """
     Number of items to fetch from a list
     """
     limit: Int!
+    """
+    Offset to apply when fetching a list
+    """
+    offset: Int!
 }
 
 type Query {
+    """
+    Fetch user document for the logged in user, returns null otherwise for anonymous
+    """
+    account: User
+    """
+    Fetch a topic by its ID
+    """
+    topic(id: ObjectID!): Topic
     """
     List topics
 
     If not sorting is provided, topics are sorted by descending update date
     """
     topics(pagination: Pagination, sorting: TopicSorting): [Topic!]!
-    """
-    Fetch a topic by its ID
-    """
-    topic(id: ObjectID!): Topic
-    """
-    Fetch user document for the logged in user, returns null otherwise for anonymous
-    """
-    account: User
 }
 
 enum SortingOrder {
@@ -92,9 +92,10 @@ type Subscription {
 }
 
 type Topic {
-    id: ObjectID
-    title: String!
+    author: User!
     body: String!
+    createdAt: DateTime!
+    id: ObjectID
     """
     list of messages posted on the topic
     """
@@ -103,16 +104,15 @@ type Topic {
     Counting how many messages are posted on this topic
     """
     messagesCount: Int!
-    author: User!
-    createdAt: DateTime!
+    title: String!
     updatedAt: DateTime!
 }
 
 type TopicMessage {
-    id: ObjectID
-    body: String!
     author: User!
+    body: String!
     createdAt: DateTime!
+    id: ObjectID
 }
 
 input TopicSorting {
@@ -128,14 +128,14 @@ enum TopicSortingField {
 scalar Upload
 
 type User {
-    id: ObjectID!
-    username: String!
     """
     Public displayed on interfaces
     """
     displayName: String!
+    id: ObjectID!
     """
     List of topic authored by the user
     """
     topics: Topic!
+    username: String!
 }

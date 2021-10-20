@@ -21,22 +21,18 @@ export type Scalars = {
 
 export type AuthenticationSuccessful = {
     __typename?: 'AuthenticationSuccessful';
-    /** User authenticated */
-    user: User;
     /** Json Web Token */
     token: Scalars['String'];
+    /** User authenticated */
+    user: User;
 };
 
 export type Mutation = {
     __typename?: 'Mutation';
+    /** Validate credentials (username/password) and return a Json Web Token */
+    authenticate: AuthenticationSuccessful;
     /** Create a new account/user */
     createAccount: User;
-    /**
-     * Update the display name for the logged in user
-     *
-     * Authentication is required
-     */
-    updateDisplayName: User;
     /**
      * Create a new topic
      *
@@ -49,69 +45,73 @@ export type Mutation = {
      * Authentication is required
      */
     postMessage: Topic;
-    /** Validate credentials (username/password) and return a Json Web Token */
-    authenticate: AuthenticationSuccessful;
     /**
      * Take the Json Web Token (JWT) from headers and returns a new one with a renewed lifetime
      *
      * Authentication is required
      */
     refreshCredentials: Scalars['String'];
+    /**
+     * Update the display name for the logged in user
+     *
+     * Authentication is required
+     */
+    updateDisplayName: User;
+};
+
+export type MutationAuthenticateArgs = {
+    password: Scalars['String'];
+    username: Scalars['String'];
 };
 
 export type MutationCreateAccountArgs = {
-    username: Scalars['String'];
     password: Scalars['String'];
+    username: Scalars['String'];
+};
+
+export type MutationCreateTopicArgs = {
+    attachments?: Maybe<Array<Scalars['Upload']>>;
+    body: Scalars['String'];
+    title: Scalars['String'];
+};
+
+export type MutationPostMessageArgs = {
+    body: Scalars['String'];
+    topicId: Scalars['ObjectID'];
 };
 
 export type MutationUpdateDisplayNameArgs = {
     displayName: Scalars['String'];
 };
 
-export type MutationCreateTopicArgs = {
-    title: Scalars['String'];
-    body: Scalars['String'];
-    attachments?: Maybe<Array<Scalars['Upload']>>;
-};
-
-export type MutationPostMessageArgs = {
-    topicId: Scalars['ObjectID'];
-    body: Scalars['String'];
-};
-
-export type MutationAuthenticateArgs = {
-    username: Scalars['String'];
-    password: Scalars['String'];
-};
-
 export type Pagination = {
-    /** Offset to apply when fetching a list */
-    offset: Scalars['Int'];
     /** Number of items to fetch from a list */
     limit: Scalars['Int'];
+    /** Offset to apply when fetching a list */
+    offset: Scalars['Int'];
 };
 
 export type Query = {
     __typename?: 'Query';
+    /** Fetch user document for the logged in user, returns null otherwise for anonymous */
+    account?: Maybe<User>;
+    /** Fetch a topic by its ID */
+    topic?: Maybe<Topic>;
     /**
      * List topics
      *
      * If not sorting is provided, topics are sorted by descending update date
      */
     topics: Array<Topic>;
-    /** Fetch a topic by its ID */
-    topic?: Maybe<Topic>;
-    /** Fetch user document for the logged in user, returns null otherwise for anonymous */
-    account?: Maybe<User>;
+};
+
+export type QueryTopicArgs = {
+    id: Scalars['ObjectID'];
 };
 
 export type QueryTopicsArgs = {
     pagination?: Maybe<Pagination>;
     sorting?: Maybe<TopicSorting>;
-};
-
-export type QueryTopicArgs = {
-    id: Scalars['ObjectID'];
 };
 
 export enum SortingOrder {
@@ -130,24 +130,24 @@ export type SubscriptionTopicUpdatedArgs = {
 
 export type Topic = {
     __typename?: 'Topic';
-    id?: Maybe<Scalars['ObjectID']>;
-    title: Scalars['String'];
+    author: User;
     body: Scalars['String'];
+    createdAt: Scalars['DateTime'];
+    id?: Maybe<Scalars['ObjectID']>;
     /** list of messages posted on the topic */
     messages: Array<TopicMessage>;
     /** Counting how many messages are posted on this topic */
     messagesCount: Scalars['Int'];
-    author: User;
-    createdAt: Scalars['DateTime'];
+    title: Scalars['String'];
     updatedAt: Scalars['DateTime'];
 };
 
 export type TopicMessage = {
     __typename?: 'TopicMessage';
-    id?: Maybe<Scalars['ObjectID']>;
-    body: Scalars['String'];
     author: User;
+    body: Scalars['String'];
     createdAt: Scalars['DateTime'];
+    id?: Maybe<Scalars['ObjectID']>;
 };
 
 export type TopicSorting = {
@@ -162,17 +162,17 @@ export enum TopicSortingField {
 
 export type User = {
     __typename?: 'User';
-    id: Scalars['ObjectID'];
-    username: Scalars['String'];
     /** Public displayed on interfaces */
     displayName: Scalars['String'];
+    id: Scalars['ObjectID'];
     /** List of topic authored by the user */
     topics: Topic;
+    username: Scalars['String'];
 };
 
 export type TopicPreviewDataFragment = {
     __typename?: 'Topic';
-    id?: Maybe<string>;
+    id?: string | null | undefined;
     title: string;
     messagesCount: number;
     author: { __typename?: 'User'; id: string; displayName: string };
@@ -180,19 +180,19 @@ export type TopicPreviewDataFragment = {
 
 export type TopicMessageDataFragment = {
     __typename?: 'TopicMessage';
-    id?: Maybe<string>;
+    id?: string | null | undefined;
     body: string;
     author: { __typename?: 'User'; id: string; displayName: string };
 };
 
 export type TopicFullDataFragment = {
     __typename?: 'Topic';
-    id?: Maybe<string>;
+    id?: string | null | undefined;
     title: string;
     body: string;
     messages: Array<{
         __typename?: 'TopicMessage';
-        id?: Maybe<string>;
+        id?: string | null | undefined;
         body: string;
         author: { __typename?: 'User'; id: string; displayName: string };
     }>;
@@ -208,7 +208,7 @@ export type GetTopicsQuery = {
     __typename?: 'Query';
     topics: Array<{
         __typename?: 'Topic';
-        id?: Maybe<string>;
+        id?: string | null | undefined;
         title: string;
         messagesCount: number;
         author: { __typename?: 'User'; id: string; displayName: string };
@@ -221,19 +221,22 @@ export type GetTopicQueryVariables = Exact<{
 
 export type GetTopicQuery = {
     __typename?: 'Query';
-    topic?: Maybe<{
-        __typename?: 'Topic';
-        id?: Maybe<string>;
-        title: string;
-        body: string;
-        messages: Array<{
-            __typename?: 'TopicMessage';
-            id?: Maybe<string>;
-            body: string;
-            author: { __typename?: 'User'; id: string; displayName: string };
-        }>;
-        author: { __typename?: 'User'; id: string; displayName: string };
-    }>;
+    topic?:
+        | {
+              __typename?: 'Topic';
+              id?: string | null | undefined;
+              title: string;
+              body: string;
+              messages: Array<{
+                  __typename?: 'TopicMessage';
+                  id?: string | null | undefined;
+                  body: string;
+                  author: { __typename?: 'User'; id: string; displayName: string };
+              }>;
+              author: { __typename?: 'User'; id: string; displayName: string };
+          }
+        | null
+        | undefined;
 };
 
 export type CreateTopicMutationVariables = Exact<{
@@ -245,12 +248,12 @@ export type CreateTopicMutation = {
     __typename?: 'Mutation';
     createTopic: {
         __typename?: 'Topic';
-        id?: Maybe<string>;
+        id?: string | null | undefined;
         title: string;
         body: string;
         messages: Array<{
             __typename?: 'TopicMessage';
-            id?: Maybe<string>;
+            id?: string | null | undefined;
             body: string;
             author: { __typename?: 'User'; id: string; displayName: string };
         }>;
@@ -267,12 +270,12 @@ export type PostMessageMutation = {
     __typename?: 'Mutation';
     postMessage: {
         __typename?: 'Topic';
-        id?: Maybe<string>;
+        id?: string | null | undefined;
         title: string;
         body: string;
         messages: Array<{
             __typename?: 'TopicMessage';
-            id?: Maybe<string>;
+            id?: string | null | undefined;
             body: string;
             author: { __typename?: 'User'; id: string; displayName: string };
         }>;
@@ -286,7 +289,7 @@ export type OnTopicUpdatesSubscriptionVariables = Exact<{
 
 export type OnTopicUpdatesSubscription = {
     __typename?: 'Subscription';
-    topicUpdated: { __typename?: 'Topic'; id?: Maybe<string> };
+    topicUpdated: { __typename?: 'Topic'; id?: string | null | undefined };
 };
 
 export type UserPreviewDataFragment = { __typename?: 'User'; id: string; displayName: string };

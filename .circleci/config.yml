@@ -3,10 +3,10 @@ version: 2.1
 executors:
     node-standalone:
         docker:
-            - image: circleci/node:16.4.2
+            - image: circleci/node:16.10.0
     node-with-dependencies:
         docker:
-            - image: circleci/node:16.4.2
+            - image: circleci/node:16.10.0
               environment:
                   APP_DB_URI: mongodb://root:password@127.0.0.1:27017
                   APP_SESSION_SECRET: localSecret
@@ -17,7 +17,7 @@ executors:
                   APP_STORAGE_ACCESS_KEY: 'AKIAIOSFODNN7EXAMPLE'
                   APP_STORAGE_SECRET_KEY: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
                   APP_HTML2PDF_ENDPOINT: 'http://html2pdf:3000/'
-            - image: circleci/mongo:5.0.1
+            - image: circleci/mongo:5.0.3
               environment:
                   MONGO_INITDB_ROOT_USERNAME: root
                   MONGO_INITDB_ROOT_PASSWORD: password
