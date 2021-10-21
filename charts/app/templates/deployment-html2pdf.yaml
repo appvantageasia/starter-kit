@@ -18,10 +18,13 @@ spec:
         {{- $selectorLabels | nindent 8 }}
         app.kubernetes.io/component: html2pdf
     spec:
+      {{- if .Values.html2pdf.image.pullSecret }}
+      imagePullSecrets: {{ .Values.html2pdf.image.pullSecret }}
+      {{- end }}
       containers:
         - name: html2pdf
-          image: "{{ .Values.html2pdf.image }}"
-          imagePullPolicy: {{ .Values.html2pdf.imagePullPolicy }}
+          image: {{ include "app.image" .Values.html2pdf.image }}
+          imagePullPolicy: {{ .Values.html2pdf.image.pullPolicy }}
           ports:
             - name: http
               containerPort: 3000

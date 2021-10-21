@@ -1,13 +1,20 @@
 # Application settings
 app:
-    # docker image (including tag)
-    image: ''
+    image:
+        registry: ''
+        repository: ''
+        pullPolicy: IfNotPresent
+        tag: 'latest'
+        pullSecret: []
 
-    # image pull secrets
-    imagePullSecrets: []
-
-    # image pull policy
-    imagePullPolicy: IfNotPresent
+    serviceAccount:
+        # Specifies whether a service account should be created
+        create: true
+        # Annotations to add to the service account
+        annotations: { }
+        # The name of the service account to use.
+        # If not set and create is true, a name is generated using the fullname template
+        name: ""
 
     # pods specs
     pods:
@@ -20,6 +27,11 @@ app:
         ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
         ##
         workerAnnotations: {}
+
+        # extra environment configuration
+        extraEnvs: []
+        # - secretRef:
+        #     name: my-secret
 
     ingress:
         annotations: {}
@@ -113,11 +125,12 @@ app:
 
 # html2pdf settings
 html2pdf:
-    # docker image (including tag)
-    image: 'appvantage/html2pdf-service:1.2.1'
-
-    # image pull policy
-    imagePullPolicy: IfNotPresent
+    image:
+        registry: 'docker.io'
+        repository: 'appvantage/html2pdf-service'
+        pullPolicy: IfNotPresent
+        tag: '1.2.1'
+        pullSecret: []
 
     # pod scaler
     podScaler:

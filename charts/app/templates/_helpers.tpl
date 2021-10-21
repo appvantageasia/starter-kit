@@ -33,3 +33,21 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- define "app.deploymentReplicas" -}}
 {{ if .enabled }}{{ .minReplicas }}{{ else }}1{{ end }}
 {{- end }}
+
+{{/* Generate image based on settings */}}
+{{- define "app.image" -}}
+{{- if .registry }}
+{{- printf "%s/%s:%s" .registry .repository .tag -}}
+{{- else -}}
+{{- printf "%s:%s" .repository .tag -}}
+{{- end -}}
+{{- end -}}
+
+{{/* Create the name of the service account to use */}}
+{{- define "app.serviceAccountName" -}}
+{{- if .Values.app.serviceAccount.create }}
+{{- default .Release.Name .Values.app.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.app.serviceAccount.name }}
+{{- end }}
+{{- end }}

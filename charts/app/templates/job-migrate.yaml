@@ -13,19 +13,23 @@ metadata:
 spec:
   template:
     spec:
-      {{- if .Values.app.imagePullSecrets }}
-      imagePullSecrets: {{ .Values.app.imagePullSecrets }}
+      {{- if .Values.app.image.pullSecret }}
+      imagePullSecrets: {{ .Values.app.image.pullSecret }}
       {{- end }}
+      serviceAccountName: {{ include "app.serviceAccountName" . }}
       containers:
         - name: "{{ .Release.Name }}-migrate"
-          image: "{{ .Values.app.image }}"
+          image: {{ include "app.image" .Values.app.image }}
           command: ["dumb-init", "node", "server.js", "migrate"]
-          imagePullPolicy: {{ .Values.app.imagePullPolicy }}
+          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
           envFrom:
             - configMapRef:
                 name: "{{ .Release.Name }}-app-configmap"
             - secretRef:
                 name: "{{ .Release.Name }}-app-secrets"
+            {{- with .Values.app.pods.extraEnvs }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
       restartPolicy: OnFailure
       {{- with .Values.affinity }}
       affinity:

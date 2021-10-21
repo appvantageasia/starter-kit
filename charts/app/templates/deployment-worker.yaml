@@ -22,19 +22,23 @@ spec:
         {{- toYaml .Values.app.pods.workerAnnotations | nindent 8 }}
       {{- end }}
     spec:
-      {{- if .Values.app.imagePullSecrets }}
-      imagePullSecrets: {{ .Values.app.imagePullSecrets }}
+      {{- if .Values.app.image.pullSecret }}
+      imagePullSecrets: {{ .Values.app.image.pullSecret }}
       {{- end }}
+      serviceAccountName: {{ include "app.serviceAccountName" . }}
       containers:
         - name: server
-          image: "{{ .Values.app.image }}"
-          imagePullPolicy: {{ .Values.app.imagePullPolicy }}
+          image: {{ include "app.image" .Values.app.image }}
+          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
           command: ["dumb-init", "node", "server.js", "worker"]
           envFrom:
             - configMapRef:
                 name: "{{ .Release.Name }}-app-configmap"
             - secretRef:
                 name: "{{ .Release.Name }}-app-secrets"
+            {{- with .Values.app.pods.extraEnvs }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
       {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}

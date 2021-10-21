@@ -196,7 +196,7 @@ jobs:
                   namespace: << parameters.namespace >>
                   release-name: << parameters.release-name >>
                   helm-version: v3.4.0
-                  values-to-override: app.image=ACCOUNT_ID.dkr.ecr.ap-southeast-1.amazonaws.com/PROJECT:${CIRCLE_TAG:1},app.global.publicPath=https://CLOUDID.cloudfront.net/${CIRCLE_TAG:1}
+                  values-to-override: app.image.tag=${CIRCLE_TAG:1},app.global.publicPath=https://CLOUDID.cloudfront.net/${CIRCLE_TAG:1}
                   update-repositories: false
 ```
 
@@ -240,7 +240,7 @@ jobs:
                   namespace: << parameters.namespace >>
                   release-name: << parameters.release-name >>
                   helm-version: v3.4.0
-                  values-to-override: app.image=ACCOUNT_ID.dkr.ecr.ap-southeast-1.amazonaws.com/PROJECT:${CIRCLE_TAG:1},app.global.publicPath=https://CLOUDID.cloudfront.net/${CIRCLE_TAG:1}
+                  values-to-override: app.image.tag=${CIRCLE_TAG:1},app.global.publicPath=https://CLOUDID.cloudfront.net/${CIRCLE_TAG:1}
                   update-repositories: false
 ```
 
