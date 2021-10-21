@@ -22,11 +22,18 @@ app:
         workerAnnotations: {}
 
     ingress:
-        # hostname on which the application is served
-        hostname: ''
-
-        # annotations to apply on the ingress
         annotations: {}
+        # kubernetes.io/ingress.class: nginx
+        # kubernetes.io/tls-acme: "true"
+
+        hosts:
+            - host: app.local
+              paths: []
+
+        tls: []
+        #  - secretName: chart-example-tls
+        #    hosts:
+        #      - chart-example.local
 
     # global configuration
     global:
