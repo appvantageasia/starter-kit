@@ -42,7 +42,7 @@ const createContext = async (req: IncomingMessage, res: OutgoingMessage): Promis
             res.setHeader(
                 'Set-Cookie',
                 cookie.serialize('CSRF', value, {
-                    sameSite: 'strict',
+                    sameSite: config.cookiePolicy,
                     httpOnly: true,
                     secure: config.secureCookie,
                 })
