@@ -33,6 +33,7 @@ app:
         publicPath: ''
         gzip: ''
         secureCookie: ''
+        cookiePolicy: ''
 
     # redis settings
     redis:

@@ -37,6 +37,7 @@ const config = {
     publicPath: getString(getPrefix('PUBLIC_PATH'), '/public/'),
 
     // secure cookies
+    cookiePolicy: getString(getPrefix('COOKIE_POLICY'), 'strict'),
     secureCookie: getBoolean(getPrefix('SECURE_COOKIE'), true),
 
     // gzip module
