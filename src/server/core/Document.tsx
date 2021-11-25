@@ -2,7 +2,6 @@ import { ReactElement } from 'react';
 import { HelmetData } from 'react-helmet';
 import { RuntimeConfig } from '../../app/runtimeConfig';
 import { attachPublicPath } from '../utils';
-import config from './config';
 
 type DocumentProps = {
     htmlAttrs?: { [prop: string]: any };
@@ -13,10 +12,21 @@ type DocumentProps = {
     jsScripts?: string[];
     cssScripts?: string[];
     runtime: RuntimeConfig;
+    locale: string;
 };
 
-const Document = ({ htmlAttrs, bodyAttrs, helmet, body, styleTags, cssScripts, jsScripts, runtime }: DocumentProps) => (
-    <html lang={config.i18n.defaultLocale} {...htmlAttrs}>
+const Document = ({
+    htmlAttrs,
+    bodyAttrs,
+    helmet,
+    body,
+    styleTags,
+    cssScripts,
+    jsScripts,
+    runtime,
+    locale,
+}: DocumentProps) => (
+    <html lang={locale} {...htmlAttrs}>
         <head>
             {helmet.title.toComponent()}
             {helmet.meta.toComponent()}

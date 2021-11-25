@@ -24,6 +24,19 @@ It's recommended to disable compression if you may delegate it to a reverse prox
 | APP_DB_NAME | String | app                           | Database Name              |
 | APP_DB_POOL | Number | 10                            | Database pool size         |
 
+## Database encryption configuration
+
+| Name                       | Type    | Default                 | Comment                                       |
+| -------------------------- | ------- | ----------------------- | --------------------------------------------- |
+| APP_CSFLE_MODE             | String  |                         | CSFLE provider (supported: aws, local)        |
+| APP_CSFLE_KEY_VAULT        | String  | encryption.\_\_keyVault | Key Vault                                     |
+| APP_CSFLE_MASTER_KEY       | String  |                         | Local path to the master key (local provider) |
+| APP_CSFLE_ACCESS_KEY       | String  |                         | AWS Access key ID                             |
+| APP_CSFLE_SECRET_KEY       | String  |                         | AWS Access secret key                         |
+| APP_DB_CRYPTD_URI          | String  |                         | MongoCryptd URI                               |
+| APP_DB_CRYPTD_BYPASS_SPAWN | Boolean | false                   | Bypass MongoCryptd Spwan                      |
+| APP_DB_CRYPTD_SPWAN_ARGS   | String  |                         | Extra arguments for MongoCryptd Spwan         |
+
 ## Redis configuration
 
 | Name          | Type   | Default                | Comment                 |

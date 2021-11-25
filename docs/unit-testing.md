@@ -98,7 +98,7 @@ test('test', async () => {
 
 ## createBlobFrom
 
-You may  upload files over GraphQL requests by using `createBlobFrom`.
+You may upload files over GraphQL requests by using `createBlobFrom`.
 
 ```typescript
 import { composeHandlers, setupWebService } from './helpers';

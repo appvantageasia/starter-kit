@@ -16,5 +16,7 @@ export const getNumber = (key: string, fallbackValue?: number) => getValue(key, 
 
 export const getBoolean = (key: string, fallbackValue?: boolean) => getValue(key, fallbackValue, toBoolean);
 
-export const getStringList = (key: string, fallbackValue?: string[]) =>
-    getValue(key, fallbackValue, value => value.split(','));
+export const getStringList = (key: string, fallbackValue?: string[], separator = ',') =>
+    getValue(key, fallbackValue, value => value.split(separator));
+
+export const getPrefix = (key: string) => `APP_${key}`;

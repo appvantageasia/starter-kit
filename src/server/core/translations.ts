@@ -2,6 +2,7 @@ import { IncomingMessage } from 'http';
 import languageParser from 'accept-language-parser';
 import { i18n, TFunction } from 'i18next';
 import createI18nInstance from '../../shared/createI18nInstance/node';
+import { getDefaultLocale } from '../database';
 import config from './config';
 
 export type I18nContext = { i18n: i18n; t: TFunction };
@@ -48,12 +49,12 @@ export const getLazyTranslations = (language: string): GetTranslations => {
     return getter;
 };
 
-export const getLanguage = (req: IncomingMessage): string => {
+export const getLanguage = (req: IncomingMessage): Promise<string> => {
     const detectedLanguage = languageParser.pick(config.i18n.locales, req.headers['accept-language']);
 
     if (detectedLanguage) {
-        return detectedLanguage;
+        return Promise.resolve(detectedLanguage);
     }
 
-    return config.i18n.defaultLocale;
+    return getDefaultLocale();
 };

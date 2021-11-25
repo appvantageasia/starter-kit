@@ -8,6 +8,7 @@ import { ServerStyleSheet } from 'styled-components';
 import App from '../../app/App';
 import { RuntimeConfig } from '../../app/runtimeConfig';
 import createI18Instance from '../../shared/createI18nInstance/node';
+import { getDefaultLocale } from '../database';
 import createContext from '../schema/context';
 import Document from './Document';
 import config from './config';
@@ -26,8 +27,8 @@ const execute = async (req: Request, res: Response): Promise<void> => {
     const sheet = new ServerStyleSheet();
 
     try {
-        // todo find  way to detect this information
-        const currentLocale = 'en';
+        // todo detect the local from the browser at first
+        const currentLocale = await getDefaultLocale();
 
         const runtime: RuntimeConfig = {
             version: config.version,
@@ -85,6 +86,7 @@ const execute = async (req: Request, res: Response): Promise<void> => {
                 cssScripts={css}
                 helmet={helmet}
                 jsScripts={js}
+                locale={currentLocale}
                 runtime={runtime}
                 styleTags={styleTags}
             />
