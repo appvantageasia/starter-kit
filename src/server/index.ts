@@ -1,5 +1,11 @@
 import { program } from 'commander';
-import { composeCommand, executeDataMigration, startServerCommand, startWorkerCommand } from './core/commands';
+import {
+    composeCommand,
+    executeDataMigration,
+    startServerCommand,
+    startWorkerCommand,
+    executeSetupMasterKey,
+} from './core/commands';
 import config, { runValidityChecks } from './core/config';
 import createWebServer from './core/createWebServer';
 import { HealthStatusManager, createHealthServer } from './core/health';
@@ -33,6 +39,8 @@ program
         createHealthServer(manager);
         composeCommand(await startServerCommand(manager), await startPrometheusServer());
     });
+
+program.command('setupMasterKey').description('Setup master key for MongoDB CSFLE').action(executeSetupMasterKey);
 
 if (process.isCLI) {
     program.parse();

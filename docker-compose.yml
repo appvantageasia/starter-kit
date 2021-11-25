@@ -23,6 +23,8 @@ services:
             - minio:/data
 
     mongo:
+        # can be replace by ghcr.io/appvantageasia/mongo-entreprise:X.X.X
+        # changes to be done in override file
         image: mongo:5.0.6
         environment:
             MONGO_INITDB_ROOT_USERNAME: root

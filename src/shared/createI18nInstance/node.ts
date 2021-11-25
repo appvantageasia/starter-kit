@@ -2,6 +2,7 @@ import path from 'path';
 import i18n, { i18n as I18n } from 'i18next';
 import i18nextFSBackend from 'i18next-fs-backend';
 import config from '../../server/core/config';
+import { getDefaultLocale } from '../../server/database';
 import defaultConfig from './defaultConfig';
 import { CreateClientReturn } from './types';
 
@@ -12,7 +13,7 @@ const localesDirectory = path.resolve(process.cwd(), './public/locales/');
 const createInstance = async () => {
     const instance = i18n.createInstance({
         ...defaultConfig,
-        lng: config.i18n.defaultLocale,
+        lng: await getDefaultLocale(),
         supportedLngs: config.i18n.locales,
 
         backend: {

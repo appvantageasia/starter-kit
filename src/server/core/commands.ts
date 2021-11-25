@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import { getDatabaseContext, migrate } from '../database';
+import setupMasterKey from '../database/setupMasterKey';
 import { setup as startWorker } from '../queues';
 import config from './config';
 import createWebServer from './createWebServer';
@@ -58,11 +59,11 @@ export const startWorkerCommand = (manager: HealthStatusManager) => {
 
 export const executeDataMigration = async (exitOnTermination = false): Promise<void> => {
     // get the database connection
-    const { db } = await getDatabaseContext();
+    const context = await getDatabaseContext();
 
     try {
         // then migrate the database
-        await migrate(db);
+        await migrate(context);
     } catch (error) {
         // print it
         console.error(error);
@@ -93,4 +94,14 @@ export const composeCommand = (...shutdowns: (() => Promise<unknown>)[]) => {
 
     process.on('SIGTERM', onExit);
     process.on('SIGINT', onExit);
+};
+
+export const executeSetupMasterKey = async () => {
+    try {
+        await setupMasterKey();
+        process.exit(0);
+    } catch (error) {
+        console.error(error);
+        process.exit(1);
+    }
 };

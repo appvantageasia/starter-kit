@@ -29,7 +29,7 @@ const getIp = (req: IncomingMessage): string | undefined =>
 
 const createContext = async (req: IncomingMessage, res: OutgoingMessage): Promise<Context> => {
     const session = await getSessionDataFromRequest(req);
-    const language = getLanguage(req);
+    const language = await getLanguage(req);
 
     return {
         ip: getIp(req),

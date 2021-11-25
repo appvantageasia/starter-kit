@@ -1,9 +1,9 @@
-import { Db } from 'mongodb';
+import { DatabaseContext } from '../instance';
 
 export default {
     identifier: '02_initialUsersIndexes',
 
-    async up(db: Db): Promise<void> {
+    async up({ regular: { db } }: DatabaseContext): Promise<void> {
         await db.collection('users').createIndex({ username: 1 }, { unique: true });
     },
 };

@@ -1,8 +1,16 @@
-# production image, copy all the files and run next
-FROM node:16.14.0-alpine3.14
+FROM node:16.14.0-buster-slim as base
 
-# add dumb-init
-RUN apk add dumb-init
+# install libmongocrypt
+# this can be removed if the projects does not target a support for CSFLE
+RUN apt-get update  \
+    && apt-get install --no-install-recommends -y curl gnupg ca-certificates apt-transport-https dumb-init \
+    && curl -L https://www.mongodb.org/static/pgp/libmongocrypt.asc | gpg --dearmor >/etc/apt/trusted.gpg.d/libmongocrypt.gpg \
+    && echo "deb https://libmongocrypt.s3.amazonaws.com/apt/debian buster/libmongocrypt/1.0 main" | tee /etc/apt/sources.list.d/libmongocrypt.list \
+    && curl -L https://www.mongodb.org/static/pgp/server-5.0.asc | apt-key add - \
+    && echo "deb http://repo.mongodb.com/apt/debian buster/mongodb-enterprise/5.0 main" | tee /etc/apt/sources.list.d/mongodb-enterprise.list \
+    && apt-get update \
+    && apt-get install -y libmongocrypt-dev mongodb-enterprise-cryptd \
+    && rm -rf /var/lib/apt/lists/*
 
 # set production environment for node
 ENV NODE_ENV=production
@@ -13,8 +21,23 @@ WORKDIR /usr/src/app
 # copy everything we need from the builder to install dependencies
 COPY --chown=node:node package.json yarn.lock ./
 
+FROM base as dependencies
+
+# install build dependencies
+RUN apt-get update && apt-get install python3 make g++ -y
+
+# install node prune
+RUN curl -sf https://gobinaries.com/tj/node-prune | sh
+
 # install dependencies with frozen lockfile
-RUN yarn install --frozen-lockfile --production
+# then clean with node prune
+RUN yarn install --frozen-lockfile --production \
+    && node-prune
+
+FROM base
+
+# copy dependencies
+COPY --from=dependencies /usr/src/app .
 
 # copy everything else
 COPY --chown=node:node . .

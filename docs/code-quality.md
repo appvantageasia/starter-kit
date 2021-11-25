@@ -22,5 +22,3 @@ yarn tsc
 [ts]: https://www.typescriptlang.org/
 [eslint]: https://eslint.org/
 [prettier]: https://prettier.io/
-
-

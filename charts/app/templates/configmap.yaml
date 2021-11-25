@@ -14,6 +14,13 @@ data:
   {{- include "app.configValue" ( dict "Key" "APP_COOKIE_POLICY" "Value" .cookiePolicy ) }}
   {{- end }}
 
+  # database settings
+  APP_DB_CRYPTD_SPWAN_ARGS: '--pidfilepath /tmp/mongocryptd.pid'
+  {{- with .Values.app.database }}
+  {{- include "app.configValue" ( dict "Key" "APP_DB_CRYPTD_URI" "Value" .cryptdUri ) }}
+  {{- include "app.configValue" ( dict "Key" "APP_DB_CRYPTD_BYPASS_SPAWN" "Value" .cryptdBypassSpawn ) }}
+  {{- end }}
+
   # session settings
   {{- with .Values.app.session }}
   {{- include "app.configValue" ( dict "Key" "APP_SESSION_LIFETIME" "Value" .lifetime ) }}

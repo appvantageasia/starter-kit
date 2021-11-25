@@ -1,10 +1,7 @@
 import chalk from 'chalk';
 import type { SMTPSettings } from '../emails';
-import { getString, getBoolean, getInteger, getNumber, getStringList } from './env';
-
-const prefix = 'APP';
-
-const getPrefix = (key: string) => `${prefix}_${key}`;
+import { getClientSideFieldLevelEncryptionSettings } from './encryption';
+import { getString, getBoolean, getInteger, getNumber, getPrefix, getStringList } from './env';
 
 const getSmtpSettings = (): SMTPSettings => {
     const base = {
@@ -57,7 +54,6 @@ const config = {
     // internationalization
     i18n: {
         locales: ['en'],
-        defaultLocale: 'en',
     },
 
     // server runtime
@@ -65,6 +61,18 @@ const config = {
         uri: getString(getPrefix('DB_URI'), 'mongodb+srv://localhost:27017'),
         name: getString(getPrefix('DB_NAME'), 'app'),
         pool: getInteger(getPrefix('DB_POOL'), 10),
+
+        // Client Side Field Level Encryption (CSFLE)
+        // https://docs.mongodb.com/drivers/security/client-side-field-level-encryption-guide/
+        encryption: getClientSideFieldLevelEncryptionSettings(),
+
+        // mongocryptd settings
+        // only used if encryption is enabled
+        cryptd: {
+            uri: getString(getPrefix('DB_CRYPTD_URI')),
+            mongocryptdBypassSpawn: getBoolean(getPrefix('DB_CRYPTD_BYPASS_SPAWN'), false),
+            mongocryptdSpawnArgs: getStringList(getPrefix('DB_CRYPTD_SPWAN_ARGS'), [], ' '),
+        },
     },
 
     redis: {

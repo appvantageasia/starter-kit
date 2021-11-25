@@ -5,6 +5,7 @@ import ipaddr from 'ipaddr.js';
 import { getDatabaseContext } from '../database';
 import { queues } from '../queues/setup';
 import config from './config';
+import { getPubSub } from './pubSub';
 import getRedisInstance from './redis';
 
 export enum HealthStatus {
@@ -18,9 +19,18 @@ export const runHealthChecks = async () => {
     // check the main redis first
     await getRedisInstance().ping();
 
+    // check pub-sub
+    await getPubSub().getPublisher().ping();
+    await getPubSub().getSubscriber().ping();
+
     // check the mongo database
-    const { db } = await getDatabaseContext();
-    await db.command({ ping: 1 });
+    const { regular, encrypted } = await getDatabaseContext();
+    await regular.db.command({ ping: 1 });
+
+    if (regular.client !== encrypted.client) {
+        // also ping on encrypted client
+        await encrypted.db.command({ ping: 1 });
+    }
 
     // check queues are healthy
     await Promise.all(Object.values(queues).map(queue => queue.isHealthy()));

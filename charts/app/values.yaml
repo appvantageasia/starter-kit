@@ -69,6 +69,16 @@ app:
     uri: ''
     name: ''
     pool: ''
+    cryptdUri: ''
+    cryptdBypassSpawn: ''
+
+  # CSFLE settings
+  csfle:
+    mode: ''
+    keyVault: ''
+    masterKey: ''
+    accessKey: ''
+    secretKey: ''
 
   # session settings
   session:

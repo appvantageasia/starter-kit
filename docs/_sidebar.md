@@ -14,6 +14,7 @@
     -   [Caching](caching.md)
     -   [Internationalization](i18n.md)
     -   [Emails](emails.md)
+    -   [Encryption (CSFLE)](encryption.md)
 -   [Guides](guides.md)
 -   [Releasing](releasing.md)
 -   [Helm chart](helm.md)
