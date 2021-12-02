@@ -1,3 +1,4 @@
+/* eslint-disable import/no-import-module-exports */
 /// <reference types="cypress" />
 import fs from 'fs';
 import path from 'path';
