@@ -133,7 +133,13 @@ module.exports = {
         ],
         'react/require-default-props': 'off',
         'react/sort-prop-types': 'error',
-        'react-hooks/exhaustive-deps': 'warn',
+
+        'react-hooks/exhaustive-deps': [
+            'warn',
+            {
+                additionalHooks: 'useHandleError',
+            },
+        ],
 
         // no need to import React with nextjs
         'react/react-in-jsx-scope': 'off',
