@@ -14,7 +14,10 @@ export const startServerCommand = async () => {
         console.info(chalk.cyan('Server listening'));
     });
 
-    return () => new Promise(resolve => httpServer.close(resolve));
+    return () =>
+        new Promise(resolve => {
+            httpServer.close(resolve);
+        });
 };
 
 export const startWorkerCommand = () => {

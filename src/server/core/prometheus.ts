@@ -33,7 +33,6 @@ export const setupPrometheusMetrics = async (app: Express) => {
             app,
             options: {
                 labels: ['environment'],
-                accuracies: ['ms'],
                 metricPrefix: config.prometheus.prefix,
                 metricTypes: ['httpRequestsTotal', 'httpRequestsSummary', 'httpRequestsHistogram'],
                 getLabelValues: () => ({
@@ -61,7 +60,10 @@ export const startPrometheusServer = async () => {
 
     const server = await createServer({ port: config.prometheus.internalPort });
 
-    return () => new Promise(resolve => server.close(resolve));
+    return () =>
+        new Promise(resolve => {
+            server.close(resolve);
+        });
 };
 
 export const ApolloMetricsPlugin: ApolloServerExpressConfig['plugins'][0] = {

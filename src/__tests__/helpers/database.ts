@@ -14,7 +14,9 @@ export const cleanDatabase = async (): Promise<void> => {
     // drop the database
     await db.dropDatabase();
     // close database
-    await new Promise(resolve => mongoClient.close(resolve));
+    await new Promise(resolve => {
+        mongoClient.close(resolve);
+    });
     // reset mongo global store
     global.mongo = { instance: null, promise: null };
 };

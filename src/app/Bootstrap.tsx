@@ -11,6 +11,11 @@ export type BootstrapProps = {
 };
 
 class Bootstrap extends Component<BootstrapProps> {
+    private apolloClient: ApolloClient<NormalizedCacheObject>;
+
+    // eslint-disable-next-line react/static-property-placement
+    public context: { i18n: I18n };
+
     constructor(props: BootstrapProps) {
         super(props);
 
@@ -23,11 +28,6 @@ class Bootstrap extends Component<BootstrapProps> {
 
         this.apolloClient = props.createApolloClient(getContext);
     }
-
-    private apolloClient: ApolloClient<NormalizedCacheObject>;
-
-    // eslint-disable-next-line react/static-property-placement
-    public context: { i18n: I18n };
 
     render() {
         const { apolloClient } = this;
