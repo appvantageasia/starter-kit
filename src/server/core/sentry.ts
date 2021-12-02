@@ -5,7 +5,6 @@ import { Integration } from '@sentry/types';
 import { ApolloError } from 'apollo-server';
 import { ApolloServerExpressConfig } from 'apollo-server-express';
 import { Express } from 'express';
-import { APIError } from '../schema/errors';
 import config from './config';
 
 const { sentry: sentryConfig } = config;
@@ -54,7 +53,7 @@ export const ApolloSentryPlugin: ApolloServerExpressConfig['plugins'][0] = {
                 for (const error of ctx.errors) {
                     // Only report internal server errors,
                     // all errors extending ApolloError should be user-facing
-                    if (error.originalError instanceof ApolloError || error.originalError instanceof APIError) {
+                    if (error.originalError instanceof ApolloError) {
                         continue;
                     }
 
