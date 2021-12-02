@@ -1,9 +1,32 @@
 import { ApolloClient, ApolloLink, from, InMemoryCache, NormalizedCacheObject, HttpLink } from '@apollo/client';
+import { onError } from '@apollo/client/link/error';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { createUploadLink } from 'apollo-upload-client';
 import { extractFiles } from 'extract-files';
 import { i18n as I18n } from 'i18next';
+import { isObject, flow, mapValues, omit } from 'lodash/fp';
+import PubSub from 'pubsub-js';
+
+const prepareForGraphQL = (data: any): any => {
+    if (data instanceof Date) {
+        return data.toISOString();
+    }
+
+    if (Array.isArray(data)) {
+        return data.map(prepareForGraphQL);
+    }
+
+    if (data instanceof File) {
+        return data;
+    }
+
+    if (isObject(data)) {
+        return flow([omit(['__typename']), mapValues(prepareForGraphQL)])(data);
+    }
+
+    return data;
+};
 
 const createApolloClient = (
     getContext: () => { i18n: I18n; token: string | undefined }
@@ -63,9 +86,28 @@ const createApolloClient = (
         from([authLink, httpLink])
     );
 
+    // on not authenticated listener
+    const disconnectLink = onError(({ graphQLErrors }) => {
+        if (graphQLErrors) {
+            const isUnauthenticated = graphQLErrors.some(error => error.extensions.code === 'UNAUTHENTICATED');
+
+            if (isUnauthenticated) {
+                PubSub.publish('core.jwtInvalid');
+            }
+        }
+    });
+
+    // link to clean data
+    const cleanLink = new ApolloLink((operation, forward) => {
+        // eslint-disable-next-line no-param-reassign
+        operation.variables = prepareForGraphQL(operation.variables);
+
+        return forward(operation);
+    });
+
     return new ApolloClient({
         ssrMode: false,
-        link: rootLink,
+        link: from([cleanLink, disconnectLink, rootLink]),
         cache: new InMemoryCache(),
     });
 };
