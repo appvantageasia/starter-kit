@@ -100,7 +100,7 @@
         "dotenv-expand": "^5.1.0",
         "enquirer": "^2.3.6",
         "eslint": "^8.0.1",
-        "eslint-config-airbnb": "^19.0.1",
+        "eslint-config-airbnb": "^19.0.2",
         "eslint-config-prettier": "^8.1.0",
         "eslint-plugin-cypress": "^2.11.2",
         "eslint-plugin-graphql": "^4.0.0",
