@@ -20,7 +20,7 @@ spec:
             pathType: {{ .pathType | default "Prefix" }}
             backend:
               service:
-                name: "{{ .Release.Name }}-server"
+                name: "{{ $.Release.Name }}-server"
                 port:
                   number: 3000
           {{- end }}
