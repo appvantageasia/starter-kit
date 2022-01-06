@@ -39,6 +39,17 @@ spec:
             {{- with .Values.app.pods.extraEnvs }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+          livenessProbe:
+            httpGet:
+              port: 3000
+              path: /healthChecks/live
+              scheme: HTTP
+          readinessProbe:
+            initialDelaySeconds: 1
+            httpGet:
+              port: 3000
+              path: /healthChecks/ready
+              scheme: HTTP
           ports:
             - name: http
               containerPort: 3000
