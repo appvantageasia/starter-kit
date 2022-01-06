@@ -3,6 +3,7 @@ import { getDatabaseContext, migrate } from '../database';
 import { setup as startWorker } from '../queues';
 import config from './config';
 import createWebServer from './createWebServer';
+import { updateStatus, HealthStatus } from './health';
 import { initializeSentry } from './sentry';
 
 export const startServerCommand = async () => {
@@ -11,13 +12,19 @@ export const startServerCommand = async () => {
     initializeSentry({ app: expressServer });
 
     httpServer.listen(config.port, () => {
+        updateStatus(HealthStatus.Running);
         console.info(chalk.cyan('Server listening'));
     });
 
-    return () =>
-        new Promise(resolve => {
-            httpServer.close(resolve);
-        });
+    return () => {
+        updateStatus(HealthStatus.Stopping);
+
+        return new Promise(resolve => {
+            setTimeout(() => {
+                httpServer.close(resolve);
+            }, 10000);
+        }).then(() => updateStatus(HealthStatus.Stopped));
+    };
 };
 
 export const startWorkerCommand = () => {

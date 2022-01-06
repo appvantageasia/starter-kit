@@ -11,6 +11,7 @@ import { SubscriptionServer } from 'subscriptions-transport-ws';
 import schema from '../schema';
 import createContext, { Context, RootDocument } from '../schema/context';
 import config from './config';
+import { createHealthRouter } from './health';
 import setupPrometheusMetrics, { ApolloMetricsPlugin } from './prometheus';
 import { expressRateLimiter } from './rateLimiter';
 import renderApplication from './renderApplication';
@@ -124,6 +125,9 @@ const createWebServer = async (): Promise<WebServerCreation> => {
 
     // update cache policy
     expressServer.use(disableCaching);
+
+    // health endpoints
+    expressServer.use('/healthChecks', createHealthRouter());
 
     // serve graphql API
     expressServer.use(
