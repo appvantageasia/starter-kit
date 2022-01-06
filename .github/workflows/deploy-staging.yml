@@ -1,0 +1,19 @@
+name: Validation
+
+on:
+  release:
+    types: [prereleased]
+
+
+jobs:
+  deploy:
+    name: "Deploy"
+    runs-on: ubuntu-latest
+    env:
+      REF: ${{ github.ref }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Dummy
+        run: echo "${REF:11}"

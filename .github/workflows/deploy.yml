@@ -1,0 +1,44 @@
+name: Release
+
+on:
+  workflow_call:
+    inputs:
+      AWS_REGION:
+        required: true
+      AWS_EKS_CLUSTER_NAME:
+        required: true
+      RELEASE_NAME:
+        required: true
+      RELEASE_NAMESPACE:
+        required: true
+      VERSION:
+        required: true
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+
+jobs:
+  deploy-to-eks:
+    name: Deploy to EKS
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ inputs.AWS_REGION }}
+      - name: Configure Kubectl
+        run: aws eks update-kubeconfig --name ${{ inputs.AWS_EKS_CLUSTER_NAME }}
+      - name: Install Helm
+        run: curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+      - name: Deploy to cluster
+        run: |
+          helm upgrade ${{ inputs.RELEASE_NAME }} ./charts/app \
+            --namespace ${{ inputs.RELEASE_NAMESPACE }} \
+            --reuse-values \
+            --set app.image.tag=${{ inputs.VERSION }} \
+            --set app.global.publicPath=https://CLOUDID.cloudfront.net/${{ inputs.VERSION }}

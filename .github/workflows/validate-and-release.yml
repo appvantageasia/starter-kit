@@ -1,0 +1,47 @@
+name: Pull Request validation
+
+on:
+  push:
+    branches:
+      # latest channel
+      - stable
+      # next channel
+      - next
+      # specific versions
+      - '*.*.x'
+
+# for releasing we prefer to play safe and proceed with only one run at the time
+concurrency:
+  group: ${{ github.workflow }}
+
+jobs:
+  # run the complete validation flow
+  validation:
+    uses: ./.github/workflows/validation.yml
+    secrets:
+      CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
+      CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    needs: validation
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: 'yarn'
+#      - name: Configure AWS credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: REGION
+#      - name: Fetch tokens for AWS ECR
+#        run: aws ecr get-login-password --region REGION | docker login --username AWS --password-stdin ACCOUNTID.dkr.ecr.REGION.amazonaws.com
+      - name: Semantic Release
+        run: yarn semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

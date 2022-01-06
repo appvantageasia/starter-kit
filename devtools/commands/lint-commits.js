@@ -26,39 +26,57 @@ const matchGithub = (url, prop) => {
 };
 
 const getRangeFromPr = async () => {
-    const { owner, repo, data: pull } = matchGithub(process.env.CIRCLE_PULL_REQUEST, 'pull');
-    const github = new Octokit({ auth: process.env.GH_TOKEN });
+    const ghToken = process.env.GH_TOKEN || process.env.GITHUB_TOKEN;
 
-    console.info('📡   Looking up PR #%s...', pull);
+    if (!ghToken) {
+        throw new Error('GitHub token is missing');
+    }
 
-    const {
-        data: { base, head },
-    } = await github.pulls.get({ owner, repo, pull_number: +pull });
+    if (process.env.CIRCLE_PULL_REQUEST) {
+        // use CircleCI setup
+        const { owner, repo, data: pull } = matchGithub(process.env.CIRCLE_PULL_REQUEST, 'pull');
+        const github = new Octokit({ auth: ghToken });
 
-    await checkCommit(base.sha, head.sha);
-    console.info('🔀   Linting PR #%s', pull);
+        console.info('📡   Looking up PR #%s...', pull);
 
-    return [base.sha, head.sha];
+        const {
+            data: { base, head },
+        } = await github.pulls.get({ owner, repo, pull_number: +pull });
+
+        await checkCommit(base.sha, head.sha);
+        console.info('🔀   Linting PR #%s', pull);
+
+        return [base.sha, head.sha];
+    }
+
+    throw new Error('Environment not supported to get a range');
 };
 
 const getRangeFromCompare = async () => {
-    const [from, to] = matchGithub(process.env.CIRCLE_COMPARE_URL, 'compare').data.split('...');
+    if (process.env.CIRCLE_COMPARE_URL) {
+        // use CircleCI setup
+        const [from, to] = matchGithub(process.env.CIRCLE_COMPARE_URL, 'compare').data.split('...');
 
-    await checkCommit(from, to);
-    console.info('🎏   Linting using comparison URL %s...%s', from, to);
+        await checkCommit(from, to);
+        console.info('🎏   Linting using comparison URL %s...%s', from, to);
 
-    return [from, to];
+        return [from, to];
+    }
+
+    throw new Error('Environment not supported to identity the comparison');
 };
 
 const getRangeFromSha = async () => {
-    const sha = process.env.CIRCLE_SHA1;
+    // for CircleCI get the commit ID from `CIRCLE_SHA1`
+    // for GH Actions get the commit ID from `GITHUB_SHA`
+    const sha = process.env.CIRCLE_SHA1 || process.env.GITHUB_SHA;
 
     if (!sha) {
-        throw new Error('Cannot find CIRCLE_SHA1 environment variable');
+        throw new Error('Cannot find the git commit ID in environment variable');
     }
 
     await checkCommit(sha);
-    console.info('⚙️   Linting using CIRCLE_SHA1 (%s)', sha);
+    console.info('⚙️   Linting using commit ID (%s)', sha);
 
     return [`${sha}^1`, sha];
 };

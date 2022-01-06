@@ -1,0 +1,233 @@
+name: Validation
+
+on:
+  workflow_call:
+    secrets:
+      CYPRESS_PROJECT_ID:
+        required: true
+      CYPRESS_RECORD_KEY:
+        required: true
+
+
+jobs:
+  install-dependencies:
+    name: Install dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: install-dependencies
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Build
+        run: yarn build
+        env:
+          NODE_ENV: production
+      - uses: actions/upload-artifact@v2
+        name: Upload build artifact
+        with:
+          name: build
+          path: build/
+          retention-days: 7
+      - uses: actions/upload-artifact@v2
+        name: Upload report artifact
+        with:
+          name: report
+          path: report.html
+          retention-days: 7
+
+  unit-testing:
+    name: Unit testing
+    runs-on: ubuntu-latest
+    needs: install-dependencies
+    services:
+      mailhog:
+        image: mailhog/mailhog:v1.0.0
+        ports:
+          - 1025:1025
+      mongo:
+        image: circleci/mongo:5.0.3
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: password
+        ports:
+          - 27017:27017
+      minio:
+        image: bitnami/minio:2021.12.29-debian-10-r39
+        env:
+          MINIO_ROOT_USER: 'AKIAIOSFODNN7EXAMPLE'
+          MINIO_ROOT_PASSWORD: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
+        ports:
+          - 9000:9000
+      redis:
+        image: circleci/redis:6.2.4-alpine
+        ports:
+          - 6379:6379
+      html2pdf:
+        image: appvantage/html2pdf-service:1.3.0
+        ports:
+          - 4000:3000
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Wait for db
+        run: ./.github/wait-for-it.sh 127.0.0.1:27017 -t 60
+      - name: Unit testing
+        run: yarn test:coverage --reporters=default --reporters=jest-junit
+        env:
+          # app config
+          APP_DB_URI: mongodb://root:password@127.0.0.1:27017
+          APP_SESSION_SECRET: localSecret
+          APP_FLOW_SECRET: flowSecret
+          APP_SMTP_PORT: 1025
+          APP_STORAGE_ENDPOINT: localhost
+          APP_STORAGE_PORT: 9000
+          APP_STORAGE_SSL: false
+          APP_STORAGE_ACCESS_KEY: 'AKIAIOSFODNN7EXAMPLE'
+          APP_STORAGE_SECRET_KEY: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
+          APP_HTML2PDF_ENDPOINT: 'http://127.0.0.1:4000/'
+          APP_DEBUG: true
+          # jest config
+          JEST_JUNIT_OUTPUT_DIR: ./junit/
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage
+          path: coverage/
+          retention-days: 7
+
+  functional-testing:
+    name: Functional testing
+    runs-on: ubuntu-latest
+    needs: build
+    env:
+      APP_DB_URI: mongodb://root:password@127.0.0.1:27017
+      APP_SESSION_SECRET: localSecret
+      APP_FLOW_SECRET: flowSecret
+      APP_SMTP_PORT: 1025
+      APP_STORAGE_ENDPOINT: localhost
+      APP_STORAGE_PORT: 9000
+      APP_STORAGE_SSL: false
+      APP_STORAGE_ACCESS_KEY: 'AKIAIOSFODNN7EXAMPLE'
+      APP_STORAGE_SECRET_KEY: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
+      APP_HTML2PDF_ENDPOINT: 'http://127.0.0.1:4000/'
+      APP_DEBUG: true
+    services:
+      mailhog:
+        image: mailhog/mailhog:v1.0.0
+        ports:
+          - 1025:1025
+      mongo:
+        image: circleci/mongo:5.0.3
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: password
+        ports:
+          - 27017:27017
+      minio:
+        image: bitnami/minio:2021.12.29-debian-10-r39
+        env:
+          MINIO_ROOT_USER: 'AKIAIOSFODNN7EXAMPLE'
+          MINIO_ROOT_PASSWORD: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
+        ports:
+          - 9000:9000
+      redis:
+        image: circleci/redis:6.2.4-alpine
+        ports:
+          - 6379:6379
+      html2pdf:
+        image: appvantage/html2pdf-service:1.3.0
+        ports:
+          - 4000:3000
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Wait for db
+        run: ./.github/wait-for-it.sh 127.0.0.1:27017 -t 60
+      - name: Download build artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build
+          path: build/
+      - name: Start server
+        run: node server.js serve &>/dev/null &
+        working-directory: ./build
+      - name: Start worker
+        run: node server.js worker &>/dev/null &
+        working-directory: ./build
+      - name: Wait for test server
+        run: ./.github/wait-for-it.sh 127.0.0.1:3000 -t 60
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          record: true
+        env:
+          DOTENV_DISABLE: true
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_BASE_URL: "http://localhost:3000"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload cypress videos
+        uses: actions/upload-artifact@v2
+        with:
+          name: cypress-videos
+          path: cypress/videos/
+          retention-days: 7
+      - name: Stop test server & worker
+        run: pkill -SIGQUIT node
+
+  linting-and-typing:
+    name: "Linting & Typing"
+    runs-on: ubuntu-latest
+    needs: install-dependencies
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Lint source code
+        run: yarn lint --format junit -o ./junit/js-lint-results.xml
+      - name: Type checking
+        run: yarn tsc
+      - name: Type checking on cypress
+        run: yarn tsc
+        working-directory: ./cypress
+      - name: Lint commit messages
+        run: node ./devtools/commands/lint-commits.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

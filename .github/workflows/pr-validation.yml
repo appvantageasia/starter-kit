@@ -1,0 +1,17 @@
+name: Pull Request validation
+
+on: [pull_request]
+
+jobs:
+  # run the complete validation flow
+  validation:
+    uses: ./.github/workflows/validation.yml
+    secrets:
+      CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
+      CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+
+# for validation we only need to the validate the latest commit
+# no need to continue with previous commits
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
