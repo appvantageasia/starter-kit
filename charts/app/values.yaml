@@ -115,6 +115,7 @@ app:
         minReplicas: 1
         maxReplicas: 1
         metrics: {}
+        behavior: {}
 
     # HorizontalPodAutoscaler for workers
     workerPodScaler:
@@ -122,6 +123,7 @@ app:
         minReplicas: 1
         maxReplicas: 1
         metrics: {}
+        behavior: {}
 
 # html2pdf settings
 html2pdf:
