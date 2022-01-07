@@ -1,5 +1,5 @@
 {{- if .Values.app.serverPodScaler.enabled }}
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: "{{ .Release.Name }}-server"
@@ -13,6 +13,27 @@ spec:
     name: "{{ .Release.Name }}-server"
   minReplicas: {{ .Values.app.serverPodScaler.minReplicas }}
   maxReplicas: {{ .Values.app.serverPodScaler.maxReplicas }}
+  {{- if .Values.app.serverPodScaler.behavior }}
+  behavior: {{ .Values.app.serverPodScaler.behavior}}
+  {{- else }}
+  behavior:
+    scaleUp:
+      selectPolicy: Max
+      stabilizationWindowSeconds: 0
+      policies:
+        - periodSeconds: 60
+          type: Pods
+          value: 1
+        - periodSeconds: 60
+          type: Percent
+          value: 10
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+        - periodSeconds: 60
+          type: Percent
+          value: 10
+  {{- end }}
   {{- if .Values.app.serverPodScaler.metrics }}
   metrics: {{ .Values.app.serverPodScaler.metrics }}
   {{- else }}
