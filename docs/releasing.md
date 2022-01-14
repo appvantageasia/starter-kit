@@ -118,7 +118,6 @@ This plugin has the following settings
 | Env    | CDN_SECRET_KEY | Secret key                                            |
 | Plugin | bucket         | Bucket name                                           |
 | Plugin | endPoint       | Object Storage end point                              |
-| Plugin | port           | Object storage port (default: 443)                    |
 | Plugin | useSSL         | Object Storage end point requires SSL (default: true) |
 | Plugin | region         | Object storage region                                 |
 
@@ -135,7 +134,7 @@ module.exports = {
                 // bucket name
                 bucket: 'starter-kit',
                 // endpoint
-                endPoint: 's3.amazonaws.com',
+                endPoint: 'https://s3.amazonaws.com',
                 // aws region
                 region: 'ap-southeast-1',
             },

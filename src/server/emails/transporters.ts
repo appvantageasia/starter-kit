@@ -1,16 +1,23 @@
+import AWS from '@aws-sdk/client-ses';
 import { createTransport, Transporter } from 'nodemailer';
-import config from '../core/config';
+import config, { AWSSESSettings, MailerSettings, SMTPSettings } from '../core/config';
 
-export type SMTPSettings = {
-    host: string;
-    port: number;
-    secure: boolean;
-    auth?: {
-        user: string;
-        pass: string;
-    };
+export const createSMTPTransports = (transporterSettings: MailerSettings): Transporter => {
+    const { provider, ...settings } = transporterSettings;
+
+    switch (provider) {
+        case 'smtp':
+            return createTransport(settings as SMTPSettings);
+
+        case 'aws': {
+            const ses = new AWS.SES(settings as AWSSESSettings);
+
+            return createTransport({ SES: { ses, aws: AWS } });
+        }
+
+        default:
+            throw new Error('Unsupported provider');
+    }
 };
-
-export const createSMTPTransports = (settings: SMTPSettings): Transporter => createTransport(settings);
 
 export const defaultTransporter = createSMTPTransports(config.smtp.transporter);
