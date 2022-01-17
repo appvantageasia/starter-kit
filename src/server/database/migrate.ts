@@ -37,6 +37,7 @@ export const migrate = async (db: Db, verbose = true): Promise<void> => {
 
         // persist the run
         await migrationCollection.insertOne({
+            _id: new ObjectId(),
             identifier: migration.identifier,
             executedAt: new Date(),
         });
