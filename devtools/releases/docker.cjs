@@ -1,6 +1,6 @@
 const { spawn } = require('child_process');
 const path = require('path');
-const { getReleaseName } = require('./sentry');
+const { getReleaseName } = require('./sentry.cjs');
 
 // compute paths
 const cwd = path.resolve(__dirname, '../../');

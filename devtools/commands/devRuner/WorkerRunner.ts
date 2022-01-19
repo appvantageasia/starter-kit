@@ -1,4 +1,6 @@
 class WorkerRunner {
+    private cleanUp: () => Promise<void> | null;
+
     constructor() {
         this.cleanUp = null;
     }
@@ -21,4 +23,4 @@ class WorkerRunner {
     }
 }
 
-module.exports = WorkerRunner;
+export default WorkerRunner;

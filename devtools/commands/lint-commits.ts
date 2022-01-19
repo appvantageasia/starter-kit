@@ -1,5 +1,5 @@
-const { Octokit } = require('@octokit/rest');
-const execa = require('execa');
+import { Octokit } from '@octokit/rest';
+import { execa } from 'execa';
 
 const git = async (...args) => {
     const { stdout } = await execa('git', args);

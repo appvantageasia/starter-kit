@@ -1,6 +1,12 @@
-const Enquirer = require('enquirer');
+import Enquirer from 'enquirer';
 
 class MigrationRunner {
+    private enquirer: Enquirer<{ doExecute: boolean }>;
+
+    private migrationPromise: Promise<unknown> | null;
+
+    private latestPrompt: Enquirer.Prompt | null;
+
     constructor() {
         this.enquirer = new Enquirer();
         this.migrationPromise = null;
@@ -60,4 +66,4 @@ class MigrationRunner {
     }
 }
 
-module.exports = MigrationRunner;
+export default MigrationRunner;

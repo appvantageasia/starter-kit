@@ -1,9 +1,9 @@
-const fs = require('fs');
-const { builtinModules } = require('module');
-const path = require('path');
-const { parse, stringify } = require('@yarnpkg/lockfile');
-const { flow, map, groupBy, uniq } = require('lodash/fp');
-const { Compilation } = require('webpack');
+import fs from 'fs';
+import { builtinModules } from 'module';
+import path from 'path';
+import { parse, stringify } from '@yarnpkg/lockfile';
+import { flow, map, groupBy, uniq } from 'lodash/fp';
+import Webpack from 'webpack';
 
 const pluginName = 'WebpackPackagePlugin';
 
@@ -16,8 +16,17 @@ const getParentIdentifier = identifier => {
     return identifier.split('/')[0];
 };
 
+export type Options = {
+    name: string;
+    version?: string;
+    yarnFile: string;
+    additionalModules: string[];
+    scriptExecName: string;
+    scriptExecCmd: (compilation) => string;
+};
+
 // default options
-const defaultOptions = {
+const defaultOptions: Options = {
     name: process.env.npm_package_name,
     version: undefined,
     yarnFile: 'yarn.lock',
@@ -128,7 +137,11 @@ const processDependencies = (entries, rootDependencies) => {
 };
 
 class WebpackPackagePlugin {
-    constructor(options) {
+    private readonly options: Options;
+
+    private readonly yarnEntries: any;
+
+    constructor(options: Partial<Options>) {
         // merge default options and given options
         this.options = { ...defaultOptions, ...options };
 
@@ -150,7 +163,7 @@ class WebpackPackagePlugin {
 
         compiler.hooks.compilation.tap(pluginName, compilation => {
             compilation.hooks.processAssets.tap(
-                { name: pluginName, stage: Compilation.PROCESS_ASSETS_STAGE_DEV_TOOLING },
+                { name: pluginName, stage: Webpack.Compilation.PROCESS_ASSETS_STAGE_DEV_TOOLING },
                 assets => {
                     const externalPackages = [];
 
@@ -223,4 +236,4 @@ class WebpackPackagePlugin {
     }
 }
 
-module.exports = WebpackPackagePlugin;
+export default WebpackPackagePlugin;
