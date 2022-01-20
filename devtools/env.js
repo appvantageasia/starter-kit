@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const dotenv = require('dotenv');
-const dotenvExpand = require('dotenv-expand');
+const { parse } = require('dotenv');
+const { expand } = require('dotenv-expand');
 
 let combinedEnv;
 const cachedLoadedEnvFiles = [];
@@ -14,8 +14,8 @@ const processEnv = (loadedEnvFiles, dir, verbose = true) => {
         try {
             let result = {};
 
-            result.parsed = dotenv.parse(envFile.contents);
-            result = dotenvExpand(result);
+            result.parsed = parse(envFile.contents);
+            result = expand(result);
 
             if (result.parsed && verbose) {
                 console.info(`Loaded env from ${path.join(dir || '', envFile.path)}`);
