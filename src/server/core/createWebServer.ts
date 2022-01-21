@@ -116,7 +116,7 @@ const createWebServer = async (): Promise<WebServerCreation> => {
             const scheme = req.header('X-Forwarded-Scheme') || 'https';
 
             // apply cors
-            callback(null, { origin: host ? `${scheme}://${host}` : false });
+            callback(null, { origin: !process.isDev && host ? `${scheme}://${host}` : false });
         })
     );
 
