@@ -2,7 +2,7 @@ type Mutation {
     """
     Create a new account/user
     """
-    createAccount(username: String!, password: String!): User!
+    createAccount(username: String!, password: String!, email: String!): User!
 
     """
     Update the display name for the logged in user
@@ -12,23 +12,29 @@ type Mutation {
     updateDisplayName(displayName: String!): User!
 
     """
-    Create a new topic
-
-    Authentication is required
-    """
-    createTopic(title: String!, body: String!, attachments: [Upload!]): Topic!
-
-    """
-    Post a message on a new topicd
-
-    Authentication is required
-    """
-    postMessage(topicId: ObjectID!, body: String!): Topic!
-
-    """
     Validate credentials (username/password) and return a Json Web Token
     """
-    authenticate(username: String!, password: String!): AuthenticationSuccessful!
+    authenticate(username: String!, password: String!): AuthenticationResponse!
+
+    """
+    Continue authentication with TOTP
+    """
+    authenticateWithTOTP(token: String!, password: String!): AuthenticationResponse!
+
+    """
+    Change password following a successful authentication
+    """
+    changePasswordFromAuthentication(token: String!, password: String!): AuthenticationResponse!
+
+    """
+    Request to renew a password
+    """
+    applyForPasswordChange(username: String!): Boolean!
+
+    """
+    Change password by using a token
+    """
+    changePasswordFromToken(token: String!, password: String): Boolean!
 
     """
     Take the Json Web Token (JWT) from headers and returns a new one with a renewed lifetime
@@ -36,4 +42,41 @@ type Mutation {
     Authentication is required
     """
     refreshCredentials: String!
+
+    """
+    Enable 2FA / Authenticator for the signed user
+    """
+    enableAuthenticator(token: String!, secret: String!): User!
+
+    """
+    Create a web public key credential registration request
+    """
+    requestWebPublicKeyCredentialRegistration: WebPublicKeyCredentialRegistrationRequest!
+
+    """
+    Complete registration request for a web public key
+    """
+    completeWebPublicKeyCredentialRegistration(token: String!, response: JSONObject!): Boolean!
+
+    """
+    Generate a challenge to authenticate with web credentials
+    """
+    generateWebCredentialAuthentication(username: String!): AuthenticationWithWebPublicKeyCredential
+
+    """
+    Authenticate with a web public key credential
+    """
+    authenticateWithWebPublicKeyCredential(token: String!, response: JSONObject!): AuthenticationResponse!
+
+    """
+    Revoke web public ket credential
+
+    Return the key ID revoked
+    """
+    revokeWebPublicKeyCredential(id: ObjectID!): String
+
+    """
+    Revoke user session
+    """
+    revokeUserSession(id: ObjectID!, displayNotice: Boolean): Boolean!
 }

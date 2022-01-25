@@ -1,12 +1,12 @@
 import { genSalt, hash } from 'bcryptjs';
 import { ObjectId } from 'mongodb';
-import zxcvbn from 'zxcvbn';
 import { getDatabaseContext, User } from '../../../database';
 import { isDuplicateErrorOnFields } from '../../../utils';
+import { validatePasswordStrength } from '../../../utils/passwords';
 import { InvalidInput } from '../../errors';
 import { GraphQLMutationResolvers } from '../definitions';
 
-const cryptPassword = async (password: string) => {
+export const cryptPassword = async (password: string) => {
     const salt = await genSalt(10);
 
     return hash(password, salt);
@@ -14,15 +14,13 @@ const cryptPassword = async (password: string) => {
 
 const mutation: GraphQLMutationResolvers['createAccount'] = async (
     root,
-    { username, password },
+    { username, password, email },
     { getTranslations }
 ) => {
     const { collections } = await getDatabaseContext();
     const { t } = await getTranslations(['errors']);
 
-    const passwordReview = zxcvbn(password, [username]);
-
-    if (passwordReview.score < 3) {
+    if (!validatePasswordStrength(password, username)) {
         throw new InvalidInput({ password: t('errors:weakPassword') });
     }
 
@@ -31,6 +29,11 @@ const mutation: GraphQLMutationResolvers['createAccount'] = async (
         username,
         displayName: username,
         password: await cryptPassword(password),
+        passwordFrom: new Date(),
+        previousPasswords: [],
+        otpSetup: null,
+        singleSessionMode: true,
+        email,
     };
 
     try {

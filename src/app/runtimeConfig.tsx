@@ -6,6 +6,7 @@ export type RuntimeConfig = {
 
     locales: string[];
     defaultLocale: string;
+    withSSR: boolean;
 
     sentry: {
         dsn?: string;

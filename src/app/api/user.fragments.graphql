@@ -3,8 +3,28 @@ fragment UserPreviewData on User {
     displayName
 }
 
+fragment UserListData on User {
+    id
+    displayName
+    email
+    isAuthenticatorEnabled
+    isPasswordExpired
+}
+
 fragment UserFullData on User {
     id
     username
     displayName
+    isAuthenticatorEnabled
+    isPasswordExpired
+}
+
+fragment CurrentUserData on User {
+    id
+    username
+    displayName
+    isAuthenticatorEnabled
+    isPasswordExpired
+    email
+    passwordExpiresAt
 }

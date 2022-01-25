@@ -1,0 +1,19 @@
+fragment SystemMessageData on SystemMessage {
+    __typename
+
+    ... on UserSessionRevoked {
+        date
+        displayNotice
+    }
+
+    ... on MessageNotice {
+        date
+        message
+    }
+}
+
+subscription listenOnSystem {
+    message: listenSystemMessages {
+        ...SystemMessageData
+    }
+}

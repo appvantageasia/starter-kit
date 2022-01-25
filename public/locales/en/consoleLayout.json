@@ -1,0 +1,14 @@
+{
+  "menuItems": {
+    "overview": "Overview",
+    "users": "Users",
+    "system": "System"
+  },
+  "avatarMenuItems": {
+    "logout": "Logout",
+    "self": "Profile"
+  },
+  "messages": {
+    "successLogout": "Successfully logged out"
+  }
+}

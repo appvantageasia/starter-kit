@@ -4,15 +4,9 @@ import { mainQueue, QueueMessage } from './mainQueue';
 import stopAllQueues from './stopAllQueues';
 
 export const queues = [mainQueue];
+
 const setup = (): (() => Promise<void>) => {
-    const mainQueueJobs: QueuePeriodicPlans<QueueMessage>[] = [
-        // provide a periodic plan to send an email every hour
-        {
-            message: { value: 'periodic', type: 'dummy' },
-            repeat: { cron: '0 * * * *' },
-            jobId: 'dummyRepeat',
-        },
-    ];
+    const mainQueueJobs: QueuePeriodicPlans<QueueMessage>[] = [];
 
     if (config.healthChecks.workerBeat) {
         mainQueueJobs.push({

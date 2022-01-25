@@ -4,9 +4,9 @@ schema {
     subscription: Subscription
 }
 
-type AuthenticationSuccessful {
+type AuthenticationRequiresNewPassword {
     """
-    Json Web Token
+    Token to use with the mutation `changePasswordFromAuthentication`
     """
     token: String!
     """
@@ -15,35 +15,128 @@ type AuthenticationSuccessful {
     user: User!
 }
 
+type AuthenticationRequiresTOTP {
+    """
+    Token to use with the mutation `authenticateWithTOTP`
+    """
+    token: String!
+}
+
+union AuthenticationResponse = AuthenticationRequiresNewPassword | AuthenticationRequiresTOTP | AuthenticationSuccessful
+
+type AuthenticationSuccessful {
+    """
+    Bearer token to use in the Authorization header
+    """
+    token: String!
+    """
+    User authenticated
+    """
+    user: User!
+}
+
+type AuthenticationWithWebPublicKeyCredential {
+    """
+    Allowed credentials
+    """
+    allowCredentials: [JSONObject!]!
+    """
+    Challenge for the request
+    """
+    challenge: String!
+    """
+    Timeout
+    """
+    timeout: Int
+    """
+    Token to use with the mutation `authenticateWithWebPublicKeyCredential`
+    """
+    token: String!
+}
+
+type AuthenticatorSetup {
+    """
+    QRCode URI for the given authenticator secret
+    """
+    qrcodeUri: String!
+    """
+    Authenticator secret
+    """
+    secret: String!
+}
+
 scalar DateTime
+
+union ExternalLink = ResetPasswordLink
+
+scalar JSONObject
+
+type MessageNotice {
+    date: DateTime!
+    message: String!
+}
 
 type Mutation {
     """
+    Request to renew a password
+    """
+    applyForPasswordChange(username: String!): Boolean!
+    """
     Validate credentials (username/password) and return a Json Web Token
     """
-    authenticate(password: String!, username: String!): AuthenticationSuccessful!
+    authenticate(password: String!, username: String!): AuthenticationResponse!
+    """
+    Continue authentication with TOTP
+    """
+    authenticateWithTOTP(password: String!, token: String!): AuthenticationResponse!
+    """
+    Authenticate with a web public key credential
+    """
+    authenticateWithWebPublicKeyCredential(response: JSONObject!, token: String!): AuthenticationResponse!
+    """
+    Change password following a successful authentication
+    """
+    changePasswordFromAuthentication(password: String!, token: String!): AuthenticationResponse!
+    """
+    Change password by using a token
+    """
+    changePasswordFromToken(password: String, token: String!): Boolean!
+    """
+    Complete registration request for a web public key
+    """
+    completeWebPublicKeyCredentialRegistration(response: JSONObject!, token: String!): Boolean!
     """
     Create a new account/user
     """
-    createAccount(password: String!, username: String!): User!
+    createAccount(email: String!, password: String!, username: String!): User!
     """
-    Create a new topic
-
-    Authentication is required
+    Enable 2FA / Authenticator for the signed user
     """
-    createTopic(attachments: [Upload!], body: String!, title: String!): Topic!
+    enableAuthenticator(secret: String!, token: String!): User!
     """
-    Post a message on a new topicd
-
-    Authentication is required
+    Generate a challenge to authenticate with web credentials
     """
-    postMessage(body: String!, topicId: ObjectID!): Topic!
+    generateWebCredentialAuthentication(username: String!): AuthenticationWithWebPublicKeyCredential
     """
     Take the Json Web Token (JWT) from headers and returns a new one with a renewed lifetime
 
     Authentication is required
     """
     refreshCredentials: String!
+    """
+    Create a web public key credential registration request
+    """
+    requestWebPublicKeyCredentialRegistration: WebPublicKeyCredentialRegistrationRequest!
+    """
+    Revoke user session
+    """
+    revokeUserSession(displayNotice: Boolean, id: ObjectID!): Boolean!
+    """
+    Revoke web public ket credential
+
+    Return the key ID revoked
+    """
+    revokeWebPublicKeyCredential(id: ObjectID!): String
     """
     Update the display name for the logged in user
 
@@ -53,6 +146,17 @@ type Mutation {
 }
 
 scalar ObjectID
+
+type PaginatedUsers {
+    """
+    Number of user matching the original query
+    """
+    count: Int!
+    """
+    User on the request page
+    """
+    items: [User!]!
+}
 
 input Pagination {
     """
@@ -69,61 +173,52 @@ type Query {
     """
     Fetch user document for the logged in user, returns null otherwise for anonymous
     """
-    account: User
+    currentUser: User
     """
-    Fetch a topic by its ID
+    Generate challenge to authenticate with WebAuthn
     """
-    topic(id: ObjectID!): Topic
+    generateAuthenticatorChallenge(username: String!): AuthenticationWithWebPublicKeyCredential
     """
-    List topics
+    Generate authenticator secret and qrcode
+    """
+    generateAuthenticatorSetup: AuthenticatorSetup!
+    """
+    Fetch WebAuthn security keys for a username
+    """
+    getWebauthnKeys(username: String!): [String!]!
+    """
+    List users
+    """
+    listUsers(filter: UserFilteringRule, pagination: Pagination!, sort: UserSortingRule): PaginatedUsers!
+    """
+    Retrieve a link information
+    """
+    retrieveLink(id: String!): ExternalLink
+}
 
-    If not sorting is provided, topics are sorted by descending update date
+type ResetPasswordLink {
     """
-    topics(pagination: Pagination, sorting: TopicSorting): [Topic!]!
+    Token to use with mutation `changePasswordFromToken`
+    """
+    token: String!
 }
 
 enum SortingOrder {
+    """
+    Ascending order
+    """
     Asc
+    """
+    Descending order
+    """
     Desc
 }
 
 type Subscription {
-    topicUpdated(topicId: ObjectID!): Topic!
+    listenSystemMessages: SystemMessage!
 }
 
-type Topic {
-    author: User!
-    body: String!
-    createdAt: DateTime!
-    id: ObjectID
-    """
-    list of messages posted on the topic
-    """
-    messages: [TopicMessage!]!
-    """
-    Counting how many messages are posted on this topic
-    """
-    messagesCount: Int!
-    title: String!
-    updatedAt: DateTime!
-}
-
-type TopicMessage {
-    author: User!
-    body: String!
-    createdAt: DateTime!
-    id: ObjectID
-}
-
-input TopicSorting {
-    field: TopicSortingField!
-    order: SortingOrder!
-}
-
-enum TopicSortingField {
-    CreateDate
-    UpdateDate
-}
+union SystemMessage = MessageNotice | UserSessionRevoked
 
 scalar Upload
 
@@ -132,10 +227,131 @@ type User {
     Public displayed on interfaces
     """
     displayName: String!
+    """
+    Email address for the user
+    """
+    email: String!
+    """
+    User object ID
+    """
     id: ObjectID!
     """
-    List of topic authored by the user
+    Is the authenticator enabled for this account
     """
-    topics: Topic!
+    isAuthenticatorEnabled: Boolean!
+    """
+    Is the password expired for this account
+    """
+    isPasswordExpired: Boolean!
+    """
+    Password expiration date
+    """
+    passwordExpiresAt: DateTime!
+    """
+    Sessions
+    """
+    sessions: [UserSession!]!
+    """
+    Username use for authentication
+    """
     username: String!
+    """
+    WebAuthn keys
+    """
+    webAuthnKeys: [UserWebAuthnKey!]!
+}
+
+input UserFilteringRule {
+    """
+    Filter by email
+    """
+    email: String
+}
+
+type UserSession {
+    """
+    Creation date
+    """
+    createdAt: DateTime!
+    """
+    Expiration date
+    """
+    expiresAt: DateTime!
+    """
+    Session ID
+    """
+    id: ObjectID!
+    """
+    IP
+    """
+    ip: String!
+    """
+    Last activity date
+    """
+    lastActivityAt: DateTime!
+    """
+    User agent
+    """
+    userAgent: String!
+}
+
+type UserSessionRevoked {
+    date: DateTime!
+    displayNotice: Boolean!
+}
+
+enum UserSortingField {
+    """
+    Sort by authenticator enabled state
+    """
+    Authenticator
+    """
+    Sort by email
+    """
+    Email
+}
+
+input UserSortingRule {
+    """
+    Field on which apply the sorting
+    """
+    field: UserSortingField!
+    """
+    Sorting order
+    """
+    order: SortingOrder!
+}
+
+type UserWebAuthnKey {
+    """
+    Expiration date
+    """
+    expiresAt: DateTime!
+    """
+    Key object ID
+    """
+    id: ObjectID!
+    """
+    Last usage date
+    """
+    lastUsed: DateTime
+    """
+    Raw key ID
+    """
+    rawKeyId: String!
+    """
+    User Agent
+    """
+    userAgent: String!
+}
+
+type WebPublicKeyCredentialRegistrationRequest {
+    """
+    Options for WebAuthn
+    """
+    options: JSONObject!
+    """
+    Token to proceed with registration
+    """
+    token: String!
 }

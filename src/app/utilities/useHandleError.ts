@@ -1,19 +1,9 @@
-import { ApolloError } from '@apollo/client';
 import { message } from 'antd';
-import { FormikHelpers, FormikValues } from 'formik';
-import { set, get } from 'lodash/fp';
+import { FormikErrors, FormikHelpers, FormikValues } from 'formik';
 import { useMemo } from 'react';
-
-type FieldsRemap = { [field: string]: string };
+import getApolloErrors, { FieldsRemap } from '../../server/utils/getApolloErrors';
 
 type SubmitHandler<TValues> = (values: TValues, helpers: FormikHelpers<TValues>) => Promise<void>;
-
-const mergeErrors = (errors, newErrors, remapFields: FieldsRemap) =>
-    Object.entries(newErrors).reduce((acc, [key, value]) => {
-        const field = get(key, remapFields) || key;
-
-        return set(field, value, acc);
-    }, errors);
 
 export const handleErrors =
     <TValues = FormikValues>(handler: SubmitHandler<TValues>, remapFields?: FieldsRemap) =>
@@ -21,23 +11,16 @@ export const handleErrors =
         try {
             await handler(values, helpers);
         } catch (error) {
-            if (error instanceof ApolloError) {
-                const { $root: rootError, ...fieldErrors } = error.graphQLErrors.reduce((acc, graphqlError) => {
-                    // we exclude exception
-                    const { code, exception, ...fields } = graphqlError.extensions;
+            const apolloErrors = getApolloErrors(error, remapFields);
 
-                    if (code === 'BAD_USER_INPUT') {
-                        return mergeErrors(acc, fields, remapFields);
-                    }
-
-                    return { ...acc, $root: error.message };
-                }, {});
+            if (apolloErrors !== null) {
+                const { $root: rootError, ...fieldErrors } = apolloErrors;
 
                 if (rootError) {
                     message.error(rootError);
                 }
 
-                helpers.setErrors(fieldErrors);
+                helpers.setErrors(fieldErrors as FormikErrors<TValues>);
             }
         }
     };

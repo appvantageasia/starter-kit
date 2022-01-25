@@ -1,0 +1,9 @@
+query retrieveLink($id: String! ){
+    retrieveLink(id: $id) {
+        __typename
+
+        ... on ResetPasswordLink {
+            token
+        }
+    }
+}

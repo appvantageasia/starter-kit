@@ -16,4 +16,9 @@ afterAll(async () => {
         global.redis.disconnect();
         global.redis = undefined;
     }
+
+    if (global.pubSub) {
+        global.pubSub.close();
+        global.pubSub = undefined;
+    }
 });

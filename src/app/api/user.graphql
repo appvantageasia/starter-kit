@@ -1,12 +1,147 @@
-mutation createNewAccount($username: String!, $password: String!) {
-    createAccount(username: $username, password: $password) {
-        id
+#import "./user.fragment.graphql"
+
+query getAuthenticatedUser {
+    currentUser {
+        ...CurrentUserData
     }
 }
 
-mutation updateDisplayName($displayName: String!) {
-    updateDisplayName(displayName: $displayName) {
+query getAuthenticatedUserSessions {
+    currentUser {
         id
-        displayName
+        sessions {
+            id
+            userAgent
+            ip
+            lastActivityAt
+        }
     }
+}
+
+query getAuthenticatedUserWebAuthnKeys {
+    currentUser {
+        id
+        webAuthnKeys {
+            id
+            expiresAt
+            userAgent
+            lastUsed
+            rawKeyId
+        }
+    }
+}
+
+mutation revokeSession($sessionId: ObjectID!, $displayNotice: Boolean) {
+    revokeUserSession(id: $sessionId, displayNotice: $displayNotice)
+}
+
+mutation authenticate($username: String!, $password: String!) {
+    authenticate(username: $username, password: $password) {
+        __typename
+
+        ... on AuthenticationSuccessful {
+            token
+            user {
+                ...CurrentUserData
+            }
+        }
+
+        ... on AuthenticationRequiresNewPassword {
+            token
+        }
+
+        ... on AuthenticationRequiresTOTP {
+            token
+        }
+    }
+}
+
+mutation authenticateWithWebAuthn($token: String!, $response: JSONObject!) {
+    authenticate: authenticateWithWebPublicKeyCredential(token: $token, response: $response) {
+        __typename
+
+        ... on AuthenticationSuccessful {
+            token
+            user {
+                ...CurrentUserData
+            }
+        }
+    }
+}
+
+mutation changePasswordFromAuthentication($token: String!, $password: String!) {
+    changePasswordFromAuthentication(token: $token, password: $password) {
+        __typename
+
+        ... on AuthenticationSuccessful {
+            token
+            user {
+                ...CurrentUserData
+            }
+        }
+    }
+}
+
+mutation authenticateWithTOTP($token: String!, $password: String!) {
+    authenticateWithTOTP(token: $token, password: $password) {
+        __typename
+
+        ... on AuthenticationSuccessful {
+            token
+            user {
+                ...CurrentUserData
+            }
+        }
+
+        ... on AuthenticationRequiresNewPassword {
+            token
+        }
+    }
+}
+
+mutation refreshCredentials {
+    refreshCredentials
+}
+
+mutation  applyForPasswordChange($username: String!) {
+    applyForPasswordChange(username: $username)
+}
+
+mutation changePasswordFromToken($token: String!, $password: String!) {
+    changePasswordFromToken(token: $token, password: $password)
+}
+
+query listUsers($pagination: Pagination!, $sort: UserSortingRule) {
+    list: listUsers(pagination: $pagination, sort: $sort) {
+        count
+        items {
+            ...UserListData
+        }
+    }
+}
+
+query generateAuthenticatorSetup {
+    response: generateAuthenticatorSetup {
+        secret
+        qrcodeUri
+    }
+}
+
+mutation enableAuthenticator($secret: String!, $token: String!) {
+    enableAuthenticator(secret: $secret, token: $token) {
+        ...CurrentUserData
+    }
+}
+
+query generateAuthenticatorChallenge($username: String!) {
+    generateAuthenticatorChallenge(username: $username) {
+        token
+        challenge
+        allowCredentials
+        timeout
+    }
+}
+
+mutation revokeWebPublicKeyCredential($keyId: ObjectID!) {
+    revokeWebPublicKeyCredential(id: $keyId)
 }

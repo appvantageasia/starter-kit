@@ -22,8 +22,11 @@ generates:
             typesPrefix: GraphQL
             mappers:
                 User: ../../database#User
-                Topic: ../../database#Topic
-                TopicMessage: ../../database#TopicMessage
+                UserSession: ../../database#UserSession
+                SystemMessage: ../../utils/systemMessage#SystemMessage
+                AuthenticationResponse: ./typings#AuthenticationResponse
+                ExternalLink: ../../database#ExternalLink
+                ResetPasswordLink: ../../database#ResetPasswordLink
             enumValues: ./enums
             scalars:
                 DateTime: Date

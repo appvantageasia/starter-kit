@@ -1,9 +1,10 @@
 import { ApolloClient, ApolloLink, from, InMemoryCache, NormalizedCacheObject, HttpLink } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
-import { WebSocketLink } from '@apollo/client/link/ws';
+import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { createUploadLink } from 'apollo-upload-client';
 import { extractFiles } from 'extract-files';
+import { createClient as createWsClient } from 'graphql-ws';
 import { i18n as I18n } from 'i18next';
 import { isObject, flow, mapValues, omit } from 'lodash/fp';
 import PubSub from 'pubsub-js';
@@ -29,9 +30,80 @@ const prepareForGraphQL = (data: any): any => {
     return data;
 };
 
-const createApolloClient = (
-    getContext: () => { i18n: I18n; token: string | undefined }
-): ApolloClient<NormalizedCacheObject> => {
+const createWsLink = (getContext: GetContext) => {
+    // track if a restart is requested
+    let restartRequested = false;
+
+    // restart handler
+    let restart = () => {
+        restartRequested = true;
+    };
+
+    // restart whenever the token changed
+    PubSub.subscribe('core.tokenUpdate', () => restart());
+
+    // create ws link
+    return new GraphQLWsLink(
+        createWsClient({
+            url: `ws://${window.location.host}/graphql`,
+            lazy: true,
+
+            // provide authorization header in connection params
+            connectionParams: () => {
+                const { token } = getContext();
+
+                if (token) {
+                    return { authorization: token };
+                }
+
+                return {};
+            },
+
+            on: {
+                // we usually need to restart whenever the token changed
+                // so we need graceful restarts
+                opened: socket => {
+                    restart = () => {
+                        // @ts-ignore
+                        if (socket.readyState === WebSocket.OPEN) {
+                            // if the socket is still open for the restart, do the restart
+                            // @ts-ignore
+                            socket.close(4205, 'Client Restart');
+                        } else {
+                            // otherwise the socket might've closed, indicate that you want
+                            // a restart on the next opened event
+                            restartRequested = true;
+                        }
+                    };
+
+                    // just in case you were eager to restart
+                    if (restartRequested) {
+                        restartRequested = false;
+                        restart();
+                    }
+                },
+            },
+        })
+    );
+};
+
+const getCache = () => {
+    const cache = new InMemoryCache({ possibleTypes: introspection.possibleTypes });
+    const initialStateElement = document.querySelector('script[data-role="runtime-config"]');
+
+    if (!initialStateElement) {
+        return cache;
+    }
+
+    // restore from state
+    cache.restore(JSON.parse(initialStateElement.textContent));
+
+    return cache;
+};
+
+type GetContext = () => { i18n: I18n; token: string | undefined };
+
+const createApolloClient = (getContext: GetContext): ApolloClient<NormalizedCacheObject> => {
     // push the JWT token in headers
     const authLink = new ApolloLink((operation, forward) => {
         operation.setContext(({ headers }) => {
@@ -59,22 +131,7 @@ const createApolloClient = (
     );
 
     // websocket link
-    const wsLink = new WebSocketLink({
-        uri: `ws://${window.location.host}/graphql`,
-        options: {
-            reconnect: true,
-            lazy: true,
-            connectionParams: () => {
-                const token = typeof window !== 'undefined' ? localStorage.getItem('jwt') : null;
-
-                if (token) {
-                    return { authToken: token };
-                }
-
-                return {};
-            },
-        },
-    });
+    const wsLink = createWsLink(getContext);
 
     // split between HTTP and WS protocols
     const rootLink = ApolloLink.split(
@@ -93,7 +150,7 @@ const createApolloClient = (
             const isUnauthenticated = graphQLErrors.some(error => error.extensions.code === 'UNAUTHENTICATED');
 
             if (isUnauthenticated) {
-                PubSub.publish('core.jwtInvalid');
+                PubSub.publish('core.unauthenticated');
             }
         }
     });
@@ -109,7 +166,7 @@ const createApolloClient = (
     return new ApolloClient({
         ssrMode: false,
         link: from([cleanLink, disconnectLink, rootLink]),
-        cache: new InMemoryCache({ possibleTypes: introspection.possibleTypes }),
+        cache: getCache(),
     });
 };
 

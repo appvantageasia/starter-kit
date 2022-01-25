@@ -1,5 +1,12 @@
 type User {
+    """
+    User object ID
+    """
     id: ObjectID!
+
+    """
+    Username use for authentication
+    """
     username: String!
 
     """
@@ -8,9 +15,106 @@ type User {
     displayName: String!
 
     """
-    List of topic authored by the user
+    Email address for the user
     """
-    topics: Topic!
+    email: String!
+
+    """
+    Is the authenticator enabled for this account
+    """
+    isAuthenticatorEnabled: Boolean!
+
+    """
+    Is the password expired for this account
+    """
+    isPasswordExpired: Boolean!
+
+    """
+    Password expiration date
+    """
+    passwordExpiresAt: DateTime!
+
+
+    """
+    WebAuthn keys
+    """
+    webAuthnKeys: [UserWebAuthnKey!]!
+
+    """
+    Sessions
+    """
+    sessions: [UserSession!]!
+}
+
+type UserSession {
+    """
+    Session ID
+    """
+    id: ObjectID!
+
+    """
+    Creation date
+    """
+    createdAt: DateTime!
+
+    """
+    Expiration date
+    """
+    expiresAt: DateTime!
+
+    """
+    Last activity date
+    """
+    lastActivityAt: DateTime!
+
+    """
+    User agent
+    """
+    userAgent: String!
+
+    """
+    IP
+    """
+    ip: String!
+}
+
+type UserWebAuthnKey {
+    """
+    Key object ID
+    """
+    id: ObjectID!
+
+    """
+    Raw key ID
+    """
+    rawKeyId: String!
+
+    """
+    User Agent
+    """
+    userAgent: String!
+
+    """
+    Expiration date
+    """
+    expiresAt: DateTime!
+
+    """
+    Last usage date
+    """
+    lastUsed: DateTime
+}
+
+type PaginatedUsers {
+    """
+    Number of user matching the original query
+    """
+    count: Int!
+
+    """
+    User on the request page
+    """
+    items: [User!]!
 }
 
 type AuthenticationSuccessful {
@@ -20,7 +124,105 @@ type AuthenticationSuccessful {
     user: User!
 
     """
-    Json Web Token
+    Bearer token to use in the Authorization header
     """
     token: String!
+}
+
+type AuthenticationRequiresNewPassword {
+    """
+    User authenticated
+    """
+    user: User!
+
+    """
+    Token to use with the mutation `changePasswordFromAuthentication`
+    """
+    token: String!
+}
+
+type AuthenticationRequiresTOTP {
+    """
+    Token to use with the mutation `authenticateWithTOTP`
+    """
+    token: String!
+}
+
+union AuthenticationResponse = AuthenticationSuccessful | AuthenticationRequiresNewPassword | AuthenticationRequiresTOTP
+
+input UserFilteringRule {
+    """
+    Filter by email
+    """
+    email: String
+}
+
+enum UserSortingField {
+    """
+    Sort by email
+    """
+    Email
+
+    """
+    Sort by authenticator enabled state
+    """
+    Authenticator
+}
+
+input UserSortingRule {
+    """
+    Field on which apply the sorting
+    """
+    field: UserSortingField!
+
+    """
+    Sorting order
+    """
+    order: SortingOrder!
+}
+
+type AuthenticatorSetup {
+    """
+    Authenticator secret
+    """
+    secret: String!
+
+    """
+    QRCode URI for the given authenticator secret
+    """
+    qrcodeUri: String!
+}
+
+type WebPublicKeyCredentialRegistrationRequest {
+    """
+    Token to proceed with registration
+    """
+    token: String!
+
+    """
+    Options for WebAuthn
+    """
+    options: JSONObject!
+}
+
+type AuthenticationWithWebPublicKeyCredential {
+    """
+    Token to use with the mutation `authenticateWithWebPublicKeyCredential`
+    """
+    token: String!
+
+    """
+    Allowed credentials
+    """
+    allowCredentials: [JSONObject!]!
+
+    """
+    Challenge for the request
+    """
+    challenge: String!
+
+    """
+    Timeout
+    """
+    timeout: Int
 }

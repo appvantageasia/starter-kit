@@ -1,0 +1,11 @@
+type UserSessionRevoked {
+    date: DateTime!
+    displayNotice: Boolean!
+}
+
+type MessageNotice {
+    date: DateTime!
+    message: String!
+}
+
+union SystemMessage = UserSessionRevoked | MessageNotice

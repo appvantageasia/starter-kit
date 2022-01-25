@@ -1,7 +1,6 @@
+import { AuthenticationError } from 'apollo-server';
 import { ObjectId } from 'mongodb';
 import { getDatabaseContext, User } from '../database';
-
-export type GetLoggedUser = () => Promise<User | null>;
 
 export const getUser = async (userId: ObjectId): Promise<User | null> => {
     const { collections } = await getDatabaseContext();
@@ -9,27 +8,42 @@ export const getUser = async (userId: ObjectId): Promise<User | null> => {
     return collections.users.findOne({ _id: userId });
 };
 
-export const getLazyLoggedUser = (userId: ObjectId | null): GetLoggedUser => {
-    if (!userId) {
-        return () => Promise.resolve(null);
-    }
+export const getLazyLoggedUser = (userId: ObjectId | null | undefined) => {
+    let instance: User | null | undefined;
+    let promise: Promise<User | null> | undefined;
 
-    let instance = null;
-    let promise = null;
-
-    return async (): Promise<User | null> => {
-        if (instance) {
-            return instance;
+    const getUserFromPromise = (): Promise<User | null> => {
+        if (!userId) {
+            return Promise.resolve(null);
         }
 
-        if (promise) {
-            return promise;
+        if (instance !== undefined) {
+            return Promise.resolve(instance);
         }
 
-        promise = getUser(userId);
+        if (promise === undefined) {
+            // create the promise
+            promise = getUser(userId);
+        }
 
-        instance = await promise;
-
-        return instance;
+        return promise;
     };
+
+    /* eslint-disable no-redeclare */
+    function getLoggedUser(optional: true): Promise<User | null>;
+    function getLoggedUser(optional?: false): Promise<User>;
+    function getLoggedUser(optional?: boolean): Promise<User> | Promise<User | null> {
+        return getUserFromPromise().then(user => {
+            if (!optional && !user) {
+                throw new AuthenticationError('Not authenticated');
+            }
+
+            return user;
+        });
+    }
+    /* eslint-enable no-redeclare */
+
+    return getLoggedUser;
 };
+
+export type GetLoggedUser = ReturnType<typeof getLazyLoggedUser>;

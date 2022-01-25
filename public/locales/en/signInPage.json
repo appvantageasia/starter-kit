@@ -1,0 +1,73 @@
+{
+  "authenticateStep": {
+    "title": "Sign in",
+    "fields": {
+      "username": {
+        "placeholder": "Username"
+      },
+      "password": {
+        "placeholder": "Password"
+      }
+    },
+    "submitBtn": "Authenticate",
+    "forgotPasswordLink": "Request a new password",
+    "submittingMessage": "Authenticating..",
+    "rememberMe": "Remember me"
+  },
+  "changePasswordStep": {
+    "title": "Password renewal",
+    "description": "Your password either expired or has been revoked, you must provide a new password to continue.",
+    "fields": {
+      "password": {
+        "placeholder": "Password"
+      },
+      "passwordRepeat": {
+        "placeholder": "Password (repeat)"
+      }
+    },
+    "submitBtn": "Update & Continue",
+    "submittingMessage": "Updating.."
+  },
+  "totpStep": {
+    "title": "2FA - Authenticator",
+    "description": "Your account is protected with 2FA through authenticators, please provide your code to proceed.",
+    "fields": {
+      "code": {
+        "placeholder": "Code"
+      }
+    },
+    "submitBtn": "Continue",
+    "submittingMessage": "Verifying.."
+  },
+  "requestNewPassword": {
+    "title": "Request a new password",
+    "fields": {
+      "username": {
+        "placeholder": "Username"
+      }
+    },
+    "submitBtn": "Continue",
+    "authenticateLink": "Sign In",
+    "successMessage": "You should receive an email with a link on the email address associated to this username. The link is valid up to 10 minutes from now.",
+    "submittingMessage": "Requesting.."
+  },
+  "newPassword": {
+    "title": "New password",
+    "fields": {
+      "password": {
+        "placeholder": "Password"
+      },
+      "passwordRepeat": {
+        "placeholder": "Password (repeat)"
+      }
+    },
+    "submitBtn": "Update password",
+    "authenticateLink": "Sign In",
+    "successMessage": "Your password has been updated, you may now try to sign in.",
+    "submittingMessage": "updating.."
+  },
+  "expiredToken": {
+    "description": "Sorry, your session timed out",
+    "authenticateLink": "Sign in"
+  }
+}

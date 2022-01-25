@@ -1,0 +1,11 @@
+mutation requestWebPublicKeyCredentialRegistration {
+    requestWebPublicKeyCredentialRegistration {
+        token
+        options
+    }
+}
+
+
+mutation completeWebPublicKeyCredentialRegistration($token: String!, $response: JSONObject!) {
+    completeWebPublicKeyCredentialRegistration(token: $token, response: $response)
+}

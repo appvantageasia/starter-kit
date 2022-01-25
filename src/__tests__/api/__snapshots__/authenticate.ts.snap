@@ -1,5 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Authentication is successful with TOTP 1`] = `
+Object {
+  "__typename": "User",
+  "id": "601f7ae763d6cfc2554f6b67",
+}
+`;
+
+exports[`Authentication is successful with TOTP 2`] = `"601f7ae763d6cfc2554f6b67"`;
+
+exports[`Authentication is successful with TOTP and password renewal 1`] = `
+Object {
+  "__typename": "User",
+  "id": "601f7ae763d6cfc2554f6b67",
+}
+`;
+
+exports[`Authentication is successful with TOTP and password renewal 2`] = `"601f7ae763d6cfc2554f6b67"`;
+
 exports[`Authentication rejects invalid credentials because the password does not match 1`] = `
 Array [
   Object {
@@ -15,7 +33,7 @@ Array [
     ],
     "message": "bad request",
     "path": Array [
-      "authenticate",
+      "response",
     ],
   },
 ]
@@ -36,7 +54,7 @@ Array [
     ],
     "message": "bad request",
     "path": Array [
-      "authenticate",
+      "response",
     ],
   },
 ]
