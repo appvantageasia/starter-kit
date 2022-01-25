@@ -1,6 +1,6 @@
-import DummyEmail from './DummyEmail';
+import ResetPasswordEmail from './ResetPassword';
 import createSender from './createSender';
 
-export const sendDummyEmail = createSender(DummyEmail);
+export const sendResetPasswordEmail = createSender(ResetPasswordEmail);
 
 export * from './transporters';

@@ -12,6 +12,7 @@ data:
   {{- include "app.configValue" ( dict "Key" "APP_GZIP" "Value" .gzip ) }}
   {{- include "app.configValue" ( dict "Key" "APP_SECURE_COOKIE" "Value" .secureCookie ) }}
   {{- include "app.configValue" ( dict "Key" "APP_COOKIE_POLICY" "Value" .cookiePolicy ) }}
+  {{- include "app.configValue" ( dict "Key" "APP_ENDPOINT" "Value" .endpoint ) }}
   {{- include "app.configValue" ( dict "Key" "APP_VERBOSE" "Value" .verbose ) }}
   {{- end }}
 
@@ -25,6 +26,12 @@ data:
   # session settings
   {{- with .Values.app.session }}
   {{- include "app.configValue" ( dict "Key" "APP_SESSION_LIFETIME" "Value" .lifetime ) }}
+  {{- end }}
+
+  # bull settings
+  {{- with .Values.app.bull }}
+  {{- include "app.configValue" ( dict "Key" "APP_BULL_PERSIST" "Value" .persist ) }}
+  {{- include "app.configValue" ( dict "Key" "APP_BULL_MONITOR" "Value" .monitor ) }}
   {{- end }}
 
   # health checks settings

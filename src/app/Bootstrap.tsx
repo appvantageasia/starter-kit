@@ -2,6 +2,7 @@ import { ApolloClient, ApolloProvider, NormalizedCacheObject } from '@apollo/cli
 import { i18n as I18n } from 'i18next';
 import { Component, ReactElement } from 'react';
 import { I18nContext } from 'react-i18next';
+import { sessionJWTStorage } from './utilities/jwtStorage';
 
 export type ContextGetter = () => { i18n: I18n; token: string | undefined };
 
@@ -21,7 +22,7 @@ class Bootstrap extends Component<BootstrapProps> {
 
         const getContext = () => {
             const { i18n } = this.context;
-            const token = typeof window !== 'undefined' ? localStorage.getItem('jwt') : undefined;
+            const token = typeof window !== 'undefined' ? sessionJWTStorage.get() : undefined;
 
             return { i18n, token };
         };

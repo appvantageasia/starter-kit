@@ -1,11 +1,11 @@
 import * as Sentry from '@sentry/react';
 import { Integrations } from '@sentry/tracing';
-import { hydrate } from 'react-dom';
+import { hydrateRoot, createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import createI18Instance from '../shared/createI18nInstance/browser';
 import App from './App';
 import createApolloClient from './createApolloClient';
 import { RuntimeConfig } from './runtimeConfig';
+import createI18Instance from './utilities/createI18nInstance';
 
 const runtimeConfig = JSON.parse(
     document.querySelector('script[data-role="runtime-config"]').textContent
@@ -43,4 +43,8 @@ const element = (
 
 const container = document.getElementById('root');
 
-hydrate(element, container);
+if (runtimeConfig.withSSR) {
+    hydrateRoot(container, element);
+} else {
+    createRoot(container).render(element);
+}

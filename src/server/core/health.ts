@@ -5,7 +5,7 @@ import ipaddr from 'ipaddr.js';
 import { getDatabaseContext } from '../database';
 import { queues } from '../queues/setup';
 import config from './config';
-import { getPubSub } from './pubSub';
+import getPubSub from './pubSub';
 import getRedisInstance from './redis';
 
 export enum HealthStatus {
@@ -20,8 +20,8 @@ export const runHealthChecks = async () => {
     await getRedisInstance().ping();
 
     // check pub-sub
-    await getPubSub().getPublisher().ping();
-    await getPubSub().getSubscriber().ping();
+    const pubSub = getPubSub();
+    await Promise.all([pubSub.getPublisher().ping(), pubSub.getSubscriber().ping()]);
 
     // check the mongo database
     const { regular, encrypted } = await getDatabaseContext();
@@ -78,10 +78,12 @@ export class HealthStatusManager {
     }
 
     update(value: HealthStatus) {
-        const { label: previousLabel } = this;
-        this._value = value;
-        const { label: newLabel } = this;
-        console.info(chalk.cyan(`MSG Status moved from ${previousLabel} to ${newLabel}`));
+        if (value !== this._value) {
+            const { label: previousLabel } = this;
+            this._value = value;
+            const { label: newLabel } = this;
+            console.info(chalk.cyan(`MSG Status moved from ${previousLabel} to ${newLabel}`));
+        }
     }
 
     get label() {

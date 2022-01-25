@@ -17,5 +17,17 @@
     },
     "signIn": "Sign in",
     "signOut": "Logout",
-    "signUp": "Sign up"
+    "goToPrivate": "Admin",
+    "formats": {
+        "date": "{{date, DD/MM/YYYY}}",
+        "dateTime": "{{date, DD/MM/YYYY, HH:mm}}"
+    },
+    "messages": {
+        "sessionTimeout": "Session revoked or timed out"
+    },
+    "sessionRevokeNotice": {
+        "title": "Session revoked",
+        "content": "Your session has been revoked",
+        "okText": "OK"
+    }
 }

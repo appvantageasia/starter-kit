@@ -4,16 +4,18 @@ All settings are defined through environment variable.
 
 ## Global configuration
 
-| Name              | Type    | Default           | Comment                      |
-| ----------------- | ------- | ----------------- | ---------------------------- |
-| VERSION           | String  | 0.0.0-development | Application version          |
-| APP_PUBLIC_PATH   | String  | /public/          | Public path for assets       |
-| APP_PORT          | Number  | 3000              | HTTP server listening port   |
-| APP_GZIP          | Boolean | true              | Enable GZip compression      |
-| APP_SECURE_COOKIE | Boolean | true              | Enable secure cookies        |
-| APP_COOKIE_POLICY | String  | strict            | Cookie sameSite policy       |
-| APP_INTROSPECTION | Boolean |                   | Enable GraphQL introspection |
-| APP_VERBOSE       | Boolean | true              | Enable console logs          |
+| Name              | Type    | Default                    | Comment                            |
+| ----------------- | ------- | -------------------------- | ---------------------------------- |
+| VERSION           | String  | 0.0.0-development          | Application version                |
+| APP_PUBLIC_PATH   | String  | /public/                   | Public path for assets             |
+| APP_PORT          | Number  | 3000                       | HTTP server listening port         |
+| APP_GZIP          | Boolean | true                       | Enable GZip compression            |
+| APP_SECURE_COOKIE | Boolean | true                       | Enable secure cookies              |
+| APP_COOKIE_POLICY | String  | strict                     | Cookie sameSite policy             |
+| APP_INTROSPECTION | Boolean |                            | Enable GraphQL introspection       |
+| APP_DEBUG         | Boolean | false                      | Enable debug mode                  |
+| APP_ENDPOINT      | String  | http://localhost:$APP_PORT | Application endpoint use for links |
+| APP_VERBOSE       | Boolean | true                       | Enable console logs                |
 
 It's recommended to disable compression if you may delegate it to a reverse proxy.
 
@@ -43,6 +45,16 @@ It's recommended to disable compression if you may delegate it to a reverse prox
 | Name          | Type   | Default                | Comment                 |
 | ------------- | ------ | ---------------------- | ----------------------- |
 | APP_REDIS_URI | String | redis://127.0.0.1:6379 | Redis connection string |
+
+## Bull configuration
+
+| Name             | Type    | Default | Comment                                        |
+| ---------------- | ------- | ------- | ---------------------------------------------- |
+| APP_BULL_PERSIST | Boolean | false   | Set default behavior to not drop redis entries |
+| APP_BULL_MONITOR | Boolean | false   | Serve bull monitor endpoint on web server      |
+
+Monitor cannot be turned on when running on production environment, that could lead to a leak on sensitive data.
+The previous settings are only meant for debug purposes.
 
 ## Health checks configuration
 

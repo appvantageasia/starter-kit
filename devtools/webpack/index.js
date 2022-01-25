@@ -29,6 +29,11 @@ const graphqlRule = {
     loader: require.resolve('graphql-tag/loader'),
 };
 
+const svgRule = {
+    test: /\.svg$/,
+    use: [require.resolve('@svgr/webpack')],
+};
+
 const serverConfig = {
     name: 'server',
     mode: webpackMode,
@@ -70,6 +75,7 @@ const serverConfig = {
             { test: /antd\/.*?\/style.*?/, use: require.resolve('null-loader') },
             getBabelRule(isBuildIntentDevelopment),
             graphqlRule,
+            svgRule,
         ].filter(Boolean),
     },
 
@@ -136,7 +142,7 @@ const appConfig = {
     devtool: isBuildIntentProduction ? 'source-map' : 'cheap-module-source-map',
 
     module: {
-        rules: [getBabelRule(true), getStyleRule(), graphqlRule].filter(Boolean),
+        rules: [getBabelRule(true), getStyleRule(), graphqlRule, svgRule].filter(Boolean),
     },
 
     plugins: [

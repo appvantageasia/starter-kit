@@ -1,10 +1,8 @@
-import createTopicLoaders, { TopicLoaders } from './topics';
 import createUserLoaders, { UserLoaders } from './users';
 
-export type Loaders = TopicLoaders & UserLoaders;
+export type Loaders = UserLoaders;
 
 const createLoaders = (): Loaders => ({
-    ...createTopicLoaders(),
     ...createUserLoaders(),
 });
 

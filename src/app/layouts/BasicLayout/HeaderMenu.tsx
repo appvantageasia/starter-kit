@@ -1,42 +1,31 @@
-import { Menu as AntMenu } from 'antd';
 import { TFunction } from 'i18next';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu } from './styled';
 
-const { SubMenu, ItemGroup, Item } = AntMenu;
+type ItemMeta = { key: string; label: string; href?: string; children?: ItemMeta[] };
 
-type ItemMeta = { key: string; label: string; type: 'item'; href: string };
-
-type GroupMeta = { key: string; label: string; items: ItemMeta[]; type: 'group' };
-
-type SubMenuMeta = { key: string; label: string; items: (ItemMeta | GroupMeta)[]; type: 'subMenu' };
-
-const generateMenu = (t: TFunction): (ItemMeta | SubMenuMeta)[] => [
-    { key: '1', label: t('common:mainMenu.home'), type: 'item', href: '/' },
-    { key: '2', label: t('common:mainMenu.topics'), type: 'item', href: '/topics' },
+const generateMenu = (t: TFunction): ItemMeta[] => [
+    { key: '1', label: t('common:mainMenu.home'), href: '/' },
     {
-        type: 'subMenu',
         key: 'subMenu',
         label: '404/500 pages',
-        items: [
+        children: [
             {
                 key: 'group:1',
-                type: 'group',
                 label: 'Item 1',
-                items: [
-                    { key: 'settings:1', label: 'Error page', type: 'item', href: '/dummyError' },
-                    { key: 'settings:2', label: 'Option 2', type: 'item', href: '/c' },
+                children: [
+                    { key: 'settings:1', label: 'Error page', href: '/dummyError' },
+                    { key: 'settings:2', label: 'Option 2', href: '/c' },
                 ],
             },
             {
                 key: 'group:2',
-                type: 'group',
                 label: 'Item 2',
-                items: [
-                    { key: 'settings:3', label: 'Option 3', type: 'item', href: '/d' },
-                    { key: 'settings:4', label: 'Option 4', type: 'item', href: '/e' },
+                children: [
+                    { key: 'settings:3', label: 'Option 3', href: '/d' },
+                    { key: 'settings:4', label: 'Option 4', href: '/e' },
                 ],
             },
         ],
@@ -45,44 +34,18 @@ const generateMenu = (t: TFunction): (ItemMeta | SubMenuMeta)[] => [
 
 type MenuMap = { [key: string]: string };
 
-const computeMenuMap = (items: (ItemMeta | GroupMeta | SubMenuMeta)[]): MenuMap =>
+const computeMenuMap = (items: ItemMeta[]): MenuMap =>
     items.reduce((acc, item) => {
-        switch (item.type) {
-            case 'item':
-                return { ...acc, [item.key]: item.href };
-
-            case 'subMenu':
-            case 'group':
-                return { ...acc, ...computeMenuMap(item.items) };
-
-            default:
-                return acc;
+        if (item.children) {
+            return { ...acc, ...computeMenuMap(item.children) };
         }
+
+        if (item.href) {
+            return { ...acc, [item.key]: item.href };
+        }
+
+        return acc;
     }, {});
-
-const renderMenuLevel = (level: ItemMeta | GroupMeta | SubMenuMeta) => {
-    switch (level.type) {
-        case 'item':
-            return <Item key={level.key}>{level.label}</Item>;
-
-        case 'group':
-            return (
-                <ItemGroup key={level.key} title={level.label}>
-                    {level.items.map(renderMenuLevel)}
-                </ItemGroup>
-            );
-
-        case 'subMenu':
-            return (
-                <SubMenu key={level.key} title={level.label}>
-                    {level.items.map(renderMenuLevel)}
-                </SubMenu>
-            );
-
-        default:
-            return null;
-    }
-};
 
 const getSelectedKeys = (menuMap: MenuMap, pathname: string): string[] | undefined => {
     for (const [key, value] of Object.entries(menuMap)) {
@@ -96,29 +59,25 @@ const getSelectedKeys = (menuMap: MenuMap, pathname: string): string[] | undefin
 
 const HeaderMenu = () => {
     const { t } = useTranslation(['common']);
-    const history = useHistory();
-    const { location } = history;
+    const navigate = useNavigate();
+    const { pathname } = useLocation();
 
     const menu = useMemo(() => generateMenu(t), [t]);
     const menuMap = useMemo(() => computeMenuMap(menu), [menu]);
-    const selectedKeys = useMemo(() => getSelectedKeys(menuMap, location.pathname), [menuMap, location.pathname]);
+    const selectedKeys = useMemo(() => getSelectedKeys(menuMap, pathname), [menuMap, pathname]);
 
     const onSelect = useCallback(
         ({ key }) => {
             const pathname = menuMap[key];
 
             if (pathname) {
-                history.push(pathname);
+                navigate(pathname);
             }
         },
-        [menuMap, history]
+        [menuMap, navigate]
     );
 
-    return (
-        <Menu mode="horizontal" onSelect={onSelect} selectedKeys={selectedKeys}>
-            {menu.map(renderMenuLevel)}
-        </Menu>
-    );
+    return <Menu items={menu} mode="horizontal" onSelect={onSelect} selectedKeys={selectedKeys} />;
 };
 
 export default HeaderMenu;

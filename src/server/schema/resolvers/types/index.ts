@@ -1,6 +1,10 @@
+export { GraphQLJSONObject as JSONObject } from 'graphql-type-json';
 export { GraphQLUpload as Upload } from 'graphql-upload';
 export { default as User } from './User';
-export { default as Topic } from './Topic';
-export { default as TopicMessage } from './TopicMessage';
 export { default as ObjectID } from './ObjectID';
 export { default as DateTime } from './DateTime';
+export { default as AuthenticationResponse } from './AuthenticationResponse';
+export { default as ExternalLink } from './ExternalLink';
+export { default as ResetPasswordLink } from './ResetPasswordLink';
+export { default as UserSession } from './UserSession';
+export { default as SystemMessage } from './SystemMessage';

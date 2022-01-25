@@ -49,13 +49,10 @@ export const LogoContainer = styled.div`
 
 const EnhancedMenu = props => <AntMenu {...props} theme="light" />;
 
-export const MenuFiller = styled.div`
-    flex-grow: 2;
-`;
-
 export const Menu = styled(EnhancedMenu)`
     margin-left: 16px;
     line-height: 60px !important;
     height: 62px;
     border-bottom: none;
+    flex: auto;
 `;

@@ -11,6 +11,13 @@ input Pagination {
 }
 
 enum SortingOrder {
+    """
+    Ascending order
+    """
     Asc
+
+    """
+    Descending order
+    """
     Desc
 }

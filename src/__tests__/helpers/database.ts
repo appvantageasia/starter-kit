@@ -1,5 +1,7 @@
 import { Document, EJSON } from 'bson';
+import { ObjectId } from 'mongodb';
 import { getDatabaseContext, migrate } from '../../server/database';
+import { getSessionToken } from '../../server/schema/session';
 
 export const setupDatabase = async (): Promise<void> => {
     // get the database
@@ -37,4 +39,25 @@ export const loadFixtures = (fixtures: Fixtures) => async (): Promise<void> => {
 
     // wait for them all
     await Promise.all(promises);
+};
+
+export const createSessionForUser = async (userId: ObjectId) => {
+    // generate a session ID
+    const sessionId = new ObjectId();
+
+    // create token
+    const data = await getSessionToken({ sessionId, userId });
+
+    // create session in database as well
+    const { collections } = await getDatabaseContext();
+    await collections.userSessions.insertOne({
+        _id: sessionId,
+        userId,
+        userAgent: '',
+        expiresAt: data.exp,
+        createdAt: data.iat,
+        lastActivityAt: data.iat,
+    });
+
+    return data;
 };

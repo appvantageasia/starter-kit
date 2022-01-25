@@ -53,11 +53,17 @@ app:
     gzip: ''
     secureCookie: ''
     cookiePolicy: ''
+    endpoint: ''
     verbose: ''
 
   # redis settings
   redis:
     uri: ''
+
+  # bull settings
+  bull:
+    persist: ''
+    monitor: ''
 
   # health checks settings
   health:

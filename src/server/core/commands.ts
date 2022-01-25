@@ -2,10 +2,31 @@ import chalk from 'chalk';
 import { getDatabaseContext, migrate } from '../database';
 import setupMasterKey from '../database/setupMasterKey';
 import { setup as startWorker } from '../queues';
+import { startBoard as startBullBoard } from './bullBoard';
 import config from './config';
 import createWebServer from './createWebServer';
 import { HealthStatus, HealthStatusManager } from './health';
 import { initializeSentry } from './sentry';
+
+export const startBullBoardCommand = (manager: HealthStatusManager) => {
+    // update status
+    manager.update(HealthStatus.Running);
+
+    // get http server running
+    const httpServer = startBullBoard();
+
+    return () => {
+        // update status
+        manager.update(HealthStatus.Stopping);
+
+        // close server
+        return new Promise(resolve => {
+            setTimeout(() => {
+                httpServer.close(resolve);
+            }, 1000);
+        }).then(() => manager.update(HealthStatus.Stopped));
+    };
+};
 
 export const startServerCommand = async (manager: HealthStatusManager) => {
     const { httpServer, expressServer } = await createWebServer();
@@ -23,7 +44,7 @@ export const startServerCommand = async (manager: HealthStatusManager) => {
         return new Promise(resolve => {
             setTimeout(() => {
                 httpServer.close(resolve);
-            }, 10000);
+            }, 1000);
         }).then(() => manager.update(HealthStatus.Stopped));
     };
 };

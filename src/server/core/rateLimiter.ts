@@ -16,6 +16,38 @@ export const authenticationRateLimiter = new RateLimiterRedis({
     storeClient: getRedisInstance(),
     points: 10, // 5 tries per minute max, tries on username consume 2 points
     duration: 60, // reset every minutes
-    keyPrefix: 'authRlfx',
+    keyPrefix: 'rflx:auth',
     blockDuration: 3 * 60, // block for 3 minutes
+});
+
+// rate limiter for link
+export const linkRetrievalRateLimiter = new RateLimiterRedis({
+    storeClient: getRedisInstance(),
+    points: 1, // only 1 try per second
+    duration: 1,
+    keyPrefix: 'rflx:linkRetrieval',
+});
+
+// rate limiter on reset password
+export const resetPasswordRateLimiter = new RateLimiterRedis({
+    storeClient: getRedisInstance(),
+    points: 1, // only 1 try per second
+    duration: 1,
+    keyPrefix: 'rflx:resetPassword',
+});
+
+// rate limiter for TOTP
+export const totpRateLimiter = new RateLimiterRedis({
+    storeClient: getRedisInstance(),
+    points: 1, // only 1 try per second
+    duration: 1,
+    keyPrefix: 'totpRflex',
+});
+
+// rate limiter to publically fetch webauthn keys
+export const webAuthnKeyFetchRateLimiter = new RateLimiterRedis({
+    storeClient: getRedisInstance(),
+    points: 1, // only 1 try per second
+    duration: 1,
+    keyPrefix: 'rflx:webAuthnKeyFetch',
 });

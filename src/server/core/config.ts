@@ -27,6 +27,8 @@ const getSmtpSettings = (): SMTPSettings => {
 
 const version = getString('VERSION', '0.0.0-development');
 
+const port = getNumber(getPrefix('PORT'), 3000);
+
 const config = {
     version,
 
@@ -36,8 +38,10 @@ const config = {
     // introspection state on the GraphQL API
     introspection: getBoolean(getPrefix('INTROSPECTION'), process.env.NODE_ENV !== 'production'),
 
-    port: getNumber(getPrefix('PORT'), 3000),
+    debug: getBoolean('DEBUG', false),
+    port,
     publicPath: getString(getPrefix('PUBLIC_PATH'), '/public/'),
+    applicationEndpoint: getString(getPrefix('ENDPOINT'), `http://localhost:${port}`),
 
     // secure cookies
     cookiePolicy: getString(getPrefix('COOKIE_POLICY'), 'strict'),
@@ -76,6 +80,11 @@ const config = {
             mongocryptdBypassSpawn: getBoolean(getPrefix('DB_CRYPTD_BYPASS_SPAWN'), false),
             mongocryptdSpawnArgs: getStringList(getPrefix('DB_CRYPTD_SPWAN_ARGS'), [], ' '),
         },
+    },
+
+    bull: {
+        persistJobs: getBoolean(getPrefix('BULL_PERSIST'), false),
+        enableMonitor: getBoolean(getPrefix('BULL_MONITOR'), false),
     },
 
     redis: {
@@ -141,6 +150,10 @@ const exitOnError = (error: string): void => {
 export const runValidityChecks = () => {
     if (!config.session.secret) {
         exitOnError(chalk.red('APP_SESSION_SECRET is missing in environment variables'));
+    }
+
+    if (config.bull.enableMonitor && process.env.NODE_ENV === 'production') {
+        exitOnError(chalk.red('APP_BULL_MONITOR cannot be turned on on production environment'));
     }
 };
 

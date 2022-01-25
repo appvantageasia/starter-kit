@@ -4,6 +4,14 @@ export interface PossibleTypesResultData {
     };
 }
 const result: PossibleTypesResultData = {
-    possibleTypes: {},
+    possibleTypes: {
+        AuthenticationResponse: [
+            'AuthenticationRequiresNewPassword',
+            'AuthenticationRequiresTOTP',
+            'AuthenticationSuccessful',
+        ],
+        ExternalLink: ['ResetPasswordLink'],
+        SystemMessage: ['MessageNotice', 'UserSessionRevoked'],
+    },
 };
 export default result;

@@ -1,3 +1,4 @@
+import { NormalizedCacheObject } from '@apollo/client';
 import { ReactElement } from 'react';
 import { HelmetData } from 'react-helmet';
 import { RuntimeConfig } from '../../app/runtimeConfig';
@@ -6,31 +7,37 @@ import { attachPublicPath } from '../utils';
 type DocumentProps = {
     htmlAttrs?: { [prop: string]: any };
     bodyAttrs?: { [prop: string]: any };
-    body: string;
-    helmet: HelmetData;
+    body?: string;
+    helmet?: HelmetData;
     styleTags?: ReactElement[];
     jsScripts?: string[];
     cssScripts?: string[];
     runtime: RuntimeConfig;
     locale: string;
+    apolloState?: NormalizedCacheObject;
 };
 
 const Document = ({
     htmlAttrs,
     bodyAttrs,
     helmet,
-    body,
+    body = '',
     styleTags,
     cssScripts,
     jsScripts,
     runtime,
     locale,
+    apolloState,
 }: DocumentProps) => (
     <html lang={locale} {...htmlAttrs}>
         <head>
-            {helmet.title.toComponent()}
-            {helmet.meta.toComponent()}
-            {helmet.link.toComponent()}
+            {helmet ? (
+                <>
+                    {helmet.title.toComponent()}
+                    {helmet.meta.toComponent()}
+                    {helmet.link.toComponent()}
+                </>
+            ) : null}
             {cssScripts?.map((url, index) => (
                 // eslint-disable-next-line react/no-array-index-key
                 <link key={index.toString()} href={attachPublicPath(url)} rel="stylesheet" type="text/css" />
@@ -42,6 +49,14 @@ const Document = ({
                 data-role="runtime-config"
                 type="application/json"
             />
+            {apolloState ? (
+                <script
+                    // eslint-disable-next-line react/no-danger
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(apolloState).replace(/</g, '\\u003c') }}
+                    data-role="initial-apollo-state"
+                    type="application/json"
+                />
+            ) : null}
         </head>
         <body {...bodyAttrs}>
             {/* eslint-disable-next-line react/no-danger */}

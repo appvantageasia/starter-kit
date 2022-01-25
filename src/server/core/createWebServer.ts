@@ -6,13 +6,14 @@ import { ApolloServer, ApolloServerExpressConfig } from 'apollo-server-express';
 import compression from 'compression';
 import cors from 'cors';
 import express, { Express, Handler, Request, Response } from 'express';
-import { execute, subscribe } from 'graphql';
 import depthLimit from 'graphql-depth-limit';
 import { graphqlUploadExpress } from 'graphql-upload';
+import { useServer } from 'graphql-ws/lib/use/ws';
 import morgan from 'morgan';
-import { SubscriptionServer } from 'subscriptions-transport-ws';
+import { WebSocketServer } from 'ws';
 import schema from '../schema';
 import createContext, { Context, RootDocument } from '../schema/context';
+import { createBoard as createBullBoard } from './bullBoard';
 import config from './config';
 import setupPrometheusMetrics, { ApolloMetricsPlugin } from './prometheus';
 import { expressRateLimiter } from './rateLimiter';
@@ -114,29 +115,20 @@ const createWebServer = async (): Promise<WebServerCreation> => {
     // create the http server
     const httpServer = http.createServer(expressServer);
 
-    // create websocket server
-    const subscriptionServer = SubscriptionServer.create(
+    // create web socket server
+    const wsServer = new WebSocketServer({ server: httpServer });
+
+    // start listening with the ws server
+    const wsServerCleanup = useServer(
         {
             schema,
+            context: async context => {
+                const params = context.connectionParams as { authorization?: string };
 
-            // protect against DDoS by using deep depth on GraphQL APIs
-            validationRules: [depthLimit(10)],
-
-            // coming from graphql
-            execute,
-            subscribe,
-
-            // provide a custom context
-            onConnect: (connectionParams, webSocket, context): Promise<Context> =>
-                createContext(context.request, context.response),
-
-            // provide a custom root document
-            rootValue: (): RootDocument => null,
+                return createContext(context.extra.request, undefined, params.authorization);
+            },
         },
-        {
-            server: httpServer,
-            path: '/graphql',
-        }
+        wsServer
     );
 
     // prepare plugins for apollo
@@ -147,12 +139,12 @@ const createWebServer = async (): Promise<WebServerCreation> => {
         // help apollo server to gracefully shutdown
         ApolloServerPluginDrainHttpServer({ httpServer }),
 
-        // help shutdown subscriptions as well
+        // proper shutdown for the WebSocket server.
         {
             async serverWillStart() {
                 return {
                     async drainServer() {
-                        subscriptionServer.close();
+                        await wsServerCleanup.dispose();
                     },
                 };
             },
@@ -180,6 +172,9 @@ const createWebServer = async (): Promise<WebServerCreation> => {
         // enable introspection based on the configuration
         introspection: config.introspection,
 
+        // debug mode
+        debug: config.debug,
+
         // apollo plugins
         plugins,
     });
@@ -195,6 +190,14 @@ const createWebServer = async (): Promise<WebServerCreation> => {
         // disable CORS as we manage those at an upper level
         apolloServer.getMiddleware({ bodyParserConfig: { limit: '50mb' }, path: '/', cors: false })
     );
+
+    // we might want to monitor bull queues
+    // mostly for debug purposes as this endpoint could leak sensitive information
+    if (config.bull.enableMonitor) {
+        const bullServerAdapter = createBullBoard().serverAdapter;
+        bullServerAdapter.setBasePath('/.bull');
+        expressServer.use('/.bull', bullServerAdapter.getRouter());
+    }
 
     // fallback on the application for all other paths
     expressServer.get('*', (req, res, next) => {

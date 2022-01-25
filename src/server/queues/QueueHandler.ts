@@ -39,8 +39,8 @@ export class QueueHandler<Message = any> {
         this.options = {
             jobOptions: {
                 // by default always clean up from redis
-                removeOnFail: true,
-                removeOnComplete: true,
+                removeOnFail: !config.bull.persistJobs,
+                removeOnComplete: !config.bull.persistJobs,
                 ...options?.jobOptions,
             },
             getLabel: options?.getLabel || (() => this.queueName),

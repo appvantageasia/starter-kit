@@ -1,0 +1,8 @@
+type ResetPasswordLink {
+    """
+    Token to use with mutation `changePasswordFromToken`
+    """
+    token: String!
+}
+
+union ExternalLink = ResetPasswordLink

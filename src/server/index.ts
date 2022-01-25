@@ -4,6 +4,7 @@ import {
     executeDataMigration,
     startServerCommand,
     startWorkerCommand,
+    startBullBoardCommand,
     executeSetupMasterKey,
 } from './core/commands';
 import config, { runValidityChecks } from './core/config';
@@ -38,6 +39,15 @@ program
         const manager = new HealthStatusManager();
         createHealthServer(manager);
         composeCommand(await startServerCommand(manager), await startPrometheusServer());
+    });
+
+program
+    .command('bullBoard')
+    .description('Start bull board')
+    .action(async () => {
+        const manager = new HealthStatusManager();
+        createHealthServer(manager);
+        composeCommand(startBullBoardCommand(manager));
     });
 
 program.command('setupMasterKey').description('Setup master key for MongoDB CSFLE').action(executeSetupMasterKey);
