@@ -146,9 +146,6 @@ redis:
     # should the redis chart be deployed
     enabled: true
 
-    # no password
-    usePassword: false
-
     # architecture type
     architecture: standalone
 
@@ -178,6 +175,9 @@ minio:
 
     # bucket to automatically create
     defaultBuckets: 'app'
+
+    # authorization setup
+    auth: {}
 
 ## Affinity for pod assignment.
 ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
