@@ -176,6 +176,11 @@ class WebpackPackagePlugin {
                     // process dependencies
                     const [dependencies, yarnMap] = processDependencies(this.yarnEntries, uniq(externalPackages));
 
+                    // sort dependencies for consistency
+                    const sortedDependencies = Object.keys(dependencies)
+                        .sort()
+                        .reduce((acc, key) => ({ ...acc, [key]: dependencies[key] }), {});
+
                     // write the new package.json
                     const output = JSON.stringify(
                         {
@@ -185,7 +190,7 @@ class WebpackPackagePlugin {
                             name: this.options.name,
                             version: this.options.version,
                             // sort our dependencies to make things cleaner
-                            dependencies,
+                            dependencies: sortedDependencies,
                             scripts: {
                                 // the start script
                                 [this.options.scriptExecName]:
