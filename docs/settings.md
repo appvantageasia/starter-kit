@@ -4,14 +4,15 @@ All settings are defined through environment variable.
 
 ## Global configuration
 
-| Name              | Type    | Default           | Comment                    |
-| ----------------- | ------- | ----------------- | -------------------------- |
-| VERSION           | String  | 0.0.0-development | Application version        |
-| APP_PUBLIC_PATH   | String  | /public/          | Public path for assets     |
-| APP_PORT          | Number  | 3000              | HTTP server listening port |
-| APP_GZIP          | Boolean | true              | Enable GZip compression    |
-| APP_SECURE_COOKIE | Boolean | true              | Enable secure cookies      |
-| APP_COOKIE_POLICY | String  | strict            | Cookie sameSite policy     |
+| Name              | Type    | Default           | Comment                      |
+| ----------------- | ------- | ----------------- | ---------------------------- |
+| VERSION           | String  | 0.0.0-development | Application version          |
+| APP_PUBLIC_PATH   | String  | /public/          | Public path for assets       |
+| APP_PORT          | Number  | 3000              | HTTP server listening port   |
+| APP_GZIP          | Boolean | true              | Enable GZip compression      |
+| APP_SECURE_COOKIE | Boolean | true              | Enable secure cookies        |
+| APP_COOKIE_POLICY | String  | strict            | Cookie sameSite policy       |
+| APP_INTROSPECTION | Boolean |                   | Enable GraphQL introspection |
 
 It's recommended to disable compression if you may delegate it to a reverse proxy.
 

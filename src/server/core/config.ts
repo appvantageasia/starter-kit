@@ -33,6 +33,9 @@ const version = getString('VERSION', '0.0.0-development');
 const config = {
     version,
 
+    // introspection state on the GraphQL API
+    introspection: getBoolean(getPrefix('INTROSPECTION'), process.env.NODE_ENV !== 'production'),
+
     port: getNumber(getPrefix('PORT'), 3000),
     publicPath: getString(getPrefix('PUBLIC_PATH'), '/public/'),
 

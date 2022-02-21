@@ -1,11 +1,13 @@
 // create http server
 import http, { Server } from 'http';
 import * as Sentry from '@sentry/node';
+import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
 import { ApolloServer, ApolloServerExpressConfig } from 'apollo-server-express';
 import compression from 'compression';
 import cors from 'cors';
 import express, { Express, Handler, Request, Response } from 'express';
 import { execute, subscribe } from 'graphql';
+import depthLimit from 'graphql-depth-limit';
 import { graphqlUploadExpress } from 'graphql-upload';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
 import schema from '../schema';
@@ -26,9 +28,11 @@ const rateLimiterMiddleware: Handler = (req, res, next) => {
     expressRateLimiter
         .consume(req.ip, 1)
         .then(() => {
+            // move on to next handler
             next();
         })
         .catch(() => {
+            // reject request
             res.status(429).send('Too Many Requests');
         });
 };
@@ -37,46 +41,22 @@ const protectGraphQLEndpoint: Handler = (req, res, next) => {
     // prevent XSS attacks
     res.set({ 'X-Content-Type-Options': 'nosniff' });
 
-    // move on
+    // move on to next handler
     next();
 };
 
 const disableCaching: Handler = (req, res, next) => {
-    // update headers
+    // update headers to disable caching behaviors
     res.set({
         'Cache-control': 'no-store',
         Pragma: 'no-cache',
     });
 
-    // move on
+    // move on to next handler
     next();
 };
 
 const createWebServer = async (): Promise<WebServerCreation> => {
-    // prepare plugins for apollo
-    const plugins: ApolloServerExpressConfig['plugins'] = [ApolloSentryPlugin];
-
-    if (config.prometheus.enabled) {
-        plugins.push(ApolloMetricsPlugin);
-    }
-
-    // create apollo server
-    const apolloServer = new ApolloServer({
-        schema,
-
-        // provide a custom context
-        context: ({ req, res }: { req: Request; res: Response }): Promise<Context> => createContext(req, res),
-
-        // provide a custom root document
-        rootValue: (): RootDocument => null,
-
-        // apollo plugins
-        plugins,
-    });
-
-    // start apollo server
-    await apolloServer.start();
-
     // create express server
     const expressServer = express();
 
@@ -85,7 +65,7 @@ const createWebServer = async (): Promise<WebServerCreation> => {
 
     if (config.gzip) {
         // enable compression
-        // we might want to disable it as it's delegated to a reverse proxy
+        // we might want to disable if it's delegated to a reverse proxy
         expressServer.use(compression());
     }
 
@@ -125,38 +105,16 @@ const createWebServer = async (): Promise<WebServerCreation> => {
     // update cache policy
     expressServer.use(disableCaching);
 
-    // serve graphql API
-    expressServer.use(
-        '/graphql',
-        protectGraphQLEndpoint,
-        graphqlUploadExpress(),
-        apolloServer.getMiddleware({ bodyParserConfig: { limit: '50mb' }, path: '/', cors: false })
-    );
-
-    // otherwise fallback on the application
-    expressServer.get('*', (req, res, next) => {
-        renderApplication(req, res, next);
-    });
-
-    // sse the sentry error handler before any other error handler
-    expressServer.use(Sentry.Handlers.errorHandler());
-
-    // then here comes our error handler
-    // eslint-disable-next-line no-unused-vars
-    expressServer.use((error, request, response, next) => {
-        // print it for logs
-        console.error(error);
-        // answer as 500 response
-        response.status(500).send('Internal error');
-    });
-
     // create the http server
     const httpServer = http.createServer(expressServer);
 
-    // install websocket support
+    // create websocket server
     const subscriptionServer = SubscriptionServer.create(
         {
             schema,
+
+            // protect against DDoS by using deep depth on GraphQL APIs
+            validationRules: [depthLimit(10)],
 
             // coming from graphql
             execute,
@@ -175,9 +133,78 @@ const createWebServer = async (): Promise<WebServerCreation> => {
         }
     );
 
-    // close subscription server whenever http server closes
-    httpServer.on('close', () => {
-        subscriptionServer.close();
+    // prepare plugins for apollo
+    const plugins: ApolloServerExpressConfig['plugins'] = [
+        // sentry custom plugin for bug tracking
+        ApolloSentryPlugin,
+
+        // help apollo server to gracefully shutdown
+        ApolloServerPluginDrainHttpServer({ httpServer }),
+
+        // help shutdown subscriptions as well
+        {
+            async serverWillStart() {
+                return {
+                    async drainServer() {
+                        subscriptionServer.close();
+                    },
+                };
+            },
+        },
+    ];
+
+    if (config.prometheus.enabled) {
+        // custom plugin to extract prometheus metrics
+        plugins.push(ApolloMetricsPlugin);
+    }
+
+    // create apollo server
+    const apolloServer = new ApolloServer({
+        schema,
+
+        // protect against DDoS by using deep depth on GraphQL APIs
+        validationRules: [depthLimit(10)],
+
+        // provide a custom context
+        context: ({ req, res }: { req: Request; res: Response }): Promise<Context> => createContext(req, res),
+
+        // provide a custom root document
+        rootValue: (): RootDocument => null,
+
+        // enable introspection based on the configuration
+        introspection: config.introspection,
+
+        // apollo plugins
+        plugins,
+    });
+
+    // start apollo server
+    await apolloServer.start();
+
+    // serve graphql API
+    expressServer.use(
+        '/graphql',
+        protectGraphQLEndpoint,
+        graphqlUploadExpress(),
+        // disable CORS as we manage those at an upper level
+        apolloServer.getMiddleware({ bodyParserConfig: { limit: '50mb' }, path: '/', cors: false })
+    );
+
+    // fallback on the application for all other paths
+    expressServer.get('*', (req, res, next) => {
+        renderApplication(req, res, next);
+    });
+
+    // sse the sentry error handler before any other error handler
+    expressServer.use(Sentry.Handlers.errorHandler());
+
+    // then here comes our error handler
+    // eslint-disable-next-line no-unused-vars
+    expressServer.use((error, request, response, next) => {
+        // print it for logs
+        console.error(error);
+        // answer as 500 response
+        response.status(500).send('Internal error');
     });
 
     return { httpServer, apolloServer, expressServer };
