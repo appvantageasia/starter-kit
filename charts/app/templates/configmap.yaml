@@ -19,6 +19,13 @@ data:
   {{- include "app.configValue" ( dict "Key" "APP_SESSION_LIFETIME" "Value" .lifetime ) }}
   {{- end }}
 
+  # health checks settings
+  {{- with .Values.app.health }}
+  APP_HEALTH_ENABLED: "true"
+  {{- include "app.configValue" ( dict "Key" "APP_HEALTH_PORT" "Value" .port ) }}
+  {{- include "app.configValue" ( dict "Key" "APP_HEALTH_ALLOWED" "Value" .allowed ) }}
+  {{- end }}
+
   # smtp settings
   {{- with .Values.app.smtp }}
   {{- include "app.configValue" ( dict "Key" "APP_SMTP_FROM" "Value" .from ) }}

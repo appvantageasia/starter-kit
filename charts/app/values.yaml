@@ -58,6 +58,11 @@ app:
     redis:
         uri: ''
 
+    # health checks settings
+    health:
+        port: 4000
+        allowed: '0.0.0.0/0'
+
     # database settings
     database:
         uri: ''

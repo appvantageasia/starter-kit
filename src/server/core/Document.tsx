@@ -22,6 +22,7 @@ const Document = ({ htmlAttrs, bodyAttrs, helmet, body, styleTags, cssScripts, j
             {helmet.meta.toComponent()}
             {helmet.link.toComponent()}
             {cssScripts?.map((url, index) => (
+                // eslint-disable-next-line react/no-array-index-key
                 <link key={index.toString()} href={attachPublicPath(url)} rel="stylesheet" type="text/css" />
             ))}
             {styleTags}
@@ -36,6 +37,7 @@ const Document = ({ htmlAttrs, bodyAttrs, helmet, body, styleTags, cssScripts, j
             {/* eslint-disable-next-line react/no-danger */}
             <div dangerouslySetInnerHTML={{ __html: body }} id="root" />
             {jsScripts?.map((url, index) => (
+                // eslint-disable-next-line react/no-array-index-key
                 <script key={index.toString()} src={attachPublicPath(url)} type="application/javascript" />
             ))}
         </body>

@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import type { SMTPSettings } from '../emails';
-import { getString, getBoolean, getInteger, getNumber } from './env';
+import { getString, getBoolean, getInteger, getNumber, getStringList } from './env';
 
 const prefix = 'APP';
 
@@ -39,6 +39,13 @@ const config = {
     // secure cookies
     cookiePolicy: getString(getPrefix('COOKIE_POLICY'), 'strict'),
     secureCookie: getBoolean(getPrefix('SECURE_COOKIE'), true),
+
+    // health checks
+    healthChecks: {
+        enabled: getBoolean(getPrefix('HEALTH_ENABLED'), true),
+        port: getNumber(getPrefix('HEALTH_PORT'), 3000),
+        allowed: getStringList(getPrefix('HEALTH_ALLOWED'), ['::1/128', '127.0.0.0/8']),
+    },
 
     // gzip module
     gzip: getBoolean(getPrefix('GZIP'), true),

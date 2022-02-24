@@ -143,7 +143,7 @@ class MainRunner {
         const app = express();
 
         // create a proxy but do not define a target yet
-        const proxy = httpProxy.createProxyServer({});
+        const proxy = httpProxy.createProxyServer({ xfwd: true });
 
         // print error when there's any
         proxy.on('error', () => {

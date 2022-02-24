@@ -39,6 +39,17 @@ spec:
             {{- with .Values.app.pods.extraEnvs }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+          livenessProbe:
+            httpGet:
+              port: {{ .Values.app.health.port }}
+              path: /healthChecks/live
+              scheme: HTTP
+          readinessProbe:
+            initialDelaySeconds: 1
+            httpGet:
+              port: {{ .Values.app.health.port }}
+              path: /healthChecks/ready
+              scheme: HTTP
       {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}

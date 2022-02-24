@@ -2,7 +2,7 @@ import chalk from 'chalk';
 import { getDatabaseContext, migrate } from '../database';
 import { setup as startWorker } from '../queues';
 import config from './config';
-import createWebServer from './createWebServer';
+import createWebServer, { createHealthServer } from './createWebServer';
 import { updateStatus, HealthStatus } from './health';
 import { initializeSentry } from './sentry';
 
@@ -27,16 +27,31 @@ export const startServerCommand = async () => {
     };
 };
 
-export const startWorkerCommand = () => {
+export const startWorkerCommand = (startHealthServer = false) => {
     initializeSentry();
 
     const stopWorker = startWorker();
 
-    let stopPromise: Promise<void> | null = null;
+    // update status
+    updateStatus(HealthStatus.Running);
+
+    let stopPromise: Promise<unknown> | null = null;
+
+    const closeHealthServer = startHealthServer && config.healthChecks.enabled ? createHealthServer() : null;
 
     return () => {
+        // update status
+        updateStatus(HealthStatus.Stopping);
+
         if (!stopPromise) {
             stopPromise = stopWorker()
+                .then(() => {
+                    if (closeHealthServer) {
+                        return closeHealthServer();
+                    }
+
+                    return undefined;
+                })
                 .then(() => {
                     process.exit(0);
                 })
