@@ -41,13 +41,13 @@ spec:
             {{- end }}
           livenessProbe:
             httpGet:
-              port: 3000
+              port: {{ .Values.app.health.port }}
               path: /healthChecks/live
               scheme: HTTP
           readinessProbe:
             initialDelaySeconds: 1
             httpGet:
-              port: 3000
+              port: {{ .Values.app.health.port }}
               path: /healthChecks/ready
               scheme: HTTP
           ports:

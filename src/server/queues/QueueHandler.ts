@@ -43,6 +43,13 @@ export class QueueHandler<Message = any> {
         this.jobOptions = { removeOnComplete: true, ...jobOptions };
     }
 
+    public async isHealthy() {
+        // ping redis to test it
+        await this.queue.client.ping();
+
+        return true;
+    }
+
     public add(message: Message, options?: JobOptions): Promise<Job<Document>> {
         const serializedMessage = EJSON.serialize(message);
 

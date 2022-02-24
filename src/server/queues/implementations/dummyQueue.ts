@@ -1,7 +1,7 @@
 import { Document } from 'bson';
 import { Job } from 'bull';
-import { sendDummyEmail } from '../emails';
-import { QueueHandler } from './QueueHandler';
+import { sendDummyEmail } from '../../emails';
+import { QueueHandler } from '../QueueHandler';
 
 export type DummyMessage = { value: string };
 
