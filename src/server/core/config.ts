@@ -58,6 +58,7 @@ const config = {
 
     redis: {
         uri: getString(getPrefix('REDIS_URI'), 'redis://127.0.0.1:6379'),
+        sentinel: getBoolean(getPrefix('REDIS_SENTINEL'), false),
     },
 
     session: {

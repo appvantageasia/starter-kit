@@ -25,9 +25,10 @@ It's recommended to disable compression if you may delegate it to a reverse prox
 
 ## Redis configuration
 
-| Name          | Type   | Default                | Comment                 |
-| ------------- | ------ | ---------------------- | ----------------------- |
-| APP_REDIS_URI | String | redis://127.0.0.1:6379 | Redis connection string |
+| Name               | Type    | Default                | Comment                 |
+| ------------------ | ------- | ---------------------- | ----------------------- |
+| APP_REDIS_URI      | String  | redis://127.0.0.1:6379 | Redis connection string |
+| APP_REDIS_SENTINEL | Boolean | false                  | Use sentinels           |
 
 ## Session configuration
 

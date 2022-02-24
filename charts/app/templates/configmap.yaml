@@ -14,6 +14,17 @@ data:
   {{- include "app.configValue" ( dict "Key" "APP_COOKIE_POLICY" "Value" .cookiePolicy ) }}
   {{- end }}
 
+  # redis settings
+  {{- if .Values.redis.enabled }}
+  {{- if .Values.redis.sentinel.enabled }}
+  APP_REDIS_SENTINEL: "true"
+  {{- end }}
+  {{- else }}
+  {{- with .Values.app.redis }}
+  {{- include "app.configValue" ( dict "Key" "APP_REDIS_SENTINEL" "Value" .sentinel ) }}
+  {{- end }}
+  {{- end  }}
+
   # session settings
   {{- with .Values.app.session }}
   {{- include "app.configValue" ( dict "Key" "APP_SESSION_LIFETIME" "Value" .lifetime ) }}
