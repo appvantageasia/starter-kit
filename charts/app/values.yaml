@@ -57,6 +57,7 @@ app:
     # redis settings
     redis:
         uri: ''
+        sentinel: ''
 
     # database settings
     database:
@@ -146,12 +147,19 @@ redis:
     # should the redis chart be deployed
     enabled: true
 
-    # architecture type
-    architecture: standalone
+    # use sentinel
+    sentinel:
+        enabled: true
+
+    # disable persistence on replica as we rely on sentinels
+    replica:
+        persistence:
+            enabled: false
 
     auth:
         # no password/authentication
         enabled: false
+        sentinel: false
 
 # MongoDB settings
 # when using this sub chart

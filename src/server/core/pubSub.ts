@@ -1,7 +1,6 @@
 import { EJSON, Document } from 'bson';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
-import IORedis from 'ioredis';
-import config from './config';
+import { createRedisInstance } from './redis';
 
 export const getPubSub = (): RedisPubSub => {
     if (global.pubSub) {
@@ -9,8 +8,8 @@ export const getPubSub = (): RedisPubSub => {
     }
 
     global.pubSub = new RedisPubSub({
-        publisher: new IORedis(config.redis.uri, { enableOfflineQueue: false }),
-        subscriber: new IORedis(config.redis.uri, { enableOfflineQueue: false }),
+        publisher: createRedisInstance(),
+        subscriber: createRedisInstance(),
         serializer: (source: Document): string => JSON.stringify(EJSON.serialize(source)),
         deserializer: (source: string): Document => EJSON.deserialize(JSON.parse(source)) as Document,
     });
