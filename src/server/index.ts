@@ -1,7 +1,8 @@
 import { program } from 'commander';
 import { composeCommand, executeDataMigration, startServerCommand, startWorkerCommand } from './core/commands';
 import config, { runValidityChecks } from './core/config';
-import createWebServer, { createHealthServer } from './core/createWebServer';
+import createWebServer from './core/createWebServer';
+import { HealthStatusManager, createHealthServer } from './core/health';
 import { startPrometheusServer } from './core/prometheus';
 import { listPendingMigrations } from './database';
 import { setup as startWorker } from './queues';
@@ -19,20 +20,18 @@ program
     .command('worker')
     .description('Start worker')
     .action(() => {
-        composeCommand(startWorkerCommand(true));
+        const manager = new HealthStatusManager();
+        createHealthServer(manager);
+        composeCommand(startWorkerCommand(manager));
     });
 
 program
     .command('serve')
     .description('Start web server')
     .action(async () => {
-        const services = [await startServerCommand(), await startPrometheusServer()];
-
-        if (config.healthChecks.enabled && config.healthChecks.port !== config.port) {
-            services.push(createHealthServer());
-        }
-
-        composeCommand(...services);
+        const manager = new HealthStatusManager();
+        createHealthServer(manager);
+        composeCommand(await startServerCommand(manager), await startPrometheusServer());
     });
 
 if (process.isCLI) {
