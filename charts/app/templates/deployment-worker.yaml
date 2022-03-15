@@ -39,17 +39,25 @@ spec:
             {{- with .Values.app.pods.extraEnvs }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+          startupProbe:
+            httpGet:
+              port: {{ .Values.app.health.port }}
+              path: /.health/ready
+              scheme: HTTP
           livenessProbe:
             httpGet:
               port: {{ .Values.app.health.port }}
-              path: /healthChecks/live
+              path: /.health/live
               scheme: HTTP
           readinessProbe:
-            initialDelaySeconds: 1
             httpGet:
               port: {{ .Values.app.health.port }}
-              path: /healthChecks/ready
+              path: /.health/ready
               scheme: HTTP
+          ports:
+            - name: health
+              containerPort: {{ .Values.app.health.port }}
+              protocol: TCP
       {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}

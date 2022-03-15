@@ -2,7 +2,6 @@
 import http, { Server } from 'http';
 import * as Sentry from '@sentry/node';
 import { ApolloServer, ApolloServerExpressConfig } from 'apollo-server-express';
-import chalk from 'chalk';
 import compression from 'compression';
 import cors from 'cors';
 import express, { Express, Handler, Request, Response } from 'express';
@@ -12,7 +11,6 @@ import { SubscriptionServer } from 'subscriptions-transport-ws';
 import schema from '../schema';
 import createContext, { Context, RootDocument } from '../schema/context';
 import config from './config';
-import { createHealthRouter } from './health';
 import setupPrometheusMetrics, { ApolloMetricsPlugin } from './prometheus';
 import { expressRateLimiter } from './rateLimiter';
 import renderApplication from './renderApplication';
@@ -108,11 +106,6 @@ const createWebServer = async (): Promise<WebServerCreation> => {
     // serve static files
     expressServer.use('/public', express.static('public'));
 
-    // health endpoints to be served on the same server if the ports are the same
-    if (config.healthChecks.enabled && config.healthChecks.port === config.port) {
-        expressServer.use('/healthChecks', createHealthRouter());
-    }
-
     // apply cors
     expressServer.use(
         cors((req, callback) => {
@@ -151,8 +144,10 @@ const createWebServer = async (): Promise<WebServerCreation> => {
     // then here comes our error handler
     // eslint-disable-next-line no-unused-vars
     expressServer.use((error, request, response, next) => {
+        // print it for logs
         console.error(error);
-        response.status('500').send('Internal error');
+        // answer as 500 response
+        response.status(500).send('Internal error');
     });
 
     // create the http server
@@ -186,24 +181,6 @@ const createWebServer = async (): Promise<WebServerCreation> => {
     });
 
     return { httpServer, apolloServer, expressServer };
-};
-
-export const createHealthServer = () => {
-    // create express server
-    const expressServer = express();
-    // disable informational headers
-    expressServer.disable('x-powered-by');
-    // health endpoints
-    expressServer.use('/healthChecks', createHealthRouter());
-
-    const httpServer = expressServer.listen(config.healthChecks.port, () => {
-        console.info(chalk.cyan('Health server listening'));
-    });
-
-    return () =>
-        new Promise(resolve => {
-            httpServer.close(resolve);
-        });
 };
 
 export default createWebServer;

@@ -32,10 +32,10 @@ It's recommended to disable compression if you may delegate it to a reverse prox
 ## Health checks configuration
 
 | Name               | Type    | Default             | Comment                               |
-| ------------------ | ------- | ------------------- | ------------------------------------- |
-| APP_HEALTH_ENABLED | Boolean | true                | Serve health checks                   |
-| APP_HEALTH_PORT    | Number  | 3000                | Port on which serve the health checks |
-| APP_HEALTH_ALLOWED | String  | ::1/128,127.0.0.0/8 | Allowed origins for the health checks |
+| ------------------ | ------- |---------------------|---------------------------------------|
+| APP_HEALTH_ENABLED | Boolean | false               | Serve health checks                   |
+| APP_HEALTH_PORT    | Number  | 4000                | Port on which serve the health checks |
+| APP_HEALTH_ALLOWED | String  | ::1/128,127.0.0.0/8 | Allowed CIDR for the health checks    |
 
 ## Session configuration
 

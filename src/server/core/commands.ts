@@ -2,58 +2,49 @@ import chalk from 'chalk';
 import { getDatabaseContext, migrate } from '../database';
 import { setup as startWorker } from '../queues';
 import config from './config';
-import createWebServer, { createHealthServer } from './createWebServer';
-import { updateStatus, HealthStatus } from './health';
+import createWebServer from './createWebServer';
+import { HealthStatus, HealthStatusManager } from './health';
 import { initializeSentry } from './sentry';
 
-export const startServerCommand = async () => {
+export const startServerCommand = async (manager: HealthStatusManager) => {
     const { httpServer, expressServer } = await createWebServer();
 
     initializeSentry({ app: expressServer });
 
     httpServer.listen(config.port, () => {
-        updateStatus(HealthStatus.Running);
+        manager.update(HealthStatus.Running);
         console.info(chalk.cyan('Server listening'));
     });
 
     return () => {
-        updateStatus(HealthStatus.Stopping);
+        manager.update(HealthStatus.Stopping);
 
         return new Promise(resolve => {
             setTimeout(() => {
                 httpServer.close(resolve);
             }, 10000);
-        }).then(() => updateStatus(HealthStatus.Stopped));
+        }).then(() => manager.update(HealthStatus.Stopped));
     };
 };
 
-export const startWorkerCommand = (startHealthServer = false) => {
+export const startWorkerCommand = (manager: HealthStatusManager) => {
     initializeSentry();
 
+    // start workers
     const stopWorker = startWorker();
-
     // update status
-    updateStatus(HealthStatus.Running);
+    manager.update(HealthStatus.Running);
 
     let stopPromise: Promise<unknown> | null = null;
 
-    const closeHealthServer = startHealthServer && config.healthChecks.enabled ? createHealthServer() : null;
-
     return () => {
         // update status
-        updateStatus(HealthStatus.Stopping);
+        manager.update(HealthStatus.Stopping);
 
         if (!stopPromise) {
             stopPromise = stopWorker()
                 .then(() => {
-                    if (closeHealthServer) {
-                        return closeHealthServer();
-                    }
-
-                    return undefined;
-                })
-                .then(() => {
-                    process.exit(0);
+                    manager.update(HealthStatus.Stopped);
                 })
                 .catch(error => {
                     console.error(error);
