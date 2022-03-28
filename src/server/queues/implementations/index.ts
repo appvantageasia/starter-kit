@@ -1,1 +1,2 @@
-export { dummyQueue } from './dummyQueue';
+export * from './dummy';
+export * from './workerBeat';

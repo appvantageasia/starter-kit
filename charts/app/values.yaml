@@ -62,6 +62,7 @@ app:
     health:
         port: 4000
         allowed: '0.0.0.0/0,::/0'
+        workerBeat: ''
 
     # database settings
     database:

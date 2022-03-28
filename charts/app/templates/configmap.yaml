@@ -24,6 +24,7 @@ data:
   APP_HEALTH_ENABLED: "true"
   {{- include "app.configValue" ( dict "Key" "APP_HEALTH_PORT" "Value" .port ) }}
   {{- include "app.configValue" ( dict "Key" "APP_HEALTH_ALLOWED" "Value" .allowed ) }}
+  {{- include "app.configValue" ( dict "Key" "APP_HEALTH_WORKER_BEAT" "Value" .workerBeat ) }}
   {{- end }}
 
   # smtp settings

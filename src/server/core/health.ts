@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import express, { Router, RequestHandler } from 'express';
 import ipaddr from 'ipaddr.js';
 import { getDatabaseContext } from '../database';
-import * as queues from '../queues/implementations';
+import { queues } from '../queues/setup';
 import config from './config';
 import getRedisInstance from './redis';
 
@@ -14,7 +14,7 @@ export enum HealthStatus {
     Stopped,
 }
 
-const runHealthChecks = async () => {
+export const runHealthChecks = async () => {
     // check the main redis first
     await getRedisInstance().ping();
 
