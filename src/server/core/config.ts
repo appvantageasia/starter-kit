@@ -48,6 +48,7 @@ const config = {
         enabled: getBoolean(getPrefix('HEALTH_ENABLED'), false),
         port: getNumber(getPrefix('HEALTH_PORT'), 4000),
         allowed: getStringList(getPrefix('HEALTH_ALLOWED'), ['::1/128', '127.0.0.0/8']),
+        workerBeat: getString(getPrefix('HEALTH_WORKER_BEAT')),
     },
 
     // gzip module
