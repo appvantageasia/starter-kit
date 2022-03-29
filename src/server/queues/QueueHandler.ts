@@ -40,7 +40,13 @@ export class QueueHandler<Message = any> {
         this.queueName = queueName;
         this.queue = new BullQueue(queueName, config.redis.uri);
         this.processFunction = processFunction;
-        this.jobOptions = { removeOnComplete: true, ...jobOptions };
+
+        this.jobOptions = {
+            // by default always clean up from redis
+            removeOnFail: true,
+            removeOnComplete: true,
+            ...jobOptions,
+        };
     }
 
     public async isHealthy() {
