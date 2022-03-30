@@ -29,6 +29,21 @@ spec:
             - name: http
               containerPort: 3000
               protocol: TCP
+          startupProbe:
+            httpGet:
+              port: 3000
+              path: /.live
+              scheme: HTTP
+          livenessProbe:
+            httpGet:
+              port: 3000
+              path: /.live
+              scheme: HTTP
+          readinessProbe:
+            httpGet:
+              port: 3000
+              path: /.live
+              scheme: HTTP
       {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}

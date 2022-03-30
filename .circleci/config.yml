@@ -29,7 +29,7 @@ executors:
                   MINIO_ROOT_PASSWORD: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
             - image: cimg/redis:6.2.6
               command: redis-server --appendonly yes
-            - image: appvantage/html2pdf-service:1.3.0
+            - image: appvantage/html2pdf-service:1.4.1
               name: html2pdf
 
 jobs:
