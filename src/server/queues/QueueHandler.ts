@@ -23,6 +23,11 @@ export type ProcessFunction<Message> = (message: Message, job: Job<Document>) =>
 
 export type QueuePeriodicPlans<Message> = { message: Message; repeat: JobOptions['repeat'] };
 
+export type QueueHandlerOptions<Message> = {
+    jobOptions: Omit<JobOptions, 'repeat'>;
+    getLabel: (message: Message) => string;
+};
+
 export class QueueHandler<Message = any> {
     public readonly queueName;
 
@@ -30,22 +35,25 @@ export class QueueHandler<Message = any> {
 
     private readonly processFunction: ProcessFunction<Message>;
 
-    private readonly jobOptions?: JobOptions;
+    private readonly options?: QueueHandlerOptions<Message>;
 
     public constructor(
         queueName: string,
         processFunction: ProcessFunction<Message>,
-        jobOptions?: Omit<JobOptions, 'repeat'>
+        options?: Partial<QueueHandlerOptions<Message>>
     ) {
         this.queueName = queueName;
         this.queue = new BullQueue(queueName, config.redis.uri);
         this.processFunction = processFunction;
 
-        this.jobOptions = {
-            // by default always clean up from redis
-            removeOnFail: true,
-            removeOnComplete: true,
-            ...jobOptions,
+        this.options = {
+            jobOptions: {
+                // by default always clean up from redis
+                removeOnFail: true,
+                removeOnComplete: true,
+                ...options?.jobOptions,
+            },
+            getLabel: options?.getLabel || (() => this.queueName),
         };
     }
 
@@ -59,7 +67,7 @@ export class QueueHandler<Message = any> {
     public add(message: Message, options?: JobOptions): Promise<Job<Document>> {
         const serializedMessage = EJSON.serialize(message);
 
-        return this.queue.add(serializedMessage, { ...this.jobOptions, ...options });
+        return this.queue.add(serializedMessage, { ...this.options.jobOptions, ...options });
     }
 
     private async setupPeriodicPlan(plans: QueuePeriodicPlans<Message>[] = []) {
@@ -75,7 +83,7 @@ export class QueueHandler<Message = any> {
 
                 if (!matchingJob) {
                     // add a new job
-                    this.add(plan.message, { repeat: plan.repeat, ...this.jobOptions });
+                    this.add(plan.message, { repeat: plan.repeat, ...this.options.jobOptions });
                 }
 
                 return matchingJob ? repeatJobKey : undefined;
@@ -89,6 +97,7 @@ export class QueueHandler<Message = any> {
     }
 
     private async handleJob(job: Job<Document>) {
+        const startTime = getRecordTime();
         const local = domain.create();
 
         local.on('error', error => {
@@ -114,6 +123,7 @@ export class QueueHandler<Message = any> {
             });
 
             let message: Message = null;
+            let succeed = true;
 
             try {
                 message = EJSON.deserialize(job.data) as Message;
@@ -138,8 +148,19 @@ export class QueueHandler<Message = any> {
 
                 // set the job as failed
                 await job.moveToFailed(error);
+
+                // set as errored
+                succeed = false;
             } finally {
                 transaction.finish();
+
+                // we may want to log it
+                if (config.verbose) {
+                    const timeElapsed = getTimeElapsed(startTime);
+                    const state = succeed ? chalk.green('COMPLETED') : chalk.red('FAILED');
+                    const label = this.options.getLabel(message);
+                    console.info(`BULL ${label} ${state} ${timeElapsed}`);
+                }
             }
         });
     }
@@ -159,3 +180,18 @@ export class QueueHandler<Message = any> {
         return this.queue.close();
     }
 }
+
+const getRecordTime = () => ({
+    startAt: process.hrtime(),
+    startTime: new Date(),
+});
+
+type RecordTime = ReturnType<typeof getRecordTime>;
+
+const getTimeElapsed = (start: RecordTime, end: RecordTime = getRecordTime()) => {
+    // calculate diff
+    const ms = (end.startAt[0] - start.startAt[0]) * 1e3 + (end.startAt[1] - start.startAt[1]) * 1e-6;
+
+    // return truncated value
+    return ms.toFixed(3);
+};

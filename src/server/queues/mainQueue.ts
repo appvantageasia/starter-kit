@@ -21,4 +21,6 @@ const mainQueueHandler = (message: QueueMessage, job: Job<Document>) => {
     }
 };
 
-export const mainQueue = new QueueHandler('main', mainQueueHandler);
+export const mainQueue = new QueueHandler('main', mainQueueHandler, {
+    getLabel: message => `main.${message.type}`,
+});

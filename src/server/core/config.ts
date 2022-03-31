@@ -30,6 +30,9 @@ const version = getString('VERSION', '0.0.0-development');
 const config = {
     version,
 
+    // miscellaneous
+    verbose: getBoolean(getPrefix('VERBOSE'), true),
+
     // introspection state on the GraphQL API
     introspection: getBoolean(getPrefix('INTROSPECTION'), process.env.NODE_ENV !== 'production'),
 

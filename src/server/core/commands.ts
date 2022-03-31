@@ -14,7 +14,7 @@ export const startServerCommand = async (manager: HealthStatusManager) => {
 
     httpServer.listen(config.port, () => {
         manager.update(HealthStatus.Running);
-        console.info(chalk.cyan('Server listening'));
+        console.info(chalk.cyan('MSG Server listening'));
     });
 
     return () => {

@@ -51,9 +51,6 @@ export const getSessionDataFromRequest = async (req: IncomingMessage): Promise<S
 
         return await readSessionToken(token, csrf);
     } catch (error) {
-        // print the error
-        console.error(error);
-
         throw new AuthenticationError('Invalid authentication token');
     }
 };

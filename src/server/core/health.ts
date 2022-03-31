@@ -81,7 +81,7 @@ export class HealthStatusManager {
         const { label: previousLabel } = this;
         this._value = value;
         const { label: newLabel } = this;
-        console.info(chalk.cyan(`Status moved from ${previousLabel} to ${newLabel}`));
+        console.info(chalk.cyan(`MSG Status moved from ${previousLabel} to ${newLabel}`));
     }
 
     get label() {
@@ -164,6 +164,6 @@ export const createHealthServer = (manager: HealthStatusManager) => {
 
     // start listening
     return expressServer.listen(config.healthChecks.port, () => {
-        console.info(chalk.cyan('Health server listening'));
+        console.info(chalk.cyan('MSG Health server listening'));
     });
 };
