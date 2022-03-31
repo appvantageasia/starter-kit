@@ -13,6 +13,7 @@ All settings are defined through environment variable.
 | APP_SECURE_COOKIE | Boolean | true              | Enable secure cookies        |
 | APP_COOKIE_POLICY | String  | strict            | Cookie sameSite policy       |
 | APP_INTROSPECTION | Boolean |                   | Enable GraphQL introspection |
+| APP_VERBOSE       | Boolean | true              | Enable console logs          |
 
 It's recommended to disable compression if you may delegate it to a reverse proxy.
 

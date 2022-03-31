@@ -12,6 +12,7 @@ data:
   {{- include "app.configValue" ( dict "Key" "APP_GZIP" "Value" .gzip ) }}
   {{- include "app.configValue" ( dict "Key" "APP_SECURE_COOKIE" "Value" .secureCookie ) }}
   {{- include "app.configValue" ( dict "Key" "APP_COOKIE_POLICY" "Value" .cookiePolicy ) }}
+  {{- include "app.configValue" ( dict "Key" "APP_VERBOSE" "Value" .verbose ) }}
   {{- end }}
 
   # database settings

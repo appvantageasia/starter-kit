@@ -9,6 +9,7 @@ import express, { Express, Handler, Request, Response } from 'express';
 import { execute, subscribe } from 'graphql';
 import depthLimit from 'graphql-depth-limit';
 import { graphqlUploadExpress } from 'graphql-upload';
+import morgan from 'morgan';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
 import schema from '../schema';
 import createContext, { Context, RootDocument } from '../schema/context';
@@ -72,6 +73,11 @@ const createWebServer = async (): Promise<WebServerCreation> => {
     // enable JSON and url encoded support
     expressServer.use(express.json());
     expressServer.use(express.urlencoded({ extended: true }));
+
+    if (config.verbose) {
+        // enable logs
+        expressServer.use(morgan(process.env.NODE_ENV === 'production' ? 'tiny' : 'dev'));
+    }
 
     // enable Sentry scope
     expressServer.use(Sentry.Handlers.requestHandler());

@@ -53,6 +53,7 @@ app:
     gzip: ''
     secureCookie: ''
     cookiePolicy: ''
+    verbose: ''
 
   # redis settings
   redis:
