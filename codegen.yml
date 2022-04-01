@@ -30,6 +30,11 @@ generates:
                 ObjectID: mongodb#ObjectId
                 Upload: ../context#FileUploadPromise
 
+    src/app/api/introspection.ts:
+        documents: ./src/app/api/**/*.graphql
+        plugins:
+            - fragment-matcher
+
     src/app/api/index.ts:
         documents: ./src/app/api/**/*.graphql
         plugins:

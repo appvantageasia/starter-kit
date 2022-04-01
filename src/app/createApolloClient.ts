@@ -7,6 +7,7 @@ import { extractFiles } from 'extract-files';
 import { i18n as I18n } from 'i18next';
 import { isObject, flow, mapValues, omit } from 'lodash/fp';
 import PubSub from 'pubsub-js';
+import introspection from './api/introspection';
 
 const prepareForGraphQL = (data: any): any => {
     if (data instanceof Date) {
@@ -108,7 +109,7 @@ const createApolloClient = (
     return new ApolloClient({
         ssrMode: false,
         link: from([cleanLink, disconnectLink, rootLink]),
-        cache: new InMemoryCache(),
+        cache: new InMemoryCache({ possibleTypes: introspection.possibleTypes }),
     });
 };
 

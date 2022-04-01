@@ -47,6 +47,7 @@
         "@commitlint/config-conventional": "^16.0.0",
         "@graphql-codegen/add": "^3.0.0",
         "@graphql-codegen/cli": "^2.0.1",
+        "@graphql-codegen/fragment-matcher": "^3.2.1",
         "@graphql-codegen/schema-ast": "^2.0.0",
         "@graphql-codegen/typescript": "^2.0.0",
         "@graphql-codegen/typescript-operations": "^2.0.1",

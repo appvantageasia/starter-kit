@@ -3,10 +3,11 @@ import * as Apollo from '@apollo/client';
 import { DocumentNode } from 'graphql';
 
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-const defaultOptions = {};
+const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
     ID: string;
@@ -70,7 +71,7 @@ export type MutationCreateAccountArgs = {
 };
 
 export type MutationCreateTopicArgs = {
-    attachments?: Maybe<Array<Scalars['Upload']>>;
+    attachments?: InputMaybe<Array<Scalars['Upload']>>;
     body: Scalars['String'];
     title: Scalars['String'];
 };
@@ -110,8 +111,8 @@ export type QueryTopicArgs = {
 };
 
 export type QueryTopicsArgs = {
-    pagination?: Maybe<Pagination>;
-    sorting?: Maybe<TopicSorting>;
+    pagination?: InputMaybe<Pagination>;
+    sorting?: InputMaybe<TopicSorting>;
 };
 
 export enum SortingOrder {
@@ -172,7 +173,7 @@ export type User = {
 
 export type TopicPreviewDataFragment = {
     __typename?: 'Topic';
-    id?: string | null | undefined;
+    id?: string | null;
     title: string;
     messagesCount: number;
     author: { __typename?: 'User'; id: string; displayName: string };
@@ -180,19 +181,19 @@ export type TopicPreviewDataFragment = {
 
 export type TopicMessageDataFragment = {
     __typename?: 'TopicMessage';
-    id?: string | null | undefined;
+    id?: string | null;
     body: string;
     author: { __typename?: 'User'; id: string; displayName: string };
 };
 
 export type TopicFullDataFragment = {
     __typename?: 'Topic';
-    id?: string | null | undefined;
+    id?: string | null;
     title: string;
     body: string;
     messages: Array<{
         __typename?: 'TopicMessage';
-        id?: string | null | undefined;
+        id?: string | null;
         body: string;
         author: { __typename?: 'User'; id: string; displayName: string };
     }>;
@@ -200,15 +201,15 @@ export type TopicFullDataFragment = {
 };
 
 export type GetTopicsQueryVariables = Exact<{
-    pagination?: Maybe<Pagination>;
-    sorting?: Maybe<TopicSorting>;
+    pagination?: InputMaybe<Pagination>;
+    sorting?: InputMaybe<TopicSorting>;
 }>;
 
 export type GetTopicsQuery = {
     __typename?: 'Query';
     topics: Array<{
         __typename?: 'Topic';
-        id?: string | null | undefined;
+        id?: string | null;
         title: string;
         messagesCount: number;
         author: { __typename?: 'User'; id: string; displayName: string };
@@ -221,22 +222,19 @@ export type GetTopicQueryVariables = Exact<{
 
 export type GetTopicQuery = {
     __typename?: 'Query';
-    topic?:
-        | {
-              __typename?: 'Topic';
-              id?: string | null | undefined;
-              title: string;
-              body: string;
-              messages: Array<{
-                  __typename?: 'TopicMessage';
-                  id?: string | null | undefined;
-                  body: string;
-                  author: { __typename?: 'User'; id: string; displayName: string };
-              }>;
-              author: { __typename?: 'User'; id: string; displayName: string };
-          }
-        | null
-        | undefined;
+    topic?: {
+        __typename?: 'Topic';
+        id?: string | null;
+        title: string;
+        body: string;
+        messages: Array<{
+            __typename?: 'TopicMessage';
+            id?: string | null;
+            body: string;
+            author: { __typename?: 'User'; id: string; displayName: string };
+        }>;
+        author: { __typename?: 'User'; id: string; displayName: string };
+    } | null;
 };
 
 export type CreateTopicMutationVariables = Exact<{
@@ -248,12 +246,12 @@ export type CreateTopicMutation = {
     __typename?: 'Mutation';
     createTopic: {
         __typename?: 'Topic';
-        id?: string | null | undefined;
+        id?: string | null;
         title: string;
         body: string;
         messages: Array<{
             __typename?: 'TopicMessage';
-            id?: string | null | undefined;
+            id?: string | null;
             body: string;
             author: { __typename?: 'User'; id: string; displayName: string };
         }>;
@@ -270,12 +268,12 @@ export type PostMessageMutation = {
     __typename?: 'Mutation';
     postMessage: {
         __typename?: 'Topic';
-        id?: string | null | undefined;
+        id?: string | null;
         title: string;
         body: string;
         messages: Array<{
             __typename?: 'TopicMessage';
-            id?: string | null | undefined;
+            id?: string | null;
             body: string;
             author: { __typename?: 'User'; id: string; displayName: string };
         }>;
@@ -289,7 +287,7 @@ export type OnTopicUpdatesSubscriptionVariables = Exact<{
 
 export type OnTopicUpdatesSubscription = {
     __typename?: 'Subscription';
-    topicUpdated: { __typename?: 'Topic'; id?: string | null | undefined };
+    topicUpdated: { __typename?: 'Topic'; id?: string | null };
 };
 
 export type UserPreviewDataFragment = { __typename?: 'User'; id: string; displayName: string };
