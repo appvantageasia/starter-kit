@@ -1,5 +1,6 @@
 import { ApolloClient, InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import { SchemaLink } from '@apollo/client/link/schema';
+import introspection from '../../app/api/introspection';
 import schema from '../schema';
 import { Context } from '../schema/context';
 
@@ -10,7 +11,7 @@ const createApolloClient = (context: Context) => (): ApolloClient<NormalizedCach
     return new ApolloClient({
         ssrMode: true,
         link: schemaLink,
-        cache: new InMemoryCache(),
+        cache: new InMemoryCache({ possibleTypes: introspection.possibleTypes }),
     });
 };
 

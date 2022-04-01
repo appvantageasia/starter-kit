@@ -6,13 +6,12 @@ import { FileUploadPromise, Context, RootDocument } from '../context';
 import { TopicSortingField, SortingOrder } from './enums';
 
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & {
-    [P in K]-?: NonNullable<T[P]>;
-};
+export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 export type EnumResolverSignature<T, AllowedValues = any> = { [key in keyof T]?: AllowedValues };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -75,7 +74,7 @@ export type GraphQLMutationCreateAccountArgs = {
 };
 
 export type GraphQLMutationCreateTopicArgs = {
-    attachments?: Maybe<Array<Scalars['Upload']>>;
+    attachments?: InputMaybe<Array<Scalars['Upload']>>;
     body: Scalars['String'];
     title: Scalars['String'];
 };
@@ -114,8 +113,8 @@ export type GraphQLQueryTopicArgs = {
 };
 
 export type GraphQLQueryTopicsArgs = {
-    pagination?: Maybe<GraphQLPagination>;
-    sorting?: Maybe<GraphQLTopicSorting>;
+    pagination?: InputMaybe<GraphQLPagination>;
+    sorting?: InputMaybe<GraphQLTopicSorting>;
 };
 
 export { SortingOrder };
@@ -185,7 +184,7 @@ export type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (
     args: TArgs,
     context: TContext,
     info: GraphQLResolveInfo
-) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;
+) => AsyncIterable<TResult> | Promise<AsyncIterable<TResult>>;
 
 export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
     parent: TParent,
@@ -343,12 +342,7 @@ export type GraphQLQueryResolvers<
         ContextType,
         RequireFields<GraphQLQueryTopicArgs, 'id'>
     >;
-    topics?: Resolver<
-        Array<GraphQLResolversTypes['Topic']>,
-        ParentType,
-        ContextType,
-        RequireFields<GraphQLQueryTopicsArgs, never>
-    >;
+    topics?: Resolver<Array<GraphQLResolversTypes['Topic']>, ParentType, ContextType, Partial<GraphQLQueryTopicsArgs>>;
 };
 
 export type GraphQLSortingOrderResolvers = EnumResolverSignature<
