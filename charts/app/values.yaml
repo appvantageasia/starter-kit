@@ -1,201 +1,213 @@
 # Application settings
 app:
-    image:
-        registry: ''
-        repository: ''
-        pullPolicy: IfNotPresent
-        tag: 'latest'
-        pullSecret: []
+  image:
+    registry: ''
+    repository: ''
+    pullPolicy: IfNotPresent
+    tag: 'latest'
+    pullSecret: [ ]
 
-    serviceAccount:
-        # Specifies whether a service account should be created
-        create: true
-        # Annotations to add to the service account
-        annotations: { }
-        # The name of the service account to use.
-        # If not set and create is true, a name is generated using the fullname template
-        name: ""
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: { }
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
 
-    # pods specs
-    pods:
-        ## Annotations for server pods
-        ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
-        ##
-        serverAnnotations: {}
+  # pods specs
+  pods:
+    ## Annotations for server pods
+    ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+    ##
+    serverAnnotations: { }
 
-        ## Annotations for worker pods
-        ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
-        ##
-        workerAnnotations: {}
+    ## Annotations for worker pods
+    ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+    ##
+    workerAnnotations: { }
 
-        # extra environment configuration
-        extraEnvs: []
-        # - secretRef:
-        #     name: my-secret
+    # extra environment configuration
+    extraEnvs: [ ]
+    # - secretRef:
+    #     name: my-secret
 
-    ingress:
-        annotations: {}
-        # kubernetes.io/ingress.class: nginx
-        # kubernetes.io/tls-acme: "true"
+  ingress:
+    annotations: { }
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
 
-        hosts:
-            - host: app.local
-              paths: []
+    hosts:
+      - host: app.local
+        paths: [ ]
 
-        tls: []
-        #  - secretName: chart-example-tls
-        #    hosts:
-        #      - chart-example.local
+    tls: [ ]
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
 
-    # global configuration
-    global:
-        publicPath: ''
-        gzip: ''
-        secureCookie: ''
-        cookiePolicy: ''
+  # global configuration
+  global:
+    publicPath: ''
+    gzip: ''
+    secureCookie: ''
+    cookiePolicy: ''
 
-    # redis settings
-    redis:
-        uri: ''
+  # redis settings
+  redis:
+    uri: ''
 
-    # health checks settings
-    health:
-        port: 4000
-        allowed: '0.0.0.0/0,::/0'
-        workerBeat: ''
+  # health checks settings
+  health:
+    port: 4000
+    allowed: '0.0.0.0/0,::/0'
+    workerBeat: ''
 
-    # database settings
-    database:
-        uri: ''
-        name: ''
-        pool: ''
+  # database settings
+  database:
+    uri: ''
+    name: ''
+    pool: ''
 
-    # session settings
-    session:
-        secret: ''
-        lifetime: ''
+  # session settings
+  session:
+    secret: ''
+    lifetime: ''
 
-    # smtp settings
-    smtp:
-        host: ''
-        port: ''
-        user: ''
-        password: ''
-        secure: ''
-        from: ''
+  # smtp settings
+  smtp:
+    host: ''
+    port: ''
+    user: ''
+    password: ''
+    secure: ''
+    from: ''
 
-    # storage settings
-    storage:
-        endpoint: ''
-        accessKey: ''
-        secretKey: ''
-        ssl: ''
-        port: ''
-        region: ''
-        bucket: ''
+  # storage settings
+  storage:
+    endpoint: ''
+    accessKey: ''
+    secretKey: ''
+    ssl: ''
+    port: ''
+    region: ''
+    bucket: ''
 
-    # sentry settings
-    sentry:
-        dsn: ''
-        release: ''
-        environment: ''
-        tracing: ''
-        tracesSampleRate: ''
+  # sentry settings
+  sentry:
+    dsn: ''
+    release: ''
+    environment: ''
+    tracing: ''
+    tracesSampleRate: ''
 
-    # limiter settings
-    limiter:
-        api: ''
+  # limiter settings
+  limiter:
+    api: ''
 
-    # prometheus settings
-    prometheus:
-        enabled: ''
-        internal: ''
-        internalPort: ''
-        external: ''
-        externalPath: ''
-        prefix: ''
+  # prometheus settings
+  prometheus:
+    enabled: ''
+    internal: ''
+    internalPort: ''
+    external: ''
+    externalPath: ''
+    prefix: ''
 
-    # HorizontalPodAutoscaler config for servers (api)
-    serverPodScaler:
-        enabled: false
-        minReplicas: 1
-        maxReplicas: 1
-        metrics: {}
-        behavior: {}
+  # HorizontalPodAutoscaler config for servers (api)
+  serverPodScaler:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 1
+    metrics: { }
+    behavior: { }
 
-    # HorizontalPodAutoscaler for workers
-    workerPodScaler:
-        enabled: false
-        minReplicas: 1
-        maxReplicas: 1
-        metrics: {}
-        behavior: {}
+  # HorizontalPodAutoscaler for workers
+  workerPodScaler:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 1
+    metrics: { }
+    behavior: { }
 
 # html2pdf settings
 html2pdf:
-    image:
-        registry: 'docker.io'
-        repository: 'appvantage/html2pdf-service'
-        pullPolicy: IfNotPresent
-        tag: '1.4.1'
-        pullSecret: []
+  image:
+    registry: 'docker.io'
+    repository: 'appvantage/html2pdf-service'
+    pullPolicy: IfNotPresent
+    tag: '1.4.1'
+    pullSecret: [ ]
 
-    # pod scaler
-    podScaler:
-        enabled: false
-        minReplicas: 1
-        maxReplicas: 1
-        metrics: {}
+  # pod scaler
+  podScaler:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 1
+    metrics: { }
+
+  # Resources
+  resources:
+    limits: { }
+    requests: { }
 
 # Redis settings
 redis:
-    # should the redis chart be deployed
-    enabled: true
+  # should the redis chart be deployed
+  enabled: true
 
-    # architecture type
-    architecture: standalone
+  # architecture type
+  architecture: standalone
 
-    auth:
-        # no password/authentication
-        enabled: false
+  auth:
+    # no password/authentication
+    enabled: false
 
 # MongoDB settings
 # when using this sub chart
 # please provide information matching your application settings
 mongodb:
-    enabled: false
+  enabled: false
 
-    # image to use
-    image:
-        tag: 5.0.3-debian-10-r19
+  # image to use
+  image:
+    tag: 5.0.3-debian-10-r19
 
-    # architecture type
-    architecture: standalone
+  # architecture type
+  architecture: standalone
 
 # Minion settings
 minio:
-    enabled: false
+  enabled: false
 
-    # server mode
-    mode: standalone
+  # server mode
+  mode: standalone
 
-    # bucket to automatically create
-    defaultBuckets: 'app'
+  # bucket to automatically create
+  defaultBuckets: 'app'
 
-    # authorization setup
-    auth: {}
+  # authorization setup
+  auth: { }
 
 ## Affinity for pod assignment.
 ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
 ##
-affinity: {}
+affinity: { }
 
 ## Node labels for pod assignment.
 ## ref: https://kubernetes.io/docs/user-guide/node-selection/
 ##
-nodeSelector: {}
+nodeSelector: { }
 
 ## Tolerations for pod assignment.
 ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
 ##
-tolerations: []
+tolerations: [ ]
+
+## Resource requests and limits for workers/apis
+## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+##
+resources:
+  limits: { }
+  requests: { }
