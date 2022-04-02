@@ -15,6 +15,7 @@ type Payload = { topicUpdated: TopicUpdatedMessage };
 export const topicUpdatedSubscription = new Subscription<TopicUpdatedMessage>('gql.topicUpdated', 'topicUpdated');
 
 const resolver: GraphQLSubscriptionResolvers['topicUpdated'] = {
+    // @ts-ignore
     subscribe: withFilter(
         () => topicUpdatedSubscription.subscribe(),
         (payload: Payload, variables: Args) =>
