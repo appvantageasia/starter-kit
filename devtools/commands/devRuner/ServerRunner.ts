@@ -1,4 +1,4 @@
-const listen = require('test-listen');
+import listen from 'test-listen';
 
 class ServerRunner {
     constructor() {
@@ -58,4 +58,4 @@ class ServerRunner {
     }
 }
 
-module.exports = ServerRunner;
+export default ServerRunner;

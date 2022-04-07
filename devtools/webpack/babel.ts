@@ -1,12 +1,15 @@
-const { isBuildIntentDevelopment } = require('./variables');
+import { RuleSetRule } from 'webpack';
+import { isBuildIntentDevelopment } from './variables';
 
-const getBabelRule = (isServer = false) => {
+const getBabelRule = (isServer = false): RuleSetRule => {
     const presetOptions = {
         isServer,
         hasReactRefresh: !isServer,
         hasJsxRuntime: true,
         development: isBuildIntentDevelopment,
     };
+
+    const useReactRefresh = isBuildIntentDevelopment && !isServer;
 
     return {
         test: /\.[jt]sx?$/,
@@ -17,13 +20,11 @@ const getBabelRule = (isServer = false) => {
                 options: {
                     babelrc: false,
                     presets: [[require.resolve('../babel'), presetOptions]],
-                    plugins: [isBuildIntentDevelopment && !isServer && require.resolve('react-refresh/babel')].filter(
-                        Boolean
-                    ),
+                    plugins: [useReactRefresh && require.resolve('react-refresh/babel')].filter(Boolean),
                 },
             },
         ],
     };
 };
 
-module.exports = getBabelRule;
+export default getBabelRule;

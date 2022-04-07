@@ -1,21 +1,21 @@
-const http = require('http');
-const path = require('path');
-const chalk = require('chalk');
-const express = require('express');
-const httpProxy = require('http-proxy');
-const { choosePort } = require('react-dev-utils/WebpackDevServerUtils');
-const clearConsole = require('react-dev-utils/clearConsole');
-const printBuildError = require('react-dev-utils/printBuildError');
-const rimraf = require('rimraf');
-const webpack = require('webpack');
-const devMiddleware = require('webpack-dev-middleware');
-const hotMiddleware = require('webpack-hot-middleware');
-const loadEnvConfig = require('../../env');
-const webpackConfigs = require('../../webpack');
-const { rootDirname } = require('../../webpack/variables');
-const MigrationRunner = require('./MigrationRunner');
-const ServerRunner = require('./ServerRunner');
-const WorkerRunner = require('./WorkerRunner');
+import http from 'http';
+import path from 'path';
+import chalk from 'chalk';
+import express from 'express';
+import httpProxy from 'http-proxy';
+import { choosePort } from 'react-dev-utils/WebpackDevServerUtils';
+import clearConsole from 'react-dev-utils/clearConsole';
+import printBuildError from 'react-dev-utils/printBuildError';
+import rimraf from 'rimraf';
+import webpack from 'webpack';
+import devMiddleware from 'webpack-dev-middleware';
+import hotMiddleware from 'webpack-hot-middleware';
+import loadEnvConfig from '../../env';
+import webpackConfigs from '../../webpack';
+import { rootDirname } from '../../webpack/variables';
+import MigrationRunner from './MigrationRunner';
+import ServerRunner from './ServerRunner';
+import WorkerRunner from './WorkerRunner';
 
 // resolve the path to get the entrypoint for the server once built
 const serverEntry = path.resolve('./build/server.js');
@@ -23,7 +23,31 @@ const serverEntry = path.resolve('./build/server.js');
 // is it running in an interactive shell
 const isInteractive = process.stdout.isTTY;
 
+type Runner = ServerRunner | WorkerRunner | MigrationRunner;
+
 class MainRunner {
+    private serverRunner: ServerRunner;
+
+    private workerRunner: WorkerRunner;
+
+    private migrationRunner: MigrationRunner;
+
+    private runners: Runner[];
+
+    private latestRun: number;
+
+    private port: number | null;
+
+    private compiler: webpack.MultiCompiler;
+
+    private serverCompiler: webpack.Compiler;
+
+    private appCompiler: webpack.Compiler;
+
+    private appCompilerPromise: Promise<unknown> | null;
+
+    private appCompilerResolve: (value?: unknown) => void | null;
+
     constructor() {
         // create runner
         this.serverRunner = new ServerRunner();
@@ -111,7 +135,7 @@ class MainRunner {
                 }
 
                 // cleanup previous worker
-                await this.workerRunner.stop(isOutdated);
+                await this.workerRunner.stop();
 
                 // now we can get the latest version of our server
                 // eslint-disable-next-line global-require, import/no-unresolved, import/no-dynamic-require
@@ -187,4 +211,4 @@ class MainRunner {
     }
 }
 
-module.exports = MainRunner;
+export default MainRunner;

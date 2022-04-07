@@ -1,8 +1,8 @@
-const path = require('path');
-const rimraf = require('rimraf');
-const webpack = require('webpack');
-const webpackConfigs = require('../webpack');
-const { rootDirname } = require('../webpack/variables');
+import path from 'path';
+import rimraf from 'rimraf';
+import webpack from 'webpack';
+import webpackConfigs from '../webpack';
+import { rootDirname } from '../webpack/variables';
 
 // empty build directory
 rimraf.sync(path.join(rootDirname, 'build'));
@@ -13,8 +13,8 @@ compiler.run((err, stats) => {
     if (err) {
         console.error(err.stack || err);
 
-        if (err.details) {
-            console.error(err.details);
+        if ((err as any).details) {
+            console.error((err as any).details);
         }
 
         process.exit(1);

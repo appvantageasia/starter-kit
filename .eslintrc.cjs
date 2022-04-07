@@ -6,7 +6,7 @@ module.exports = {
     // parsing
     parser: '@babel/eslint-parser',
     parserOptions: {
-        ecmaVersion: 2018,
+        ecmaVersion: 2022,
         sourceType: 'module',
         ecmaFeatures: {
             jsx: true,
@@ -227,7 +227,7 @@ module.exports = {
     settings: {
         'import/resolver': {
             node: {
-                extensions: ['.mjs', '.csj', '.js', '.ts', '.tsx', '.json'],
+                extensions: ['.mjs', '.cjs', '.js', '.ts', '.tsx', '.json'],
             },
         },
     },
