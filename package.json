@@ -196,7 +196,7 @@
         "morgan": "^1.10.0",
         "mongodb-client-encryption": "^1.2.7",
         "nanoid": "^3.1.23",
-        "node-fetch": "^2.6.5",
+        "node-fetch": "^3.2.3",
         "nodemailer": "^6.5.0",
         "prom-client": "^14.0.0",
         "pubsub-js": "^1.9.4",
