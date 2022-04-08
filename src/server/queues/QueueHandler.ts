@@ -5,23 +5,13 @@ import BullQueue, { Queue, Job, JobOptions } from 'bull';
 import chalk from 'chalk';
 import config from '../core/config';
 
-/* comes from BullJS
- * https://github.com/OptimalBits/bull/blob/46fcba14bc01885c1ca518b3399ec474bb88b71d/lib/repeatable.js#L177
- * */
-const getRepeatKey = (repeat: JobOptions['repeat']): string => {
-    // @ts-ignore
-    const jobId = repeat.jobId ? `${repeat.jobId}:` : ':';
-    const endDate = repeat.endDate ? `${new Date(repeat.endDate).getTime()}:` : ':';
-    const tz = repeat.tz ? `${repeat.tz}:` : ':';
-    // @ts-ignore
-    const suffix = repeat.cron ? tz + repeat.cron : String(repeat.every);
-
-    return `__default__:${jobId}${endDate}${suffix}`;
-};
-
 export type ProcessFunction<Message> = (message: Message, job: Job<Document>) => Promise<void> | void;
 
-export type QueuePeriodicPlans<Message> = { message: Message; repeat: JobOptions['repeat'] };
+export type QueuePeriodicPlans<Message> = {
+    message: Message;
+    repeat: JobOptions['repeat'];
+    jobId: string;
+};
 
 export type QueueHandlerOptions<Message> = {
     jobOptions: Omit<JobOptions, 'repeat'>;
@@ -73,27 +63,38 @@ export class QueueHandler<Message = any> {
     private async setupPeriodicPlan(plans: QueuePeriodicPlans<Message>[] = []) {
         const jobs = await this.queue.getRepeatableJobs();
 
-        const existingKeys = plans
-            .map(plan => {
-                // get the repeat job key
-                const repeatJobKey = getRepeatKey(plan.repeat);
+        // initialize repeatable jobs
+        const jobIds = plans.length
+            ? await Promise.all(
+                  plans.map(async plan => {
+                      // ensure the job is registered
+                      await this.add(plan.message, {
+                          repeat: plan.repeat,
+                          ...this.options.jobOptions,
+                          jobId: plan.jobId,
+                      });
 
-                // look for a match
-                const matchingJob = jobs.find(job => job.key === repeatJobKey);
+                      return plan.jobId;
+                  })
+              )
+            : [];
 
-                if (!matchingJob) {
-                    // add a new job
-                    this.add(plan.message, { repeat: plan.repeat, ...this.options.jobOptions });
-                }
+        // remove zombies (jobs not run anymore)
+        const promises = jobs
+            .filter(job => !jobIds.includes(job.id))
+            .map(job => this.queue.removeRepeatableByKey(job.key));
 
-                return matchingJob ? repeatJobKey : undefined;
-            })
-            .filter(Boolean);
+        if (promises.length) {
+            await Promise.all(promises);
+        }
 
-        // remove outdated job
-        jobs.filter(job => !existingKeys.includes(job.key)).forEach(job => {
-            this.queue.removeRepeatableByKey(job.key);
-        });
+        // print final list of repeatable jobs for debugging
+        await this.printRepeatableJobs();
+    }
+
+    public async printRepeatableJobs() {
+        const jobs = await this.queue.getRepeatableJobs();
+        jobs.forEach(job => console.info(chalk.cyan(`Run repeatable job ${job.key} on queue ${this.queueName}`)));
     }
 
     private async handleJob(job: Job<Document>) {
