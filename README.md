@@ -48,6 +48,7 @@ List of features embedded with this SK
 | DataLoader for GraphQL resolvers                  |                                      |                                                   |
 | Object Storage support                            |                                      |                                                   |
 | I18n module (with i18next)                        |                                      |                                                   |
+| Client-Side-Field-Lebel-Encryption (CSFLE)        |                                      |                                                   |
 
 Security practices have been applied on this project based on experiences and feedbacks.
 However, this is only a starter-kit as an helper to boostrap your project.
