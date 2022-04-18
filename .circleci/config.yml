@@ -54,45 +54,79 @@ jobs:
                   paths:
                       - node_modules
 
-    validate-project:
+    validate-code:
+      executor: node-standalone
+      steps:
+        - checkout
+        - attach_workspace:
+            at: ~/project
+        - run:
+            name: Lint source code
+            command: yarn lint --format junit -o ./junit/js-lint-results.xml
+        - run:
+            name: Type checking
+            command: yarn tsc
+        - run:
+            name: Type checking on cypress
+            command: yarn tsc
+            working_directory: ~/project/cypress
+        - run:
+            name: Lint commit messages
+            command: node ./devtools/commands/lint-commits.js
+        - store_test_results:
+            path: ~/project/junit/
+
+    validate-unit-testing:
+      executor: node-with-dependencies
+      steps:
+        - checkout
+        - attach_workspace:
+            at: ~/project
+        - run:
+            name: Wait for db
+            command: dockerize -wait tcp://127.0.0.1:27017 -timeout 1m
+        - run:
+            name: Unit testing
+            command: yarn test:coverage --reporters=default --reporters=jest-junit
+            environment:
+              JEST_JUNIT_OUTPUT_DIR: ./junit/
+        - store_test_results:
+            path: ~/project/junit/
+        - store_artifacts:
+            path: ~/project/coverage/
+            destination: coverage
+
+    build:
+      executor: node-standalone
+      steps:
+          - checkout
+          - attach_workspace:
+              at: ~/project
+          - run:
+              name: Build
+              command: yarn build
+              environment:
+                NODE_ENV: production
+          - persist_to_workspace:
+              root: ~/project
+              paths:
+                - build
+          - store_artifacts:
+              path: ~/project/build
+              destination: build
+          - store_artifacts:
+              path: ~/project/report.html
+              destination: report.html
+
+    validate-functional-testing:
         executor: node-with-dependencies
         steps:
             - checkout
             - attach_workspace:
                   at: ~/project
             - run:
-                  name: Lint source code
-                  command: yarn lint --format junit -o ./junit/js-lint-results.xml
-            - run:
-                  name: Type checking
-                  command: yarn tsc
-            - run:
-                  name: Type checking on cypress
-                  command: yarn tsc
-                  working_directory: ~/project/cypress
-            - run:
                   name: Wait for db
                   command: dockerize -wait tcp://127.0.0.1:27017 -timeout 1m
-            - run:
-                  name: Unit testing
-                  command: yarn test:coverage --reporters=default --reporters=jest-junit
-                  environment:
-                      JEST_JUNIT_OUTPUT_DIR: ./junit/
-            - run:
-                  name: Build
-                  command: yarn build
-                  environment:
-                      NODE_ENV: production
-            - persist_to_workspace:
-                  root: ~/project
-                  paths:
-                      - build
-            - store_artifacts:
-                  path: ~/project/build
-                  destination: build
-            - store_artifacts:
-                  path: ~/project/report.html
-                  destination: report.html
             - run:
                   name: Install Cypress
                   command: |
@@ -126,14 +160,6 @@ jobs:
             - run:
                   name: Stop test server & worker
                   command: pkill -SIGQUIT node
-            - run:
-                  name: Lint commit messages
-                  command: node ./devtools/commands/lint-commits.js
-            - store_test_results:
-                  path: ~/project/junit/
-            - store_artifacts:
-                  path: ~/project/coverage/
-                  destination: coverage
 
     release:
         executor: node-standalone
@@ -151,9 +177,18 @@ workflows:
     main:
         jobs:
             - deps-install
-            - validate-project:
+            - validate-code:
                   requires:
                       - deps-install
+            - validate-unit-testing:
+                requires:
+                  - deps-install
+            - build:
+                requires:
+                  - deps-install
+            - validate-functional-testing:
+                requires:
+                  - build
             - release:
                   filters:
                       branches:
@@ -162,4 +197,6 @@ workflows:
                               - next
                               - latest
                   requires:
-                      - validate-project
+                      - validate-code
+                      - validate-unit-testing
+                      - validate-functional-testing
