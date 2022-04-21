@@ -55,15 +55,17 @@ const loadEnvConfig = (dir, dev = false, verbose = true) => {
     const isTest = process.env.NODE_ENV === 'test';
     const mode = getMode(isTest, dev);
 
-    const dotenvFiles = [
-        `.env.${mode}.local`,
-        // Don't include `.env.local` for `test` environment
-        // since normally you expect tests to produce the same
-        // results for everyone
-        mode !== 'test' && `.env.local`,
-        `.env.${mode}`,
-        '.env',
-    ].filter(Boolean);
+    const dotenvFiles = process.env.DOTENV_DISABLE
+        ? []
+        : [
+              `.env.${mode}.local`,
+              // Don't include `.env.local` for `test` environment
+              // since normally you expect tests to produce the same
+              // results for everyone
+              mode !== 'test' && `.env.local`,
+              `.env.${mode}`,
+              '.env',
+          ].filter(Boolean);
 
     for (const envFile of dotenvFiles) {
         // only load .env if the user provided has an env config file
