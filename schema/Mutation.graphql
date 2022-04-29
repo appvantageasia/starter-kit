@@ -49,6 +49,11 @@ type Mutation {
     enableAuthenticator(token: String!, secret: String!): User!
 
     """
+    Disable 2FA / Authenticator for the signed user
+    """
+    disableAuthenticator: User!
+
+    """
     Create a web public key credential registration request
     """
     requestWebPublicKeyCredentialRegistration: WebPublicKeyCredentialRegistrationRequest!

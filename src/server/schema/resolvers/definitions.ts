@@ -94,6 +94,8 @@ export type GraphQLMutation = {
     completeWebPublicKeyCredentialRegistration: Scalars['Boolean'];
     /** Create a new account/user */
     createAccount: GraphQLUser;
+    /** Disable 2FA / Authenticator for the signed user */
+    disableAuthenticator: GraphQLUser;
     /** Enable 2FA / Authenticator for the signed user */
     enableAuthenticator: GraphQLUser;
     /** Generate a challenge to authenticate with web credentials */
@@ -601,6 +603,7 @@ export type GraphQLMutationResolvers<
         ContextType,
         RequireFields<GraphQLMutationCreateAccountArgs, 'email' | 'password' | 'username'>
     >;
+    disableAuthenticator?: Resolver<GraphQLResolversTypes['User'], ParentType, ContextType>;
     enableAuthenticator?: Resolver<
         GraphQLResolversTypes['User'],
         ParentType,

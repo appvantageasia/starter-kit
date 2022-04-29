@@ -94,6 +94,8 @@ export type Mutation = {
     completeWebPublicKeyCredentialRegistration: Scalars['Boolean'];
     /** Create a new account/user */
     createAccount: User;
+    /** Disable 2FA / Authenticator for the signed user */
+    disableAuthenticator: User;
     /** Enable 2FA / Authenticator for the signed user */
     enableAuthenticator: User;
     /** Generate a challenge to authenticate with web credentials */
@@ -614,6 +616,22 @@ export type EnableAuthenticatorMutationVariables = Exact<{
 export type EnableAuthenticatorMutation = {
     __typename?: 'Mutation';
     enableAuthenticator: {
+        __typename?: 'User';
+        id: string;
+        username: string;
+        displayName: string;
+        isAuthenticatorEnabled: boolean;
+        isPasswordExpired: boolean;
+        email: string;
+        passwordExpiresAt: string | Date;
+    };
+};
+
+export type DisableAuthenticatorMutationVariables = Exact<{ [key: string]: never }>;
+
+export type DisableAuthenticatorMutation = {
+    __typename?: 'Mutation';
+    disableAuthenticator: {
         __typename?: 'User';
         id: string;
         username: string;
@@ -2345,6 +2363,83 @@ export type EnableAuthenticatorMutationResult = Apollo.MutationResult<EnableAuth
 export type EnableAuthenticatorMutationOptions = Apollo.BaseMutationOptions<
     EnableAuthenticatorMutation,
     EnableAuthenticatorMutationVariables
+>;
+export const DisableAuthenticatorDocument = /* #__PURE__ */ {
+    kind: 'Document',
+    definitions: [
+        {
+            kind: 'OperationDefinition',
+            operation: 'mutation',
+            name: { kind: 'Name', value: 'disableAuthenticator' },
+            selectionSet: {
+                kind: 'SelectionSet',
+                selections: [
+                    {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'disableAuthenticator' },
+                        selectionSet: {
+                            kind: 'SelectionSet',
+                            selections: [{ kind: 'FragmentSpread', name: { kind: 'Name', value: 'CurrentUserData' } }],
+                        },
+                    },
+                ],
+            },
+        },
+        {
+            kind: 'FragmentDefinition',
+            name: { kind: 'Name', value: 'CurrentUserData' },
+            typeCondition: { kind: 'NamedType', name: { kind: 'Name', value: 'User' } },
+            selectionSet: {
+                kind: 'SelectionSet',
+                selections: [
+                    { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                    { kind: 'Field', name: { kind: 'Name', value: 'username' } },
+                    { kind: 'Field', name: { kind: 'Name', value: 'displayName' } },
+                    { kind: 'Field', name: { kind: 'Name', value: 'isAuthenticatorEnabled' } },
+                    { kind: 'Field', name: { kind: 'Name', value: 'isPasswordExpired' } },
+                    { kind: 'Field', name: { kind: 'Name', value: 'email' } },
+                    { kind: 'Field', name: { kind: 'Name', value: 'passwordExpiresAt' } },
+                ],
+            },
+        },
+    ],
+} as unknown as DocumentNode;
+export type DisableAuthenticatorMutationFn = Apollo.MutationFunction<
+    DisableAuthenticatorMutation,
+    DisableAuthenticatorMutationVariables
+>;
+
+/**
+ * __useDisableAuthenticatorMutation__
+ *
+ * To run a mutation, you first call `useDisableAuthenticatorMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDisableAuthenticatorMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [disableAuthenticatorMutation, { data, loading, error }] = useDisableAuthenticatorMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useDisableAuthenticatorMutation(
+    baseOptions?: Apollo.MutationHookOptions<DisableAuthenticatorMutation, DisableAuthenticatorMutationVariables>
+) {
+    const options = { ...defaultOptions, ...baseOptions };
+
+    return Apollo.useMutation<DisableAuthenticatorMutation, DisableAuthenticatorMutationVariables>(
+        DisableAuthenticatorDocument,
+        options
+    );
+}
+export type DisableAuthenticatorMutationHookResult = ReturnType<typeof useDisableAuthenticatorMutation>;
+export type DisableAuthenticatorMutationResult = Apollo.MutationResult<DisableAuthenticatorMutation>;
+export type DisableAuthenticatorMutationOptions = Apollo.BaseMutationOptions<
+    DisableAuthenticatorMutation,
+    DisableAuthenticatorMutationVariables
 >;
 export const GenerateAuthenticatorChallengeDocument = /* #__PURE__ */ {
     kind: 'Document',

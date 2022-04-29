@@ -110,6 +110,10 @@ type Mutation {
     """
     createAccount(email: String!, password: String!, username: String!): User!
     """
+    Disable 2FA / Authenticator for the signed user
+    """
+    disableAuthenticator: User!
+    """
     Enable 2FA / Authenticator for the signed user
     """
     enableAuthenticator(secret: String!, token: String!): User!

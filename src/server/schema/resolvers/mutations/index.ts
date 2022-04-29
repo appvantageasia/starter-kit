@@ -11,3 +11,4 @@ export { default as completeWebPublicKeyCredentialRegistration } from './complet
 export { default as revokeWebPublicKeyCredential } from './revokeWebPublicKeyCredential';
 export { default as revokeUserSession } from './revokeUserSession';
 export { default as authenticateWithWebPublicKeyCredential } from './authenticateWithWebPublicKeyCredential';
+export { default as disableAuthenticator } from './disableAuthenticator';
