@@ -133,6 +133,12 @@ mutation enableAuthenticator($secret: String!, $token: String!) {
     }
 }
 
+mutation disableAuthenticator {
+    disableAuthenticator {
+        ...CurrentUserData
+    }
+}
+
 query generateAuthenticatorChallenge($username: String!) {
     generateAuthenticatorChallenge(username: $username) {
         token

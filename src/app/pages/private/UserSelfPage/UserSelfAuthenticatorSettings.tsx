@@ -1,6 +1,6 @@
 import { CheckCircleOutlined, WarningOutlined } from '@ant-design/icons';
 import { Badge, Card, Space } from 'antd';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from '../../../components/contexts/AccountContextManager';
 import AuthenticatorIntroduction from './AuthenticatorIntroduction';
@@ -28,6 +28,18 @@ const UserSelfAuthenticatorSettings = () => {
                 return null;
         }
     })();
+
+    useEffect(() => {
+        // handle issues where we are not back to introduction
+        if (step === 'summary' && !isAuthenticatorEnabled) {
+            setStep('introduction');
+        }
+
+        // similar, but going back to summary
+        if (step !== 'summary' && isAuthenticatorEnabled) {
+            setStep('summary');
+        }
+    }, [isAuthenticatorEnabled, step, setStep]);
 
     return (
         <Badge.Ribbon
