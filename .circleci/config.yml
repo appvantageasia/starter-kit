@@ -3,10 +3,10 @@ version: 2.1
 executors:
     node-standalone:
         docker:
-            - image: cimg/node:16.14.0
+            - image: cimg/node:18.2.0
     node-with-dependencies:
         docker:
-            - image: cimg/node:16.14.0
+            - image: cimg/node:18.2.0
               environment:
                   APP_DB_URI: mongodb://root:password@127.0.0.1:27017
                   APP_SESSION_SECRET: localSecret
@@ -18,7 +18,7 @@ executors:
                   APP_STORAGE_SECRET_KEY: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
                   APP_HTML2PDF_ENDPOINT: 'http://html2pdf:3000/'
                   APP_HEALTH_ENABLED: false
-            - image: mongo:5.0.6-focal
+            - image: mongo:5.0.8-focal
               environment:
                   MONGO_INITDB_ROOT_USERNAME: root
                   MONGO_INITDB_ROOT_PASSWORD: password
@@ -29,7 +29,7 @@ executors:
                   MINIO_ROOT_PASSWORD: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
             - image: cimg/redis:6.2.6
               command: redis-server --appendonly yes
-            - image: appvantage/html2pdf-service:1.4.1
+            - image: appvantage/html2pdf-service:1.5.0
               name: html2pdf
 
 jobs:
@@ -39,14 +39,14 @@ jobs:
             - checkout
             - restore_cache:
                   keys:
-                      - yarn-cache-node16-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
-                      - yarn-cache-node16-{{ checksum "package.json" }}
-                      - yarn-cache-node16
+                      - yarn-cache-node18-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+                      - yarn-cache-node18-{{ checksum "package.json" }}
+                      - yarn-cache-node18
             - run:
                   name: Install depdencies
                   command: yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
             - save_cache:
-                  key: yarn-cache-node16-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+                  key: yarn-cache-node18-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
                   paths:
                       - ~/.cache/yarn
             - persist_to_workspace:
