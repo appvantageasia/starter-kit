@@ -42,10 +42,12 @@ const createWsLink = (getContext: GetContext) => {
     // restart whenever the token changed
     PubSub.subscribe('core.tokenUpdate', () => restart());
 
+    const scheme = window.location.protocol === 'https:' ? 'wss' : 'ws';
+
     // create ws link
     return new GraphQLWsLink(
         createWsClient({
-            url: `ws://${window.location.host}/graphql`,
+            url: `${scheme}://${window.location.host}/graphql`,
             lazy: true,
 
             // provide authorization header in connection params
