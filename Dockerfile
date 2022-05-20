@@ -1,4 +1,4 @@
-FROM node:16.14.0-buster-slim as base
+FROM node:18.2..0-buster-slim as base
 
 # install libmongocrypt
 # this can be removed if the projects does not target a support for CSFLE
