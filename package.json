@@ -151,7 +151,7 @@
     },
     "dependencies": {
         "@ant-design/icons": "^4.5.0",
-        "@ant-design/pro-layout": "^6.32.7",
+        "@ant-design/pro-layout": "^6.38.4",
         "@apollo/client": "^3.3.21",
         "@babel/runtime": "^7.14.0",
         "@bull-board/api": "^3.10.4",
