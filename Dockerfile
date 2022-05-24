@@ -1,4 +1,4 @@
-FROM node:18.2..0-buster-slim as base
+FROM node:18.2.0-buster-slim as base
 
 # install libmongocrypt
 # this can be removed if the projects does not target a support for CSFLE
@@ -18,9 +18,6 @@ ENV NODE_ENV=production
 # create app directory
 WORKDIR /usr/src/app
 
-# copy everything we need from the builder to install dependencies
-COPY --chown=node:node package.json yarn.lock ./
-
 FROM base as dependencies
 
 # install build dependencies
@@ -29,18 +26,24 @@ RUN apt-get update && apt-get install python3 make g++ -y
 # install node prune
 RUN curl -sf https://gobinaries.com/tj/node-prune | sh
 
+# copy everything we need from the builder to install dependencies
+COPY --chown=node:node package.json yarn.lock .yarnrc.yml ./
+COPY --chown=node:node .yarn ./.yarn
+
 # install dependencies with frozen lockfile
 # then clean with node prune
-RUN yarn install --frozen-lockfile --production \
-    && node-prune
+RUN yarn install \
+    && node-prune \
+    && yarn cache clean
+
+# copy everything else
+COPY --chown=node:node ./public ./public
+COPY --chown=node:node ./*.json ./*.js ./*.json ./*.map ./
 
 FROM base
 
 # copy dependencies
 COPY --from=dependencies /usr/src/app .
-
-# copy everything else
-COPY --chown=node:node . .
 
 # set the version
 ARG VERSION

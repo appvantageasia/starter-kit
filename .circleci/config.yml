@@ -37,21 +37,13 @@ jobs:
         executor: node-standalone
         steps:
             - checkout
-            - restore_cache:
-                  keys:
-                      - yarn-cache-node18-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
-                      - yarn-cache-node18-{{ checksum "package.json" }}
-                      - yarn-cache-node18
             - run:
-                  name: Install depdencies
-                  command: yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
-            - save_cache:
-                  key: yarn-cache-node18-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
-                  paths:
-                      - ~/.cache/yarn
+                  name: Install dependencies
+                  command: yarn install --immutable
             - persist_to_workspace:
                   root: ~/project
                   paths:
+                      - .yarn/unplugged
                       - node_modules
 
     validate-code:
@@ -107,6 +99,18 @@ jobs:
               command: yarn build
               environment:
                 NODE_ENV: production
+          - run:
+              name: Prepare dependencies
+              working_directory: ./build
+              # first copy yarn and related
+              # then remove unplugged directory
+              # run yarn up to update lockfile based on the newly generated package.json
+              # then remove node modules as it will be computed again in dockerfile
+              command: |
+                cp -R ../.yarn ../.yarnrc.yml ../yarn.lock .
+                rm -rf .yarn/unplugged
+                yarn up --mode=skip-build
+                rm -rf ./node_modules
           - persist_to_workspace:
               root: ~/project
               paths:
