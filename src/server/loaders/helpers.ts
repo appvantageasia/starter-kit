@@ -28,7 +28,7 @@ export const buildManyToOneLoader = <TDocument extends { _id: ObjectId }>(
         return keys.map(key => mappedDocuments[key.toHexString()] || []);
     });
 
-const mergeDocuments = mergeWith((objValue, srcValue) => concat(srcValue, objValue));
+const mergeDocuments = mergeWith((objValue = [], srcValue = []) => concat(srcValue, objValue));
 
 export const buildManyToManyLoader = <TDocument extends { _id: ObjectId }>(
     getItems: GetItems<TDocument>,
