@@ -162,7 +162,7 @@
         "@promster/server": "^7.0.3",
         "@sentry/integrations": "^6.7.2",
         "@sentry/node": "^6.3.6",
-        "@sentry/react": "^6.3.6",
+        "@sentry/react": "^7.0.0",
         "@sentry/tracing": "^6.6.0",
         "@sentry/types": "^6.7.2",
         "@types/ua-parser-js": "^0.7.36",
