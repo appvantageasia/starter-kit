@@ -1,5 +1,6 @@
 {
   "labels": ["dependencies"],
   "semanticCommits": "enabled",
-  "lockFileMaintenance": { "enabled": true }
+  "lockFileMaintenance": { "enabled": true },
+  "dependencyDashboard": true
 }
