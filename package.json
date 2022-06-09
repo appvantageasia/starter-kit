@@ -161,7 +161,7 @@
         "@promster/express": "^7.0.2",
         "@promster/server": "^7.0.3",
         "@sentry/integrations": "^6.7.2",
-        "@sentry/node": "^6.3.6",
+        "@sentry/node": "^7.0.0",
         "@sentry/react": "^6.3.6",
         "@sentry/tracing": "^6.6.0",
         "@sentry/types": "^6.7.2",
