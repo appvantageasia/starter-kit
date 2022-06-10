@@ -1,10 +1,16 @@
-const Enquirer = require('enquirer');
+import Enquirer, { Prompt } from 'enquirer';
+import { BundleEntry } from './index';
 
-class MigrationRunner {
+export default class MigrationRunner {
+    private enquirer: Enquirer<{ doExecute: boolean }>;
+
+    private latestPrompt: Prompt | null;
+
+    private migrationPromise: Promise<void>;
+
     constructor() {
         this.enquirer = new Enquirer();
         this.migrationPromise = null;
-
         this.latestPrompt = null;
 
         this.enquirer.on('prompt', prompt => {
@@ -12,7 +18,7 @@ class MigrationRunner {
         });
     }
 
-    async start({ listPendingMigrations, executeDataMigration }, isOutdated) {
+    async start({ listPendingMigrations, executeDataMigration }: BundleEntry, isOutdated) {
         const pendingMigrations = await listPendingMigrations();
 
         if (isOutdated() || pendingMigrations.length === 0) {
@@ -43,6 +49,8 @@ class MigrationRunner {
     async stop() {
         if (this.latestPrompt) {
             try {
+                // todo look into it
+                // @ts-ignore
                 await this.latestPrompt.close();
             } finally {
                 this.latestPrompt = null;
@@ -59,5 +67,3 @@ class MigrationRunner {
         }
     }
 }
-
-module.exports = MigrationRunner;

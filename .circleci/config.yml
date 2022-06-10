@@ -39,20 +39,21 @@ jobs:
             - checkout
             - restore_cache:
                   keys:
-                      - yarn-cache-node18-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
-                      - yarn-cache-node18-{{ checksum "package.json" }}
-                      - yarn-cache-node18
+                      - yarn3-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+                      - yarn3-cache-{{ checksum "package.json" }}
+                      - yarn3-cache
             - run:
-                  name: Install depdencies
-                  command: yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
+                  name: Install dependencies
+                  command: yarn install --immutable
             - save_cache:
-                  key: yarn-cache-node18-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+                  key: yarn3-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
                   paths:
-                      - ~/.cache/yarn
+                      - ~/project/yarn
             - persist_to_workspace:
                   root: ~/project
                   paths:
                       - node_modules
+                      - .yarn
 
     validate-code:
       executor: node-standalone
@@ -72,7 +73,7 @@ jobs:
             working_directory: ~/project/cypress
         - run:
             name: Lint commit messages
-            command: node ./devtools/commands/lint-commits.js
+            command: yarn ts-node ./devtools/commands/lint-commits.ts
         - store_test_results:
             path: ~/project/junit/
 
@@ -107,6 +108,12 @@ jobs:
               command: yarn build
               environment:
                 NODE_ENV: production
+          - run:
+              name: Prepare dependencies
+              command: |
+                cp -R ../.yarn ../.yarnrc.yml ../yarn.lock .
+                yarn up --mode=skip-build
+                yarn cache clean
           - persist_to_workspace:
               root: ~/project
               paths:

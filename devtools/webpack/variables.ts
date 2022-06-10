@@ -1,4 +1,4 @@
-const path = require('path');
+import path from 'path';
 
 const isBuildIntentDevelopment = process.env.NODE_ENV === 'development';
 const isBuildIntentProduction = !isBuildIntentDevelopment;
@@ -8,10 +8,4 @@ const srcDirname = path.join(rootDirname, './src');
 
 const webpackMode = isBuildIntentProduction ? 'production' : 'development';
 
-module.exports = {
-    isBuildIntentDevelopment,
-    isBuildIntentProduction,
-    rootDirname,
-    srcDirname,
-    webpackMode,
-};
+export { isBuildIntentDevelopment, isBuildIntentProduction, rootDirname, srcDirname, webpackMode };

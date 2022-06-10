@@ -1,6 +1,16 @@
-const listen = require('test-listen');
+import { Server } from 'http';
+import listen from 'test-listen';
+import { BundleEntry } from './index';
 
-class ServerRunner {
+export default class ServerRunner {
+    private server: Server;
+
+    private serverPromise: Promise<string>;
+
+    private serverPromiseResolve: (server: Server) => void;
+
+    private serverUrl: string;
+
     constructor() {
         // latest http server instance for the backend
         this.server = null;
@@ -15,7 +25,7 @@ class ServerRunner {
         this.createPendingServer();
     }
 
-    async start({ createWebServer }) {
+    async start({ createWebServer }: BundleEntry) {
         // create http server
         this.server = (await createWebServer()).httpServer;
         this.serverPromiseResolve(this.server);
@@ -57,5 +67,3 @@ class ServerRunner {
         }
     }
 }
-
-module.exports = ServerRunner;

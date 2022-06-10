@@ -74,7 +74,7 @@ export const ApolloSentryPlugin: ApolloServerExpressConfig['plugins'][0] = {
                             scope.addBreadcrumb({
                                 category: 'query-path',
                                 message: error.path.join(' > '),
-                                level: Sentry.Severity.Debug,
+                                level: 'debug',
                             });
                         }
 

@@ -1,9 +1,13 @@
-class WorkerRunner {
+import { BundleEntry } from './index';
+
+export default class WorkerRunner {
+    private cleanUp: (() => Promise<void>) | null;
+
     constructor() {
         this.cleanUp = null;
     }
 
-    async start({ startWorker }) {
+    async start({ startWorker }: BundleEntry) {
         this.cleanUp = startWorker();
     }
 
@@ -20,5 +24,3 @@ class WorkerRunner {
         }
     }
 }
-
-module.exports = WorkerRunner;

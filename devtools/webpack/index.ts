@@ -1,40 +1,34 @@
-const path = require('path');
-const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const webpack = require('webpack');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
-const nodeExternals = require('webpack-node-externals');
-const WebpackBar = require('webpackbar');
-const PackagePlugin = require('./WebpackPackagePlugin');
+import path from 'path';
+import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
+import CopyPlugin from 'copy-webpack-plugin';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import webpack, { Configuration, RuleSetRule } from 'webpack';
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import { WebpackManifestPlugin } from 'webpack-manifest-plugin';
+import nodeExternals from 'webpack-node-externals';
+import WebpackBar from 'webpackbar';
+import PackagePlugin from './WebpackPackagePlugin';
 
-const getBabelRule = require('./babel');
-const getStyleRule = require('./style');
+import getBabelRule from './babel';
+import getStyleRule from './style';
+
+import { webpackMode, srcDirname, rootDirname, isBuildIntentDevelopment, isBuildIntentProduction } from './variables';
 
 // is it running in an interactive shell
 const isInteractive = process.stdout.isTTY;
 
-const {
-    webpackMode,
-    srcDirname,
-    rootDirname,
-    isBuildIntentDevelopment,
-    isBuildIntentProduction,
-} = require('./variables');
-
-const graphqlRule = {
+const graphqlRule: RuleSetRule = {
     test: /\.graphql$/,
     exclude: /node_modules/,
     loader: require.resolve('graphql-tag/loader'),
 };
 
-const svgRule = {
+const svgRule: RuleSetRule = {
     test: /\.svg$/,
     use: [require.resolve('@svgr/webpack')],
 };
 
-const serverConfig = {
+const serverConfig: Configuration = {
     name: 'server',
     mode: webpackMode,
 
@@ -92,16 +86,14 @@ const serverConfig = {
         }),
 
         // provide a package.json on production
-        isBuildIntentProduction &&
-            new PackagePlugin({
-                yarnFile: path.resolve(rootDirname, './yarn.lock'),
-            }),
+        isBuildIntentProduction && new PackagePlugin({}),
 
+        // show progress bar when building for production with TTY
         isBuildIntentProduction && isInteractive && new WebpackBar({ name: 'server', profile: true }),
     ].filter(Boolean),
 };
 
-const appConfig = {
+const appConfig: Configuration = {
     name: 'app',
     mode: webpackMode,
 
@@ -212,4 +204,4 @@ const appConfig = {
     ].filter(Boolean),
 };
 
-module.exports = [serverConfig, appConfig];
+export default [serverConfig, appConfig];
