@@ -154,7 +154,7 @@ html2pdf:
     registry: 'docker.io'
     repository: 'appvantage/html2pdf-service'
     pullPolicy: IfNotPresent
-    tag: '1.5.0'
+    tag: '1.5.1'
     pullSecret: [ ]
 
   # pod scaler
