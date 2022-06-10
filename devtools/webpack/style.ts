@@ -1,10 +1,11 @@
 /* eslint-disable global-require */
-const fs = require('fs');
-const path = require('path');
-const lessToJS = require('less-vars-to-js');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
-const { isBuildIntentProduction, srcDirname } = require('./variables');
+import fs from 'fs';
+import path from 'path';
+import lessToJS from 'less-vars-to-js';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import getCSSModuleLocalIdent from 'react-dev-utils/getCSSModuleLocalIdent';
+import { RuleSetRule } from 'webpack';
+import { isBuildIntentProduction, srcDirname } from './variables';
 
 const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
@@ -51,7 +52,7 @@ const getLessLoaders = cssOptions => [
     },
 ];
 
-const getStyleRule = () => ({
+const getStyleRule = (): RuleSetRule => ({
     test: /\.(less|css)$/,
     oneOf: [
         // "postcss" loader applies autoprefixer to our CSS.
@@ -112,4 +113,4 @@ const getStyleRule = () => ({
     ],
 });
 
-module.exports = getStyleRule;
+export default getStyleRule;

@@ -56,4 +56,8 @@ if (process.isCLI) {
     program.parse();
 }
 
-export { createWebServer, startWorker, executeDataMigration, listPendingMigrations };
+const bundle = { createWebServer, startWorker, executeDataMigration, listPendingMigrations };
+
+export default bundle;
+
+export type Bundle = typeof bundle;

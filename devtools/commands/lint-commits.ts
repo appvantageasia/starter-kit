@@ -1,5 +1,5 @@
-const { Octokit } = require('@octokit/rest');
-const execa = require('execa');
+import { Octokit } from '@octokit/rest';
+import execa from 'execa';
 
 const git = async (...args) => {
     const { stdout } = await execa('git', args);
@@ -65,16 +65,15 @@ const getRangeFromSha = async () => {
 
 const runLint = ([from, to]) => execa('yarn', ['commitlint', '--from', from, '--to', to, '-V'], { stdio: 'inherit' });
 
-const run = () =>
-    getRangeFromPr()
-        .catch(getRangeFromCompare)
-        .catch(getRangeFromSha)
-        .then(runLint, error => {
-            console.error(error);
-            process.exit(1);
-        })
-        .catch(() => {
-            process.exit(1);
-        });
+getRangeFromPr()
+    .catch(getRangeFromCompare)
+    .catch(getRangeFromSha)
+    .then(runLint, error => {
+        console.error(error);
+        process.exit(1);
+    })
+    .catch(() => {
+        process.exit(1);
+    });
 
-run();
+export {};

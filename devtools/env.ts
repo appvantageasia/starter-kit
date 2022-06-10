@@ -1,18 +1,19 @@
-const fs = require('fs');
-const path = require('path');
-const { parse } = require('dotenv');
-const { expand } = require('dotenv-expand');
+import fs from 'fs';
+import path from 'path';
+import { parse } from 'dotenv';
+import { expand, DotenvExpandOutput } from 'dotenv-expand';
 
-let combinedEnv;
-const cachedLoadedEnvFiles = [];
+let combinedEnv: ReturnType<typeof processEnv>;
 
-const processEnv = (loadedEnvFiles, dir, verbose = true) => {
+const cachedLoadedEnvFiles: { path: string; contents: string }[] = [];
+
+const processEnv = (loadedEnvFiles, dir, verbose = true): DotenvExpandOutput['parsed'] => {
     const origEnv = { ...process.env };
     const parsed = {};
 
     for (const envFile of loadedEnvFiles) {
         try {
-            let result = {};
+            let result: DotenvExpandOutput = {};
 
             result.parsed = parse(envFile.contents);
             result = expand(result);
@@ -91,4 +92,4 @@ const loadEnvConfig = (dir, dev = false, verbose = true) => {
     return { combinedEnv, loadedEnvFiles: cachedLoadedEnvFiles };
 };
 
-module.exports = loadEnvConfig;
+export default loadEnvConfig;
