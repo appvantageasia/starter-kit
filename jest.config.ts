@@ -169,7 +169,7 @@ export default {
 
     // A map from regular expressions to paths to transformers
     transform: {
-        '\\.graphql$': 'jest-transform-graphql',
+        '\\.graphql$': '<rootDir>/devtools/jest-transform-graphql',
         '^.+\\.(js|jsx|ts|tsx)$': '<rootDir>/node_modules/babel-jest',
     },
 
