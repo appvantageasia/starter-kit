@@ -1,4 +1,4 @@
 {
     "extends": "./tsconfig.base.json",
-    "exclude": ["cypress"]
+    "exclude": ["cypress", "./cypress.config.ts"]
 }

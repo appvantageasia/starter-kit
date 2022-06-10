@@ -1,209 +1,251 @@
 version: 2.1
 
+partials:
+  main-env: &main-env
+    DOTENV_DISABLE: true
+    APP_DB_URI: mongodb://root:password@127.0.0.1:27017
+    APP_SESSION_SECRET: localSecret
+    APP_SMTP_PORT: 1025
+    APP_STORAGE_ENDPOINT: localhost
+    APP_STORAGE_PORT: 9000
+    APP_STORAGE_SSL: false
+    APP_STORAGE_ACCESS_KEY: 'AKIAIOSFODNN7EXAMPLE'
+    APP_STORAGE_SECRET_KEY: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
+    APP_STORAGE_PUBLIC_ENDPOINT: 'http://localhost:9000/app-public/'
+    APP_HTML2PDF_ENDPOINT: 'http://html2pdf:3000/'
+    APP_HEALTH_ENABLED: false
+  minio-env: &mino-env
+    MINIO_ROOT_USER: 'AKIAIOSFODNN7EXAMPLE'
+    MINIO_ROOT_PASSWORD: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
+  mongo-env: &mongo-env
+    MONGO_INITDB_ROOT_USERNAME: root
+    MONGO_INITDB_ROOT_PASSWORD: password
+
 executors:
-    node-standalone:
-        docker:
-            - image: cimg/node:18.2.0
-    node-with-dependencies:
-        docker:
-            - image: cimg/node:18.2.0
-              environment:
-                  APP_DB_URI: mongodb://root:password@127.0.0.1:27017
-                  APP_SESSION_SECRET: localSecret
-                  APP_SMTP_PORT: 1025
-                  APP_STORAGE_ENDPOINT: localhost
-                  APP_STORAGE_PORT: 9000
-                  APP_STORAGE_SSL: false
-                  APP_STORAGE_ACCESS_KEY: 'AKIAIOSFODNN7EXAMPLE'
-                  APP_STORAGE_SECRET_KEY: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
-                  APP_HTML2PDF_ENDPOINT: 'http://html2pdf:3000/'
-                  APP_HEALTH_ENABLED: false
-            - image: mongo:5.0.8-focal
-              environment:
-                  MONGO_INITDB_ROOT_USERNAME: root
-                  MONGO_INITDB_ROOT_PASSWORD: password
-            - image: minio/minio:RELEASE.2021-07-08T01-15-01Z
-              command: server /data
-              environment:
-                  MINIO_ROOT_USER: 'AKIAIOSFODNN7EXAMPLE'
-                  MINIO_ROOT_PASSWORD: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'
-            - image: cimg/redis:6.2.6
-              command: redis-server --appendonly yes
-            - image: appvantage/html2pdf-service:1.5.1
-              name: html2pdf
+  node-standalone:
+    docker:
+      - image: cimg/node:18.2.0
+  node-with-dependencies:
+    docker:
+      - image: cimg/node:18.2.0
+        environment: *main-env
+      - image: mongo:5.0.8-focal
+        environment: *mongo-env
+      - image: minio/minio:RELEASE.2021-07-08T01-15-01Z
+        command: server /data
+        environment: *mino-env
+      - image: cimg/redis:6.2.6
+        command: redis-server --appendonly yes
+      - image: appvantage/html2pdf-service:1.5.1
+        name: html2pdf
+  cypress-standalone:
+    docker:
+      - image: cypress/browsers:node16.14.0-slim-chrome99-ff97
+        environment: *main-env
+  cypress:
+    docker:
+      - image: cypress/browsers:node16.14.0-slim-chrome99-ff97
+        environment: *main-env
+      - image: mongo:5.0.8-focal
+        environment: *mongo-env
+      - image: minio/minio:RELEASE.2021-07-08T01-15-01Z
+        command: server /data
+        environment: *mino-env
+      - image: cimg/redis:6.2.6
+        command: redis-server --appendonly yes
+      - image: appvantage/html2pdf-service:1.5.1
+        name: html2pdf
 
 jobs:
-    deps-install:
-        executor: node-standalone
-        steps:
-            - checkout
-            - restore_cache:
-                  keys:
-                      - yarn3-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
-                      - yarn3-cache-{{ checksum "package.json" }}
-                      - yarn3-cache
-            - run:
-                  name: Install dependencies
-                  command: yarn install --immutable
-            - save_cache:
-                  key: yarn3-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
-                  paths:
-                      - ~/project/yarn
-            - persist_to_workspace:
-                  root: ~/project
-                  paths:
-                      - node_modules
-                      - .yarn
+  deps-install:
+    executor: node-standalone
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - yarn3-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+            - yarn3-cache-{{ checksum "package.json" }}
+            - yarn3-cache
+      - run:
+          name: Install dependencies
+          command: yarn install --immutable
+      - save_cache:
+          key: yarn3-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/project/yarn
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - node_modules
+            - .yarn
 
-    validate-code:
-      executor: node-standalone
-      steps:
-        - checkout
-        - attach_workspace:
-            at: ~/project
-        - run:
-            name: Lint source code
-            command: yarn lint --format junit -o ./junit/js-lint-results.xml
-        - run:
-            name: Type checking
-            command: yarn tsc
-        - run:
-            name: Type checking on cypress
-            command: yarn tsc
-            working_directory: ~/project/cypress
-        - run:
-            name: Lint commit messages
-            command: yarn ts-node ./devtools/commands/lint-commits.ts
-        - store_test_results:
-            path: ~/project/junit/
+  validate-code:
+    executor: node-standalone
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Lint source code
+          command: yarn lint --format junit -o ./junit/js-lint-results.xml
+      - run:
+          name: Type checking
+          command: yarn tsc
+      - run:
+          name: Type checking on cypress
+          command: yarn tsc
+          working_directory: ~/project/cypress
+      - run:
+          name: Lint commit messages
+          command: yarn ts-node ./devtools/commands/lint-commits.ts
+      - store_test_results:
+          path: ~/project/junit/
 
-    validate-unit-testing:
-      executor: node-with-dependencies
-      steps:
-        - checkout
-        - attach_workspace:
-            at: ~/project
-        - run:
-            name: Wait for db
-            command: dockerize -wait tcp://127.0.0.1:27017 -timeout 1m
-        - run:
-            name: Unit testing
-            command: yarn test:coverage --reporters=default --reporters=jest-junit
-            environment:
-              JEST_JUNIT_OUTPUT_DIR: ./junit/
-        - store_test_results:
-            path: ~/project/junit/
-        - store_artifacts:
-            path: ~/project/coverage/
-            destination: coverage
+  validate-unit-testing:
+    executor: node-with-dependencies
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Wait for db
+          command: ./devtools/wait-for-it.sh 127.0.0.1:27017 --timeout=60
+      - run:
+          name: Unit testing
+          command: yarn test:coverage --reporters=default --reporters=jest-junit
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./junit/
+      - store_test_results:
+          path: ~/project/junit/
+      - store_artifacts:
+          path: ~/project/coverage/
+          destination: coverage
 
-    build:
-      executor: node-standalone
-      steps:
-          - checkout
-          - attach_workspace:
-              at: ~/project
-          - run:
-              name: Build
-              command: yarn build
-              environment:
-                NODE_ENV: production
-          - run:
-              name: Prepare dependencies
-              command: |
-                cp -R ../.yarn ../.yarnrc.yml ../yarn.lock .
-                yarn up --mode=skip-build
-                yarn cache clean
-          - persist_to_workspace:
-              root: ~/project
-              paths:
-                - build
-          - store_artifacts:
-              path: ~/project/build
-              destination: build
-          - store_artifacts:
-              path: ~/project/report.html
-              destination: report.html
+  build:
+    executor: node-standalone
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Build
+          command: yarn build
+          environment:
+            NODE_ENV: production
+      - run:
+          name: Prepare dependencies
+          working_directory: ~/project/cypress
+          command: |
+            cp -R ../.yarn ../.yarnrc.yml ../yarn.lock .
+            yarn up --mode=skip-build
+            yarn cache clean
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - build
+      - store_artifacts:
+          path: ~/project/build
+          destination: build
+      - store_artifacts:
+          path: ~/project/report.html
+          destination: report.html
 
-    validate-functional-testing:
-        executor: node-with-dependencies
-        steps:
-            - checkout
-            - attach_workspace:
-                  at: ~/project
-            - run:
-                  name: Wait for db
-                  command: dockerize -wait tcp://127.0.0.1:27017 -timeout 1m
-            - run:
-                  name: Install Cypress
-                  command: |
-                      sudo apt-get update
-                      sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
-                      yarn cypress install
-            - run:
-                  name: Start server
-                  command: node server.js serve
-                  background: true
-                  working_directory: ~/project/build
-            - run:
-                  name: Start worker
-                  command: node server.js worker
-                  background: true
-                  working_directory: ~/project/build
-            - run:
-                  name: Wait for test server
-                  command: dockerize -wait http://127.0.0.1:3000 -timeout 5m
-            - run:
-                  name: Functional testing
-                  command: yarn cypress:run
-                  environment:
-                      CYPRESS_BASE_URL: 'http://localhost:3000'
-            - store_artifacts:
-                  path: ~/project/cypress/screenshots
-                  destination: cypress/screenshots
-            - store_artifacts:
-                  path: ~/project/cypress/videos
-                  destination: cypress/videos
-            - run:
-                  name: Stop test server & worker
-                  command: pkill -SIGQUIT node
+  validate-component-testing:
+    executor: cypress-standalone
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Install Cypress
+          command: yarn cypress install
+      - run:
+          name: Component testing
+          command: yarn cypress:run --component
+      - store_artifacts:
+          path: ~/project/cypress/screenshots
+          destination: cypress/screenshots
+      - store_artifacts:
+          path: ~/project/cypress/videos
+          destination: cypress/videos
 
-    release:
-        executor: node-standalone
-        steps:
-            - checkout
-            - attach_workspace:
-                  at: ~/project
-            - run:
-                  name: semantic-release
-                  command: yarn semantic-release
+  validate-functional-testing:
+    executor: cypress
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Wait for db
+          command: ./devtools/wait-for-it.sh 127.0.0.1:27017 --timeout=60
+      - run:
+          name: Install Cypress
+          command: yarn cypress install
+      - run:
+          name: Start server
+          command: node server.js serve
+          background: true
+          working_directory: ~/project/build
+      - run:
+          name: Start worker
+          command: node server.js worker
+          background: true
+          working_directory: ~/project/build
+      - run:
+          name: Wait for test server
+          command: ./devtools/wait-for-it.sh 127.0.0.1:3000 --timeout=60
+      - run:
+          name: Functional testing
+          command: yarn cypress:run
+          environment:
+            CYPRESS_BASE_URL: 'http://localhost:3000'
+      - store_artifacts:
+          path: ~/project/cypress/screenshots
+          destination: cypress/screenshots
+      - store_artifacts:
+          path: ~/project/cypress/videos
+          destination: cypress/videos
+
+  release:
+    executor: node-standalone
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: semantic-release
+          command: yarn semantic-release
 
 workflows:
-    version: 2
+  version: 2
 
-    main:
-        jobs:
+  main:
+    jobs:
+      - deps-install
+      - validate-code:
+          requires:
             - deps-install
-            - validate-code:
-                  requires:
-                      - deps-install
-            - validate-unit-testing:
-                requires:
-                  - deps-install
-            - build:
-                requires:
-                  - deps-install
-            - validate-functional-testing:
-                requires:
-                  - build
-            - release:
-                  filters:
-                      branches:
-                          only:
-                              - /([0-9])+?.([0-9])+?.x/
-                              - next
-                              - latest
-                  requires:
-                      - validate-code
-                      - validate-unit-testing
-                      - validate-functional-testing
+      - validate-unit-testing:
+          requires:
+            - deps-install
+      - validate-component-testing:
+          requires:
+            - deps-install
+      - build:
+          requires:
+            - deps-install
+      - validate-functional-testing:
+          requires:
+            - build
+      - release:
+          filters:
+            branches:
+              only:
+                - /([0-9])+?.([0-9])+?.x/
+                - next
+                - latest
+          requires:
+            - validate-code
+            - validate-unit-testing
+            - validate-component-testing
+            - validate-functional-testing
