@@ -155,7 +155,7 @@
         "@apollo/client": "^3.6.6",
         "@babel/runtime": "^7.18.3",
         "@bull-board/api": "^3.11.1",
-        "@bull-board/express": "^3.11.1",
+        "@bull-board/express": "^4.0.0",
         "@graphql-tools/schema": "^8.3.14",
         "@loadable/component": "^5.15.2",
         "@promster/express": "^7.0.5",

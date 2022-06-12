@@ -1751,7 +1751,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bull-board/api@npm:3.11.1, @bull-board/api@npm:^3.11.1":
+"@bull-board/api@npm:4.0.0":
+  version: 4.0.0
+  resolution: "@bull-board/api@npm:4.0.0"
+  dependencies:
+    redis-info: ^3.0.8
+  checksum: 9d0da26021265c044d1b9bc0cccb728a76385e0c7ec9d7a9b3cd0f6102d971da08c2909562cb9e2635cf485d1c1d9e0d1b2ddec5f8fe0d11b2f48674fd48664a
+  languageName: node
+  linkType: hard
+
+"@bull-board/api@npm:^3.11.1":
   version: 3.11.1
   resolution: "@bull-board/api@npm:3.11.1"
   dependencies:
@@ -1760,24 +1769,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bull-board/express@npm:^3.11.1":
-  version: 3.11.1
-  resolution: "@bull-board/express@npm:3.11.1"
+"@bull-board/express@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "@bull-board/express@npm:4.0.0"
   dependencies:
-    "@bull-board/api": 3.11.1
-    "@bull-board/ui": 3.11.1
+    "@bull-board/api": 4.0.0
+    "@bull-board/ui": 4.0.0
     ejs: 3.1.7
     express: 4.17.3
-  checksum: 8e1a8090a1fe3c7f93c5ade7139ede172326b5d3ba7f920fc1e587c0bed7cc6c7194f6fe098a6881a51437d2d0713a428336d806c2ffa0fdf1fb9ff7ceebf04e
+  checksum: c175d0d13c0942095d7081fe10849002383349c982619849ef0d7253ee933fb045fcbdf3e7af035b2c37e63b02c197c556a70e9bd33a82ee2b167abff867d376
   languageName: node
   linkType: hard
 
-"@bull-board/ui@npm:3.11.1":
-  version: 3.11.1
-  resolution: "@bull-board/ui@npm:3.11.1"
+"@bull-board/ui@npm:4.0.0":
+  version: 4.0.0
+  resolution: "@bull-board/ui@npm:4.0.0"
   dependencies:
-    "@bull-board/api": 3.11.1
-  checksum: 316c7e53cdea8b0aa169d6390199e2ed682765facf345d94501c07cd28e8fd42a1601cc9893fcf7b9b00dfdf752e0941befb15738a2d4c34c77ef8b8c8dec827
+    "@bull-board/api": 4.0.0
+  checksum: 34d90de90137587e0343a2cfe236df4f7c667a6f08e0c1ea5516090c481b5acbce10ebb652b705f9eb0272b3f6a98033d160e2906b0a120bc76b3c89cf303340
   languageName: node
   linkType: hard
 
@@ -19873,7 +19882,7 @@ __metadata:
     "@babel/preset-typescript": ^7.17.12
     "@babel/runtime": ^7.18.3
     "@bull-board/api": ^3.11.1
-    "@bull-board/express": ^3.11.1
+    "@bull-board/express": ^4.0.0
     "@commitlint/cli": ^17.0.2
     "@commitlint/config-conventional": ^17.0.2
     "@graphql-codegen/add": ^3.1.1
