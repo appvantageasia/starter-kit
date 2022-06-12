@@ -1751,12 +1751,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bull-board/api@npm:3.11.1, @bull-board/api@npm:^3.11.1":
+"@bull-board/api@npm:3.11.1":
   version: 3.11.1
   resolution: "@bull-board/api@npm:3.11.1"
   dependencies:
     redis-info: ^3.0.8
   checksum: 2dddd9847cc3b15030f07129068b0cfa3352b0c45e4de1c622634a0854ab9ec0fe06433f63eaa62d48ab7b5775cf8aad390711b25d44a24da11d567173ec47fa
+  languageName: node
+  linkType: hard
+
+"@bull-board/api@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "@bull-board/api@npm:4.0.0"
+  dependencies:
+    redis-info: ^3.0.8
+  checksum: 9d0da26021265c044d1b9bc0cccb728a76385e0c7ec9d7a9b3cd0f6102d971da08c2909562cb9e2635cf485d1c1d9e0d1b2ddec5f8fe0d11b2f48674fd48664a
   languageName: node
   linkType: hard
 
@@ -19872,7 +19881,7 @@ __metadata:
     "@babel/preset-react": ^7.17.12
     "@babel/preset-typescript": ^7.17.12
     "@babel/runtime": ^7.18.3
-    "@bull-board/api": ^3.11.1
+    "@bull-board/api": ^4.0.0
     "@bull-board/express": ^3.11.1
     "@commitlint/cli": ^17.0.2
     "@commitlint/config-conventional": ^17.0.2
