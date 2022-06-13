@@ -5,6 +5,7 @@ partials:
     DOTENV_DISABLE: true
     APP_DB_URI: mongodb://root:password@127.0.0.1:27017
     APP_SESSION_SECRET: localSecret
+    APP_SMTP_HOST: mailhog
     APP_SMTP_PORT: 1025
     APP_STORAGE_ENDPOINT: localhost
     APP_STORAGE_PORT: 9000
@@ -38,6 +39,8 @@ executors:
         command: redis-server --appendonly yes
       - image: appvantage/html2pdf-service:1.5.1
         name: html2pdf
+      - image: mailhog/mailhog:v1.0.1
+        name: mailhog
   cypress-standalone:
     docker:
       - image: cypress/browsers:node16.14.0-slim-chrome99-ff97
@@ -55,6 +58,8 @@ executors:
         command: redis-server --appendonly yes
       - image: appvantage/html2pdf-service:1.5.1
         name: html2pdf
+      - image: mailhog/mailhog:v1.0.1
+        name: mailhog
 
 jobs:
   deps-install:
