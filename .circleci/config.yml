@@ -144,6 +144,7 @@ jobs:
             cp -R ../.yarn ../.yarnrc.yml ../yarn.lock .
             yarn up --mode=skip-build
             yarn cache clean
+            rm -rf ./node_modules
       - persist_to_workspace:
           root: ~/project
           paths:
