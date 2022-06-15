@@ -35,7 +35,7 @@ executors:
       - image: minio/minio:RELEASE.2021-07-08T01-15-01Z
         command: server /data
         environment: *mino-env
-      - image: cimg/redis:7.0.1
+      - image: cimg/redis:7.0.2
         command: redis-server --appendonly yes
       - image: appvantage/html2pdf-service:1.5.1
         name: html2pdf
@@ -54,7 +54,7 @@ executors:
       - image: minio/minio:RELEASE.2021-07-08T01-15-01Z
         command: server /data
         environment: *mino-env
-      - image: cimg/redis:7.0.1
+      - image: cimg/redis:7.0.2
         command: redis-server --appendonly yes
       - image: appvantage/html2pdf-service:1.5.1
         name: html2pdf
