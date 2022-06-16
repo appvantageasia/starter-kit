@@ -25,10 +25,10 @@ partials:
 executors:
   node-standalone:
     docker:
-      - image: cimg/node:18.2.0
+      - image: cimg/node:18.4.0
   node-with-dependencies:
     docker:
-      - image: cimg/node:18.2.0
+      - image: cimg/node:18.4.0
         environment: *main-env
       - image: mongo:5.0.9-focal
         environment: *mongo-env
