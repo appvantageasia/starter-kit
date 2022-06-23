@@ -1,6 +1,6 @@
 import path from 'path';
 import { Readable as ReadableStream } from 'stream';
-import type { FileUpload } from 'graphql-upload/processRequest';
+import { FileUpload } from 'graphql-upload';
 import { ItemBucketMetadata, Client } from 'minio';
 import { ObjectId } from 'mongodb';
 import config from './config';

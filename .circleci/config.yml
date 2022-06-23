@@ -28,19 +28,20 @@ partials:
 executors:
   node-standalone:
     docker:
-      - image: cimg/node:18.2.0
+      - image: cimg/node:18.4.0
   node-with-dependencies:
     docker:
-      - image: cimg/node:18.2.0
+      - image: cimg/node:18.4.0
         environment: *main-env
       - image: mongo:5.0.9-focal
         environment: *mongo-env
-      - image: minio/minio:RELEASE.2021-07-08T01-15-01Z
-        command: server /data
+      - image: minio/minio:RELEASE.2022-05-26T05-48-41Z
+        entrypoint: sh
+        command: -c 'mkdir -p /data/app && /opt/bin/minio server /data'
         environment: *mino-env
-      - image: cimg/redis:7.0.1
+      - image: cimg/redis:7.0.2
         command: redis-server --appendonly yes
-      - image: appvantage/html2pdf-service:1.5.1
+      - image: appvantage/html2pdf-service:1.5.2
         name: html2pdf
       - image: mailhog/mailhog:v1.0.1
         name: mailhog
@@ -54,12 +55,12 @@ executors:
         environment: *main-env
       - image: mongo:5.0.9-focal
         environment: *mongo-env
-      - image: minio/minio:RELEASE.2021-07-08T01-15-01Z
-        command: server /data
-        environment: *mino-env
-      - image: cimg/redis:7.0.1
+      - image: minio/minio:RELEASE.2022-05-26T05-48-41Z
+        entrypoint: sh
+        command: -c 'mkdir -p /data/app && /opt/bin/minio server /data'
+      - image: cimg/redis:7.0.2
         command: redis-server --appendonly yes
-      - image: appvantage/html2pdf-service:1.5.1
+      - image: appvantage/html2pdf-service:1.5.2
         name: html2pdf
       - image: mailhog/mailhog:v1.0.1
         name: mailhog
@@ -117,11 +118,17 @@ jobs:
           at: ~/project
       - run:
           name: Wait for db
-          command: ./devtools/wait-for-it.sh 127.0.0.1:27017 --timeout=60
+          command: |
+            ./devtools/wait-for-it.sh 127.0.0.1:27017 --timeout=60
+            ./devtools/wait-for-it.sh 127.0.0.1:6379 --timeout=60
+            ./devtools/wait-for-it.sh 127.0.0.1:9000 --timeout=60
+            ./devtools/wait-for-it.sh mailhog:8025 --timeout=60
+            ./devtools/wait-for-it.sh html2pdf:3000 --timeout=60
       - run:
           name: Unit testing
+          # enable --split-by=timings after first runs
           command: |
-            TEST_CMD=$(circleci tests glob "src/__tests__/api/**/*.ts" | circleci tests split --split-by=timings)
+            TEST_CMD=$(circleci tests glob "src/__tests__/api/**/*.ts" | circleci tests split)
             yarn test:coverage $TEST_CMD --reporters=default --reporters=jest-junit
           environment:
             JEST_JUNIT_OUTPUT_DIR: ./junit/
@@ -134,6 +141,7 @@ jobs:
 
   build:
     executor: node-standalone
+    resource_class: medium+
     steps:
       - checkout
       - attach_workspace:
@@ -164,6 +172,7 @@ jobs:
 
   build-with-istanbul:
     executor: node-standalone
+    resource_class: medium+
     steps:
       - checkout
       - attach_workspace:
@@ -193,8 +202,9 @@ jobs:
           name: Component testing
           environment:
             USE_ISTANBUL: "true"
+          # enable --split-by=timings after first runs
           command: |
-            TEST_FILES="$(circleci tests glob "cypress/component/**/*.cy.tsx" | circleci tests split --split-by=timings)"
+            TEST_FILES="$(circleci tests glob "cypress/component/**/*.cy.tsx" | circleci tests split)"
             yarn cypress:run \
               --browser chrome \
               --component \
@@ -217,6 +227,7 @@ jobs:
   validate-functional-testing:
     executor: cypress
     parallelism: 1
+    resource_class: large
     steps:
       - checkout
       - attach_workspace:
@@ -226,7 +237,12 @@ jobs:
           command: yarn install --immutable
       - run:
           name: Wait for db
-          command: ./devtools/wait-for-it.sh 127.0.0.1:27017 --timeout=60
+          command: |
+            ./devtools/wait-for-it.sh 127.0.0.1:27017 --timeout=60
+            ./devtools/wait-for-it.sh 127.0.0.1:6379 --timeout=60
+            ./devtools/wait-for-it.sh 127.0.0.1:9000 --timeout=60
+            ./devtools/wait-for-it.sh mailhog:8025 --timeout=60
+            ./devtools/wait-for-it.sh html2pdf:3000 --timeout=60
       - run:
           name: Install Cypress
           command: yarn cypress install
@@ -245,8 +261,9 @@ jobs:
           command: ./devtools/wait-for-it.sh 127.0.0.1:3000 --timeout=60
       - run:
           name: Functional testing
+          # enable --split-by=timings after first runs
           command: |
-            TEST_FILES="$(circleci tests glob "cypress/e2e/**/*.cy.ts" | circleci tests split --split-by=timings)"
+            TEST_FILES="$(circleci tests glob "cypress/e2e/**/*.cy.ts" | circleci tests split)"
             yarn cypress:run \
               --browser chrome \
               --reporter=junit \

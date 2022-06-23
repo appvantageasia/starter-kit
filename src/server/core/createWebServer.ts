@@ -7,7 +7,7 @@ import compression from 'compression';
 import cors from 'cors';
 import express, { Express, Handler, Request, Response } from 'express';
 import depthLimit from 'graphql-depth-limit';
-import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress';
+import { graphqlUploadExpress } from 'graphql-upload';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import morgan from 'morgan';
 import { WebSocketServer } from 'ws';

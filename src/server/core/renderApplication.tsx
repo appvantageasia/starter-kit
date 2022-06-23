@@ -1,6 +1,7 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { SchemaLink } from '@apollo/client/link/schema';
 import { getDataFromTree } from '@apollo/client/react/ssr';
+import chalk from 'chalk';
 import { Request, Response, Handler } from 'express';
 import { renderToStaticMarkup } from 'react-dom/server';
 import Helmet from 'react-helmet';
@@ -97,7 +98,25 @@ const externalCdn = config.publicPath.startsWith('http')
     : null;
 
 // generate CSP rule
-const cspRule = `${['script-src', "'self'", externalCdn].filter(Boolean).join(' ')};`;
+const cspRule = `${[
+    'script-src',
+    "'self'",
+    externalCdn,
+    process.useIstanbul && "'unsafe-eval'",
+    ';',
+    'worker-src',
+    "'self' blob: ",
+]
+    .filter(Boolean)
+    .join(' ')};`;
+
+if (process.useIstanbul && process.env.NODE_ENV === 'production') {
+    throw new Error('Unsafe-Eval cannot be granted in the Content-Security-Policy rule when running for production');
+}
+
+if (process.useIstanbul) {
+    console.info(chalk.redBright('Unsafe-Eval is granted in the Content-Security-Policy rule (Istanbul support)'));
+}
 
 const execute = async (req: Request, res: Response): Promise<void> => {
     /*

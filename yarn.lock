@@ -4829,15 +4829,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/busboy@npm:^1.5.0":
-  version: 1.5.0
-  resolution: "@types/busboy@npm:1.5.0"
-  dependencies:
-    "@types/node": "*"
-  checksum: ffa7bf25c0395f6927526b7d97e70cd2df789e4ca0d231e41855fb08542fa236891ce457d83cc50cac6e5cef6be092ab80597070dcf1413f736462690a23e987
-  languageName: node
-  linkType: hard
-
 "@types/chai@npm:^4.3.1":
   version: 4.3.1
   resolution: "@types/chai@npm:4.3.1"
@@ -5292,13 +5283,6 @@ __metadata:
   version: 2.4.1
   resolution: "@types/normalize-package-data@npm:2.4.1"
   checksum: e87bccbf11f95035c89a132b52b79ce69a1e3652fe55962363063c9c0dae0fe2477ebc585e03a9652adc6f381d24ba5589cc5e51849df4ced3d3e004a7d40ed5
-  languageName: node
-  linkType: hard
-
-"@types/object-path@npm:^0.11.1":
-  version: 0.11.1
-  resolution: "@types/object-path@npm:0.11.1"
-  checksum: 007e819d1d9dc830491b60023b1502ef1e421416d9953d6fefcda7d06eb91548eef8ee30073a9cfb6a834ac977042f6e1a761cde2d6a7973b06ddca753be91e3
   languageName: node
   linkType: hard
 
@@ -7398,6 +7382,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"busboy@npm:^0.3.1":
+  version: 0.3.1
+  resolution: "busboy@npm:0.3.1"
+  dependencies:
+    dicer: 0.3.0
+  checksum: d2bcb788c4595edca4ea2168ab8bf7f9558b627ddcec2fb6bbaf0aa6a10b63da48dce35ce56936570f330c5268a3204f7037021a310a895a8b1a223568e0cc1b
+  languageName: node
+  linkType: hard
+
 "busboy@npm:^1.6.0":
   version: 1.6.0
   resolution: "busboy@npm:1.6.0"
@@ -9291,6 +9284,15 @@ __metadata:
     asap: ^2.0.0
     wrappy: 1
   checksum: 895389c6aead740d2ab5da4d3466d20fa30f738010a4d3f4dcccc9fc645ca31c9d10b7e1804ae489b1eb02c7986f9f1f34ba132d409b043082a86d9a4e745624
+  languageName: node
+  linkType: hard
+
+"dicer@npm:0.3.0":
+  version: 0.3.0
+  resolution: "dicer@npm:0.3.0"
+  dependencies:
+    streamsearch: 0.1.2
+  checksum: 9f61aea61fcd81457f1b43967af7e66415b7a31d393336fa05a29b221b5ba065b99e5cac46476b2da36eb7af7665bf8dad6f9500409116dc6a35ada183841598
   languageName: node
   linkType: hard
 
@@ -11527,27 +11529,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-upload@npm:^15.0.1":
-  version: 15.0.1
-  resolution: "graphql-upload@npm:15.0.1"
+"graphql-upload@npm:^13.0.0":
+  version: 13.0.0
+  resolution: "graphql-upload@npm:13.0.0"
   dependencies:
-    "@types/busboy": ^1.5.0
-    "@types/node": "*"
-    "@types/object-path": ^0.11.1
-    busboy: ^1.6.0
+    busboy: ^0.3.1
     fs-capacitor: ^6.2.0
-    http-errors: ^2.0.0
+    http-errors: ^1.8.1
     object-path: ^0.11.8
   peerDependencies:
-    "@types/express": ^4.0.29
-    "@types/koa": ^2.11.4
-    graphql: ^16.3.0
-  peerDependenciesMeta:
-    "@types/express":
-      optional: true
-    "@types/koa":
-      optional: true
-  checksum: 77491514e3fae0f8ffa6b43991546fae0b84c0fdb7d7330960c584f63c872e23c36f4b19b23e368461274f299c37e2d28823342dc3c7e976654c95176f19c912
+    graphql: 0.13.1 - 16
+  checksum: 3b4b7dd717d5cfcd1d59f3656bcc7281dbe1aaa0d64b5404eb7333db913976154349dd65cf9774a9efc3a6478b1578335c83dd0696c041e3f63efff589d7d457
   languageName: node
   linkType: hard
 
@@ -11891,7 +11883,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"http-errors@npm:1.8.1":
+"http-errors@npm:1.8.1, http-errors@npm:^1.8.1":
   version: 1.8.1
   resolution: "http-errors@npm:1.8.1"
   dependencies:
@@ -11904,7 +11896,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"http-errors@npm:2.0.0, http-errors@npm:^2.0.0":
+"http-errors@npm:2.0.0":
   version: 2.0.0
   resolution: "http-errors@npm:2.0.0"
   dependencies:
@@ -20269,7 +20261,7 @@ __metadata:
     graphql-subscriptions: ^2.0.0
     graphql-tag: ^2.12.6
     graphql-type-json: ^0.3.2
-    graphql-upload: ^15.0.1
+    graphql-upload: ^13.0.0
     graphql-ws: ^5.9.0
     http-proxy: ^1.18.1
     husky: ^8.0.1
@@ -20364,6 +20356,13 @@ __metadata:
     duplexer2: ~0.1.0
     readable-stream: ^2.0.2
   checksum: dd32d179fa8926619c65471a7396fc638ec8866616c0b8747c4e05563ccdb0b694dd4e83cd799f1c52789c965a40a88195942b82b8cea2ee7a5536f1954060f9
+  languageName: node
+  linkType: hard
+
+"streamsearch@npm:0.1.2":
+  version: 0.1.2
+  resolution: "streamsearch@npm:0.1.2"
+  checksum: d2db57cbfbf7947ab9c75a7b4c80a8ef8d24850cf0a1a24258bb6956c97317ce1eab7dbcbf9c5aba3e6198611af1053b02411057bbedb99bf9c64b8275248997
   languageName: node
   linkType: hard
 

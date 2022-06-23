@@ -8,7 +8,8 @@
             "passwordFrom": { "$date":  "2022-01-26T13:26:38.997Z" },
             "previousPasswords": [],
             "otpSetup": null,
-            "email": "unknown@appvantage.co"
+            "email": "unknown@appvantage.co",
+            "singleSessionMode": false
         }
     ]
 }
