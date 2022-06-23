@@ -13,7 +13,7 @@ import hotMiddleware from 'webpack-hot-middleware';
 import type { Bundle } from '../../../src/server';
 import loadEnvConfig from '../../env';
 import webpackConfigs from '../../webpack';
-import { rootDirname } from '../../webpack/variables';
+import { rootDirname, buildDirname } from '../../webpack/variables';
 import MigrationRunner from './MigrationRunner';
 import ServerRunner from './ServerRunner';
 import WorkerRunner from './WorkerRunner';
@@ -21,7 +21,7 @@ import WorkerRunner from './WorkerRunner';
 export type BundleEntry = Bundle;
 
 // resolve the path to get the entrypoint for the server once built
-const serverEntry = path.resolve('./build/server.js');
+const serverEntry = path.join(buildDirname, 'server.js');
 
 // is it running in an interactive shell
 const isInteractive = process.stdout.isTTY;
@@ -62,7 +62,7 @@ class MainRunner {
         this.latestRun = 0;
 
         // empty build directory
-        rimraf.sync(path.join(rootDirname, 'build'));
+        rimraf.sync(buildDirname);
 
         // start a multi-compiler
         this.compiler = webpack(webpackConfigs);

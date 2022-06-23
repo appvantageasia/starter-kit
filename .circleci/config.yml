@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  codecov: codecov/codecov@3.2.3
+
 partials:
   main-env: &main-env
     DOTENV_DISABLE: true
@@ -43,11 +46,11 @@ executors:
         name: mailhog
   cypress-standalone:
     docker:
-      - image: cypress/browsers:node16.14.0-slim-chrome99-ff97
+      - image: cypress/browsers:node16.14.2-slim-chrome100-ff99-edge
         environment: *main-env
   cypress:
     docker:
-      - image: cypress/browsers:node16.14.0-slim-chrome99-ff97
+      - image: cypress/browsers:node16.14.2-slim-chrome100-ff99-edge
         environment: *main-env
       - image: mongo:5.0.9-focal
         environment: *mongo-env
@@ -68,16 +71,15 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - yarn3-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
-            - yarn3-cache-{{ checksum "package.json" }}
-            - yarn3-cache
+            - yarn3-node18-cache-{{ checksum "yarn.lock" }}
+            - yarn3-node18-cache
       - run:
           name: Install dependencies
           command: yarn install --immutable
       - save_cache:
-          key: yarn3-cache-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
+          key: yarn3-node18-cache-{{ checksum "yarn.lock" }}
           paths:
-            - ~/project/yarn
+            - ~/project/.yarn
       - persist_to_workspace:
           root: ~/project
           paths:
@@ -108,6 +110,7 @@ jobs:
 
   validate-unit-testing:
     executor: node-with-dependencies
+    parallelism: 1
     steps:
       - checkout
       - attach_workspace:
@@ -117,11 +120,14 @@ jobs:
           command: ./devtools/wait-for-it.sh 127.0.0.1:27017 --timeout=60
       - run:
           name: Unit testing
-          command: yarn test:coverage --reporters=default --reporters=jest-junit
+          command: |
+            TEST_CMD=$(circleci tests glob "src/__tests__/api/**/*.ts" | circleci tests split --split-by=timings)
+            yarn test:coverage $TEST_CMD --reporters=default --reporters=jest-junit
           environment:
             JEST_JUNIT_OUTPUT_DIR: ./junit/
       - store_test_results:
           path: ~/project/junit/
+      - codecov/upload
       - store_artifacts:
           path: ~/project/coverage/
           destination: coverage
@@ -139,7 +145,7 @@ jobs:
             NODE_ENV: production
       - run:
           name: Prepare dependencies
-          working_directory: ~/project/cypress
+          working_directory: ./build
           command: |
             cp -R ../.yarn ../.yarnrc.yml ../yarn.lock .
             yarn up --mode=skip-build
@@ -156,8 +162,26 @@ jobs:
           path: ~/project/report.html
           destination: report.html
 
+  build-with-istanbul:
+    executor: node-standalone
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Build
+          command: yarn build:istanbul
+          environment:
+            NODE_ENV: production
+            BUILD_DIR: build-with-istanbul
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - build-with-istanbul
+
   validate-component-testing:
     executor: cypress-standalone
+    parallelism: 1
     steps:
       - checkout
       - attach_workspace:
@@ -167,20 +191,39 @@ jobs:
           command: yarn cypress install
       - run:
           name: Component testing
-          command: yarn cypress:run --component
+          environment:
+            USE_ISTANBUL: "true"
+          command: |
+            TEST_FILES="$(circleci tests glob "cypress/component/**/*.cy.tsx" | circleci tests split --split-by=timings)"
+            yarn cypress:run \
+              --browser chrome \
+              --component \
+              --reporter=junit \
+              --reporter-options "mochaFile=junit/cypress-component-results.xml,toConsole=True" \
+              --spec ${TEST_FILES//$'\n'/','}
+      - store_test_results:
+          path: ~/project/junit/
+      - codecov/upload
       - store_artifacts:
           path: ~/project/cypress/screenshots
           destination: cypress/screenshots
       - store_artifacts:
           path: ~/project/cypress/videos
           destination: cypress/videos
+      - store_artifacts:
+          path: ~/project/coverage
+          destination: coverage
 
   validate-functional-testing:
     executor: cypress
+    parallelism: 1
     steps:
       - checkout
       - attach_workspace:
           at: ~/project
+      - run:
+          name: Ready node modules
+          command: yarn install --immutable
       - run:
           name: Wait for db
           command: ./devtools/wait-for-it.sh 127.0.0.1:27017 --timeout=60
@@ -191,26 +234,38 @@ jobs:
           name: Start server
           command: node server.js serve
           background: true
-          working_directory: ~/project/build
+          working_directory: ~/project/build-with-istanbul
       - run:
           name: Start worker
           command: node server.js worker
           background: true
-          working_directory: ~/project/build
+          working_directory: ~/project/build-with-istanbul
       - run:
           name: Wait for test server
           command: ./devtools/wait-for-it.sh 127.0.0.1:3000 --timeout=60
       - run:
           name: Functional testing
-          command: yarn cypress:run
+          command: |
+            TEST_FILES="$(circleci tests glob "cypress/e2e/**/*.cy.ts" | circleci tests split --split-by=timings)"
+            yarn cypress:run \
+              --browser chrome \
+              --reporter=junit \
+              --reporter-options "mochaFile=junit/cypress-e2e-results.xml,toConsole=True" \
+              --spec ${TEST_FILES//$'\n'/','}
           environment:
             CYPRESS_BASE_URL: 'http://localhost:3000'
+      - store_test_results:
+          path: ~/project/junit/
+      - codecov/upload
       - store_artifacts:
           path: ~/project/cypress/screenshots
           destination: cypress/screenshots
       - store_artifacts:
           path: ~/project/cypress/videos
           destination: cypress/videos
+      - store_artifacts:
+          path: ~/project/coverage
+          destination: coverage
 
   release:
     executor: node-standalone
@@ -234,15 +289,18 @@ workflows:
       - validate-unit-testing:
           requires:
             - deps-install
-      - validate-component-testing:
+      - build:
           requires:
             - deps-install
-      - build:
+      - build-with-istanbul:
+          requires:
+            - deps-install
+      - validate-component-testing:
           requires:
             - deps-install
       - validate-functional-testing:
           requires:
-            - build
+            - build-with-istanbul
       - release:
           filters:
             branches:
@@ -253,5 +311,6 @@ workflows:
           requires:
             - validate-code
             - validate-unit-testing
-            - validate-component-testing
             - validate-functional-testing
+            - validate-component-testing
+            - build

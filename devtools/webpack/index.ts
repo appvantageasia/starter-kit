@@ -12,7 +12,14 @@ import PackagePlugin from './WebpackPackagePlugin';
 import getBabelRule from './babel';
 import getStyleRule from './style';
 
-import { webpackMode, srcDirname, rootDirname, isBuildIntentDevelopment, isBuildIntentProduction } from './variables';
+import {
+    webpackMode,
+    srcDirname,
+    rootDirname,
+    isBuildIntentDevelopment,
+    isBuildIntentProduction,
+    buildDirname,
+} from './variables';
 
 // is it running in an interactive shell
 const isInteractive = process.stdout.isTTY;
@@ -52,7 +59,7 @@ const serverConfig: Configuration = {
     externals: ['./manifest.json', nodeExternals()],
 
     output: {
-        path: path.resolve(rootDirname, 'build'),
+        path: buildDirname,
         filename: '[name].js',
         libraryTarget: 'commonjs2',
         chunkFilename: isBuildIntentDevelopment ? '[name].js' : '[name].[contenthash].js',
@@ -67,7 +74,7 @@ const serverConfig: Configuration = {
     module: {
         rules: [
             { test: /antd\/.*?\/style.*?/, use: require.resolve('null-loader') },
-            getBabelRule(isBuildIntentDevelopment),
+            getBabelRule(true),
             graphqlRule,
             svgRule,
         ].filter(Boolean),
@@ -134,12 +141,12 @@ const appConfig: Configuration = {
     devtool: isBuildIntentProduction ? 'source-map' : 'cheap-module-source-map',
 
     module: {
-        rules: [getBabelRule(true), getStyleRule(), graphqlRule, svgRule].filter(Boolean),
+        rules: [getBabelRule(false), getStyleRule(), graphqlRule, svgRule].filter(Boolean),
     },
 
     plugins: [
         new WebpackManifestPlugin({
-            fileName: path.join(rootDirname, 'build', 'manifest.json'),
+            fileName: path.join(buildDirname, 'manifest.json'),
             writeToFileEmit: true,
             generate: (seed, files) =>
                 files.reduce((manifest, file) => {

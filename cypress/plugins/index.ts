@@ -1,32 +1,14 @@
-/* eslint-disable import/no-import-module-exports */
 /// <reference types="cypress" />
 import fs from 'fs';
 import path from 'path';
-import loadEnvConfig from '../../devtools/env';
-import PluginEvents = Cypress.PluginEvents;
-import PluginConfigOptions = Cypress.PluginConfigOptions;
+import { cleanDatabase, setupDatabase, loadFixtures, Fixtures } from '../../src/__tests__/helpers/database';
 
 const cypressDir = path.resolve(__dirname, '..');
 const fixtureDir = path.resolve(cypressDir, 'fixtures');
-const rootDir = path.resolve(cypressDir, '..');
 
-/**
- * @type {Cypress.PluginConfig}
- */
-module.exports = (on: PluginEvents, config: PluginConfigOptions) => {
-    if (!process.env.NODE_ENV) {
-        process.env.NODE_ENV = 'test';
-    }
-
-    // setup the environment
-    loadEnvConfig(rootDir, true, true);
-
-    // then get helpers
-    // eslint-disable-next-line global-require
-    const { cleanDatabase, setupDatabase, loadFixtures } = require('../../src/__tests__/helpers/database');
-
+const pluginConfig: Cypress.PluginConfig = (on, config) => {
     on('task', {
-        async setupDatabase(fixtures = []) {
+        async setupDatabase(fixtures: Fixtures[] = []) {
             await cleanDatabase();
             await setupDatabase();
 
@@ -49,3 +31,5 @@ module.exports = (on: PluginEvents, config: PluginConfigOptions) => {
         },
     });
 };
+
+export default pluginConfig;

@@ -1,11 +1,10 @@
-import path from 'path';
 import rimraf from 'rimraf';
 import webpack from 'webpack';
 import webpackConfigs from '../webpack/index';
-import { rootDirname } from '../webpack/variables';
+import { buildDirname } from '../webpack/variables';
 
 // empty build directory
-rimraf.sync(path.join(rootDirname, 'build'));
+rimraf.sync(buildDirname);
 
 const compiler = webpack(webpackConfigs);
 
