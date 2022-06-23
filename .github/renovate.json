@@ -15,6 +15,18 @@
       "matchUpdateTypes": ["patch", "minor"],
       "groupName": "Dependencies (non-major)",
       "groupSlug": "dependencies"
+    },
+    {
+      "matchDepTypes": ["orb"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "groupName": "CircleCI Orbs (non-major)",
+      "groupSlug": "circleci-orbs"
+    },
+    {
+      "matchDepTypes": ["docker"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "groupName": "Docker images (non-major)",
+      "groupSlug": "docker"
     }
   ]
 }
