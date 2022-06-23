@@ -7,7 +7,7 @@ import compression from 'compression';
 import cors from 'cors';
 import express, { Express, Handler, Request, Response } from 'express';
 import depthLimit from 'graphql-depth-limit';
-import { graphqlUploadExpress } from 'graphql-upload';
+import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import morgan from 'morgan';
 import { WebSocketServer } from 'ws';
@@ -111,6 +111,13 @@ const createWebServer = async (): Promise<WebServerCreation> => {
 
     // update cache policy
     expressServer.use(disableCaching);
+
+    // serve code coverage when the runtime provides it
+    if (global.__coverage__) {
+        expressServer.get('/__coverage__', (request, response) => {
+            response.json({ coverage: global.__coverage__ });
+        });
+    }
 
     // create the http server
     const httpServer = http.createServer(expressServer);

@@ -1,6 +1,6 @@
-import { Document, EJSON } from 'bson';
-import { ObjectId } from 'mongodb';
-import { getDatabaseContext, migrate } from '../../server/database';
+import { EJSON } from 'bson';
+import { ObjectId, Collection } from 'mongodb';
+import { getDatabaseContext, migrate, Collections } from '../../server/database';
 import { getSessionToken } from '../../server/schema/session';
 
 export const setupDatabase = async (): Promise<void> => {
@@ -26,7 +26,11 @@ export const cleanDatabase = async (): Promise<void> => {
     global.mongo = { context: null, promise: null };
 };
 
-export type Fixtures = { [collection: string]: Document[] };
+export type Fixtures = Partial<{
+    [CollectionName in keyof Collections]: Array<
+        Collections[CollectionName] extends Collection<infer Schema> ? Schema : never
+    >;
+}>;
 
 export const loadFixtures = (fixtures: Fixtures) => async (): Promise<void> => {
     // get the database

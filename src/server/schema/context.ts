@@ -1,7 +1,7 @@
 import { IncomingMessage, OutgoingMessage } from 'http';
 import cookie from 'cookie';
 import { GraphQLFieldResolver } from 'graphql';
-import { FileUpload } from 'graphql-upload';
+import type { FileUpload } from 'graphql-upload/processRequest';
 import config from '../core/config';
 import { getLanguage, getLazyTranslations, GetTranslations } from '../core/translations';
 import createLoaders, { Loaders } from '../loaders';
