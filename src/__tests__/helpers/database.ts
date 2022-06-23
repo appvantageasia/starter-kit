@@ -26,9 +26,17 @@ export const cleanDatabase = async (): Promise<void> => {
     global.mongo = { context: null, promise: null };
 };
 
+type ConvertedType<T> = T extends Date
+    ? { $date: string }
+    : T extends ObjectId
+    ? { $oid: string }
+    : T extends object
+    ? { [K in keyof T]: ConvertedType<T[K]> }
+    : T;
+
 export type Fixtures = Partial<{
     [CollectionName in keyof Collections]: Array<
-        Collections[CollectionName] extends Collection<infer Schema> ? Schema : never
+        Collections[CollectionName] extends Collection<infer Schema> ? ConvertedType<Schema> : never
     >;
 }>;
 

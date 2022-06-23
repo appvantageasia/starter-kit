@@ -90,6 +90,7 @@ const serverConfig: Configuration = {
         new webpack.DefinePlugin({
             'process.browser': JSON.stringify(false),
             'process.isDev': JSON.stringify(isBuildIntentDevelopment),
+            'process.useIstanbul': JSON.stringify(!!process.env.USE_ISTANBUL),
         }),
 
         // provide a package.json on production
@@ -98,6 +99,10 @@ const serverConfig: Configuration = {
         // show progress bar when building for production with TTY
         isBuildIntentProduction && isInteractive && new WebpackBar({ name: 'server', profile: true }),
     ].filter(Boolean),
+
+    optimization: {
+        nodeEnv: false,
+    },
 };
 
 const appConfig: Configuration = {
@@ -125,7 +130,7 @@ const appConfig: Configuration = {
 
     output: {
         publicPath: undefined,
-        path: path.resolve(rootDirname, 'build/public'),
+        path: path.resolve(buildDirname, 'public'),
         filename: isBuildIntentDevelopment ? 'static/chunks/[name].js' : 'static/chunks/[name]-[chunkhash].js',
         chunkFilename: isBuildIntentDevelopment ? 'static/chunks/[name].js' : 'static/chunks/[name]-[chunkhash].js',
         library: '_N_E',
