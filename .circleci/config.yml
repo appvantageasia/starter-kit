@@ -68,6 +68,7 @@ executors:
 jobs:
   deps-install:
     executor: node-standalone
+    resource_class: medium
     steps:
       - checkout
       - restore_cache:
@@ -89,6 +90,7 @@ jobs:
 
   validate-code:
     executor: node-standalone
+    resource_class: medium
     steps:
       - checkout
       - attach_workspace:
@@ -112,6 +114,7 @@ jobs:
   validate-unit-testing:
     executor: node-with-dependencies
     parallelism: 1
+    resource_class: medium+
     steps:
       - checkout
       - attach_workspace:
@@ -191,6 +194,7 @@ jobs:
   validate-component-testing:
     executor: cypress-standalone
     parallelism: 1
+    resource_class: medium
     steps:
       - checkout
       - attach_workspace:
@@ -286,6 +290,7 @@ jobs:
 
   release:
     executor: node-standalone
+    resource_class: medium
     steps:
       - checkout
       - attach_workspace:
