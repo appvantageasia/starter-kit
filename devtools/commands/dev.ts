@@ -1,4 +1,8 @@
+import sourceMapSupport from 'source-map-support';
+
 const start = async () => {
+    sourceMapSupport.install({ hookRequire: true, environment: 'node' });
+
     if (process.env.NODE_ENV !== 'test') {
         process.env.NODE_ENV = 'development';
     }
