@@ -20,7 +20,8 @@
     "scripts": {
         "build": "NODE_ENV=production ts-node devtools/commands/build.ts",
         "build:istanbul": "USE_ISTANBUL=true yarn build",
-        "dev": "ts-node devtools/commands/dev.ts",
+        "dev": "ts-node --transpileOnly devtools/commands/dev.ts",
+        "dev:fs": "CACHE_MODE=filesystem ts-node devtools/commands/dev.ts",
         "dev:istanbul": "USE_ISTANBUL=true yarn dev",
         "generate:schema": "graphql-codegen",
         "generate:style": "ts-node devtools/commands/extractTheme.ts",
@@ -106,6 +107,7 @@
         "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
         "copy-webpack-plugin": "^11.0.0",
         "css-loader": "^6.7.1",
+        "css-minimizer-webpack-plugin": "^4.0.0",
         "cypress": "^10.2.0",
         "dotenv": "^16.0.1",
         "dotenv-expand": "^8.0.3",

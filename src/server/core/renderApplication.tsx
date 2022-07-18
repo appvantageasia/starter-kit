@@ -97,12 +97,14 @@ const externalCdn = config.publicPath.startsWith('http')
       new URL(config.publicPath).hostname
     : null;
 
+const useIstanbul = !!global.__coverage__;
+
 // generate CSP rule
 const cspRule = `${[
     'script-src',
     "'self'",
     externalCdn,
-    process.useIstanbul && "'unsafe-eval'",
+    useIstanbul && "'unsafe-eval'",
     ';',
     'worker-src',
     "'self' blob: ",
@@ -110,11 +112,7 @@ const cspRule = `${[
     .filter(Boolean)
     .join(' ')};`;
 
-if (process.useIstanbul && process.env.NODE_ENV === 'production') {
-    throw new Error('Unsafe-Eval cannot be granted in the Content-Security-Policy rule when running for production');
-}
-
-if (process.useIstanbul) {
+if (useIstanbul) {
     console.info(chalk.redBright('Unsafe-Eval is granted in the Content-Security-Policy rule (Istanbul support)'));
 }
 
