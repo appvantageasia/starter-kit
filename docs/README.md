@@ -57,12 +57,33 @@ services:
 ```
 
 Environment is already setup but may be changed at will (see the environment configuration section to know more about it).
+Once you bound your ports with the docker compose override file, you may now start up the service.
+
+```bash
+docker-compose up -docker
+# or with the v2 client
+docker compose up -d
+
+# you may then verify services are running and ports properly bound by executing
+docker ps
+```
 
 You may now start the development server by executing
 
 ```bash
 yarn dev
 ```
+
+By default, webpack will use in-memory caching for development.
+However, if you are low in memory, you may run with file-system caching by setting up `CACHE_MODE` to `filesystem`.
+
+```bash
+# by inlining the environment configuration
+CACHE_MODE=filesystem yarn dev
+# or using the shortcut/alias
+yarn dev:fs
+```
+
 
 ## Commit convention
 
