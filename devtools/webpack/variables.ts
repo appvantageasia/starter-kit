@@ -1,13 +1,18 @@
 import path from 'path';
+import { Configuration } from 'webpack';
 
-const isBuildIntentDevelopment = process.env.NODE_ENV === 'development';
-const isBuildIntentProduction = !isBuildIntentDevelopment;
+export const isBuildIntentDevelopment = process.env.NODE_ENV === 'development';
+export const isBuildIntentProduction = !isBuildIntentDevelopment;
 
-const rootDirname = path.resolve(__dirname, '../..');
-const srcDirname = path.join(rootDirname, './src');
+export const rootDirname = path.resolve(__dirname, '../..');
+export const srcDirname = path.join(rootDirname, './src');
 
-const buildDirname = path.join(rootDirname, process.env.BUILD_DIR || 'build');
+export const buildDirname = path.join(rootDirname, process.env.BUILD_DIR || 'build');
 
-const webpackMode = isBuildIntentProduction ? 'production' : 'development';
+export const webpackMode = isBuildIntentProduction ? 'production' : 'development';
 
-export { isBuildIntentDevelopment, isBuildIntentProduction, rootDirname, srcDirname, webpackMode, buildDirname };
+type WebpackCacheMode = Exclude<Configuration['cache'], boolean>['type'];
+
+export const webpackCacheMode: WebpackCacheMode = (process.env.CACHE_MODE as WebpackCacheMode) || 'memory';
+
+export const webpackCacheDirectory = path.resolve(rootDirname, '.cache');

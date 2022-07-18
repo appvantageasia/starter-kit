@@ -1,6 +1,9 @@
+import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
 import chalk from 'chalk';
 import { RuleSetRule } from 'webpack';
-import { isBuildIntentDevelopment } from './variables';
+import { isBuildIntentDevelopment, rootDirname, webpackCacheDirectory } from './variables';
 
 const getBabelRule = (isServer = false): RuleSetRule => {
     const useReactRefresh = isBuildIntentDevelopment && !isServer;
@@ -16,6 +19,17 @@ const getBabelRule = (isServer = false): RuleSetRule => {
     if (useIstanbul) {
         console.info(chalk.yellowBright('Istanbul running in babel for instrumentation'));
     }
+
+    const hashSum = crypto.createHash('sha256');
+    hashSum.update(fs.readFileSync(path.join(rootDirname, 'yarn.lock'), 'utf8'));
+
+    const cache = isBuildIntentDevelopment
+        ? {
+              cacheIdentifier: hashSum.digest('hex'),
+              cacheDirectory: path.join(webpackCacheDirectory, 'babel-loader'),
+              cacheCompression: false,
+          }
+        : {};
 
     return {
         test: /\.[jt]sx?$/,
@@ -36,6 +50,9 @@ const getBabelRule = (isServer = false): RuleSetRule => {
                         // may be used together with cypress to retrieve code coverage
                         useIstanbul && 'istanbul',
                     ].filter(Boolean),
+
+                    // setup caching to speed up performances
+                    ...cache,
                 },
             },
         ],

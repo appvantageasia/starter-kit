@@ -1,6 +1,7 @@
 # build output
 /build
 /report.html
+/.cache
 
 # dependencies
 /node_modules

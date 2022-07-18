@@ -16,6 +16,10 @@ compiler.run((err, stats) => {
         return;
     }
 
+    if (!stats) {
+        return;
+    }
+
     const info = stats.toJson();
 
     if (stats.hasErrors()) {

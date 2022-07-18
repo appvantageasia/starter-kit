@@ -8,7 +8,6 @@ declare global {
             readonly browser?: boolean;
             readonly isDev?: boolean;
             readonly isCLI?: boolean;
-            readonly useIstanbul?: boolean;
         }
 
         interface Global {

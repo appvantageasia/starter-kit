@@ -1,16 +1,12 @@
 import { WarningOutlined, CheckCircleOutlined, LockOutlined } from '@ant-design/icons';
 import { Badge, Card, Space, Typography, Button, notification } from 'antd';
 import Dayjs from 'dayjs';
-import durationPlugin from 'dayjs/plugin/duration';
 import { Formik, Form } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from '../../../components/contexts/AccountContextManager';
 import PasswordField from '../../../components/fields/PasswordField';
 import useHandleError from '../../../utilities/useHandleError';
-
-// ensure the duration plugin is here
-Dayjs.extend(durationPlugin);
 
 const UserSelfPasswordSettings = () => {
     const { t } = useTranslation('userSelf');

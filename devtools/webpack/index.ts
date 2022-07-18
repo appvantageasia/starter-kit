@@ -8,8 +8,9 @@ import { WebpackManifestPlugin } from 'webpack-manifest-plugin';
 import nodeExternals from 'webpack-node-externals';
 import WebpackBar from 'webpackbar';
 import PackagePlugin from './WebpackPackagePlugin';
-
 import getBabelRule from './babel';
+import getCache from './cache';
+import optimization from './optimization';
 import getStyleRule from './style';
 
 import {
@@ -20,6 +21,8 @@ import {
     isBuildIntentProduction,
     buildDirname,
 } from './variables';
+
+const dayjsExtend = path.resolve(srcDirname, 'dayjs.extend.ts');
 
 // is it running in an interactive shell
 const isInteractive = process.stdout.isTTY;
@@ -43,6 +46,7 @@ const serverConfig: Configuration = {
 
     entry: {
         server: [
+            dayjsExtend,
             path.resolve(srcDirname, 'server/node-fetch-polyfill.js'),
             path.resolve(srcDirname, 'server/index.ts'),
         ],
@@ -90,7 +94,6 @@ const serverConfig: Configuration = {
         new webpack.DefinePlugin({
             'process.browser': JSON.stringify(false),
             'process.isDev': JSON.stringify(isBuildIntentDevelopment),
-            'process.useIstanbul': JSON.stringify(!!process.env.USE_ISTANBUL),
         }),
 
         // provide a package.json on production
@@ -100,9 +103,9 @@ const serverConfig: Configuration = {
         isBuildIntentProduction && isInteractive && new WebpackBar({ name: 'server', profile: true }),
     ].filter(Boolean),
 
-    optimization: {
-        nodeEnv: false,
-    },
+    cache: getCache('server'),
+
+    infrastructureLogging: { level: isBuildIntentProduction ? 'info' : 'error' },
 };
 
 const appConfig: Configuration = {
@@ -116,6 +119,7 @@ const appConfig: Configuration = {
             isBuildIntentDevelopment && require.resolve('webpack-hot-middleware/client'),
             require.resolve('antd/dist/antd.less'),
             path.resolve(srcDirname, 'app/global.less'),
+            dayjsExtend,
             path.resolve(srcDirname, 'app/index.tsx'),
         ].filter(Boolean),
     },
@@ -187,6 +191,7 @@ const appConfig: Configuration = {
             'process.isDev': JSON.stringify(isBuildIntentDevelopment),
         }),
 
+        // copy static assets for server to bundle * server them
         new CopyPlugin({
             patterns: [{ from: path.join(rootDirname, 'public'), to: './' }],
         }),
@@ -200,11 +205,13 @@ const appConfig: Configuration = {
                 },
             }),
 
+        // we want to minimize the CSS
         new MiniCssExtractPlugin({
             filename: 'static/css/[contenthash].css',
             chunkFilename: 'static/css/[contenthash].css',
         }),
 
+        // provide reporting when building for production
         isBuildIntentProduction &&
             new BundleAnalyzerPlugin({
                 reportFilename: path.join(rootDirname, 'report.html'),
@@ -212,8 +219,16 @@ const appConfig: Configuration = {
                 openAnalyzer: false,
             }),
 
+        // in TTY improve build status
         isBuildIntentProduction && isInteractive && new WebpackBar({ name: 'app', profile: true }),
     ].filter(Boolean),
+
+    cache: getCache('app'),
+
+    // custom optimization for the front-end apps
+    optimization,
+
+    infrastructureLogging: { level: isBuildIntentProduction ? 'info' : 'error' },
 };
 
 export default [serverConfig, appConfig];
