@@ -38,6 +38,11 @@ const svgRule: RuleSetRule = {
     use: [require.resolve('@svgr/webpack')],
 };
 
+// point sourcemap entries to original disk location (format as URL on Windows)
+const devtoolModuleFilenameTemplate: Configuration['output']['devtoolModuleFilenameTemplate'] = isBuildIntentProduction
+    ? info => path.relative(srcDirname, info.absoluteResourcePath).replace(/\\/g, '/')
+    : info => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/');
+
 const serverConfig: Configuration = {
     name: 'server',
     mode: webpackMode,
@@ -67,13 +72,14 @@ const serverConfig: Configuration = {
         filename: '[name].js',
         libraryTarget: 'commonjs2',
         chunkFilename: isBuildIntentDevelopment ? '[name].js' : '[name].[contenthash].js',
+        devtoolModuleFilenameTemplate,
     },
 
     // do not show performance hints
     performance: false,
 
     bail: isBuildIntentProduction,
-    devtool: isBuildIntentProduction ? 'source-map' : 'cheap-module-source-map',
+    devtool: isBuildIntentProduction ? 'source-map' : 'eval-cheap-module-source-map',
 
     module: {
         rules: [
@@ -86,7 +92,12 @@ const serverConfig: Configuration = {
 
     plugins: [
         new webpack.BannerPlugin({
-            banner: 'process.isCLI = require.main === module;',
+            banner: [
+                isBuildIntentProduction && "require('source-map-support').install();",
+                'process.isCLI = require.main === module;',
+            ]
+                .filter(Boolean)
+                .join('\n'),
             entryOnly: true,
             raw: true,
         }),
@@ -141,6 +152,7 @@ const appConfig: Configuration = {
         libraryTarget: 'assign',
         hotUpdateChunkFilename: 'static/webpack/[id].[fullhash].hot-update.js',
         hotUpdateMainFilename: 'static/webpack/[fullhash].hot-update.json',
+        devtoolModuleFilenameTemplate,
     },
 
     // do not show performance hints
