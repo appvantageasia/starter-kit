@@ -108,7 +108,10 @@ const serverConfig: Configuration = {
         }),
 
         // provide a package.json on production
-        isBuildIntentProduction && new PackagePlugin({}),
+        isBuildIntentProduction &&
+            new PackagePlugin({
+                additionalModules: ['source-map-support'],
+            }),
 
         // show progress bar when building for production with TTY
         isBuildIntentProduction && isInteractive && new WebpackBar({ name: 'server', profile: true }),
