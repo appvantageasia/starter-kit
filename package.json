@@ -196,7 +196,7 @@
         "dayjs": "^1.11.4",
         "enquirer": "^2.3.6",
         "express": "^4.18.1",
-        "extract-files": "^11.0.0",
+        "extract-files": "^12.0.0",
         "fido2-lib": "^3.2.5",
         "formik": "^2.2.9",
         "graphql": "^16.5.0",

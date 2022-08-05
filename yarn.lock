@@ -12288,6 +12288,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"extract-files@npm:^12.0.0":
+  version: 12.0.0
+  resolution: "extract-files@npm:12.0.0"
+  dependencies:
+    is-plain-obj: ^4.0.0
+  checksum: fb46b5ba7bfa731832d034953ccae5cb470d1fd2dc0cccdc1d807abb3cba71ab60964400d32f024ad963a758f48e95204530ccb76d72771167974909da8b7025
+  languageName: node
+  linkType: hard
+
 "extract-zip@npm:2.0.1":
   version: 2.0.1
   resolution: "extract-zip@npm:2.0.1"
@@ -14420,6 +14429,13 @@ __metadata:
   version: 2.1.0
   resolution: "is-plain-obj@npm:2.1.0"
   checksum: cec9100678b0a9fe0248a81743041ed990c2d4c99f893d935545cfbc42876cbe86d207f3b895700c690ad2fa520e568c44afc1605044b535a7820c1d40e38daa
+  languageName: node
+  linkType: hard
+
+"is-plain-obj@npm:^4.0.0":
+  version: 4.1.0
+  resolution: "is-plain-obj@npm:4.1.0"
+  checksum: 6dc45da70d04a81f35c9310971e78a6a3c7a63547ef782e3a07ee3674695081b6ca4e977fbb8efc48dae3375e0b34558d2bcd722aec9bddfa2d7db5b041be8ce
   languageName: node
   linkType: hard
 
@@ -22267,7 +22283,7 @@ __metadata:
     eslint-plugin-react-hooks: ^4.6.0
     execa: ^5.1.1
     express: ^4.18.1
-    extract-files: ^11.0.0
+    extract-files: ^12.0.0
     fetch-blob: ^3.2.0
     fido2-lib: ^3.2.5
     form-data-encoder: ^1.7.2
