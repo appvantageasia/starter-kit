@@ -200,6 +200,9 @@ jobs:
       - attach_workspace:
           at: ~/project
       - run:
+          name: Ready node modules
+          command: yarn install --immutable
+      - run:
           name: Install Cypress
           command: yarn cypress install
       - run:
