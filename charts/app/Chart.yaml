@@ -14,5 +14,5 @@ dependencies:
       condition: redis.enabled
     - name: minio
       repository: https://charts.bitnami.com/bitnami
-      version: 11.7.4
+      version: 11.8.3
       condition: minio.enabled
