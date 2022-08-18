@@ -5,28 +5,28 @@
   "dependencyDashboard": true,
   "packageRules": [
     {
-      "matchDepTypes": ["devDependencies"],
+      "matchDatasources": ["npm"],
       "matchUpdateTypes": ["patch", "minor"],
-      "groupName": "Dev-Dependencies (non-major)",
-      "groupSlug": "dev-dependencies"
+      "groupName": "Node Dependencies (non-major)",
+      "groupSlug": "npm-dependencies"
     },
     {
-      "matchDepTypes": ["dependencies"],
-      "matchUpdateTypes": ["patch", "minor"],
-      "groupName": "Dependencies (non-major)",
-      "groupSlug": "dependencies"
-    },
-    {
-      "matchDepTypes": ["orb"],
+      "matchDatasources": ["orb"],
       "matchUpdateTypes": ["patch", "minor"],
       "groupName": "CircleCI Orbs (non-major)",
       "groupSlug": "circleci-orbs"
     },
     {
-      "matchDepTypes": ["docker"],
+      "matchDatasources": ["docker"],
       "matchUpdateTypes": ["patch", "minor"],
       "groupName": "Docker images (non-major)",
       "groupSlug": "docker"
+    },
+    {
+      "matchDatasources": ["helm"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "groupName": "Helm charts (non-major)",
+      "groupSlug": "helm"
     }
   ]
 }
