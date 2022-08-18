@@ -4294,7 +4294,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/schema@npm:8.5.1, @graphql-tools/schema@npm:^8.5.1":
+"@graphql-tools/schema@npm:8.5.1":
   version: 8.5.1
   resolution: "@graphql-tools/schema@npm:8.5.1"
   dependencies:
@@ -22258,7 +22258,7 @@ __metadata:
     "@graphql-codegen/typescript-operations": ^2.5.3
     "@graphql-codegen/typescript-react-apollo": ^3.3.3
     "@graphql-codegen/typescript-resolvers": ^2.7.3
-    "@graphql-tools/schema": ^8.5.1
+    "@graphql-tools/schema": ^9.0.0
     "@loadable/component": ^5.15.2
     "@octokit/rest": ^19.0.4
     "@pmmmwh/react-refresh-webpack-plugin": ^0.5.7
