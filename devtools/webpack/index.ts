@@ -110,7 +110,8 @@ const serverConfig: Configuration = {
         // provide a package.json on production
         isBuildIntentProduction &&
             new PackagePlugin({
-                additionalModules: ['source-map-support'],
+                // we require aws4 to authenticate with IAM role on the database
+                additionalModules: ['source-map-support', 'aws4'],
             }),
 
         // show progress bar when building for production with TTY

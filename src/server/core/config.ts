@@ -1,28 +1,64 @@
 import chalk from 'chalk';
-import type { SMTPSettings } from '../emails';
 import { getClientSideFieldLevelEncryptionSettings } from './encryption';
 import { getString, getBoolean, getInteger, getNumber, getPrefix, getStringList } from './env';
 
-const getSmtpSettings = (): SMTPSettings => {
-    const base = {
-        host: getString(getPrefix('SMTP_HOST'), 'localhost'),
-        port: getInteger(getPrefix('SMTP_PORT'), 465),
-        secure: getBoolean(getPrefix('SMTP_SECURE'), false),
-    };
+export type SMTPSettings = {
+    host: string;
+    port: number;
+    secure: boolean;
+    auth?: { user: string; pass: string };
+};
 
-    const user = getString(getPrefix('SMTP_USER'));
+export type AWSSESSettings = {
+    endpoint?: string;
+    region: string;
+    accessKeyId?: string;
+    secretAccessKey?: string;
+    sslEnabled: boolean;
+};
 
-    if (!user) {
-        return base;
+export type MailerSettings = ({ provider: 'smtp' } & SMTPSettings) | ({ provider: 'aws' } & AWSSESSettings);
+
+const getSmtpSettings = (): MailerSettings => {
+    const provider = getString(getPrefix('PROVIDER'), 'smtp');
+
+    switch (provider) {
+        case 'smtp': {
+            const base: MailerSettings = {
+                provider: 'smtp',
+                host: getString(getPrefix('SMTP_HOST'), 'localhost'),
+                port: getInteger(getPrefix('SMTP_PORT'), 465),
+                secure: getBoolean(getPrefix('SMTP_SECURE'), false),
+            };
+
+            const user = getString(getPrefix('SMTP_USER'));
+
+            if (!user) {
+                return base;
+            }
+
+            return {
+                ...base,
+                auth: {
+                    user,
+                    pass: getString(getPrefix('SMTP_PASSWORD')),
+                },
+            };
+        }
+
+        case 'aws':
+            return {
+                provider: 'aws',
+                endpoint: getString(getPrefix('SMTP_ENDPOINT')),
+                accessKeyId: getString(getPrefix('SMTP_ACCESS_KEY')),
+                secretAccessKey: getString(getPrefix('SMTP_SECRET_KEY')),
+                sslEnabled: getBoolean(getPrefix('SMTP_SSL'), true),
+                region: getString(getPrefix('SMTP_REGION'), 'ap-southeast-1'),
+            };
+
+        default:
+            throw new Error('SMTP provider not supported');
     }
-
-    return {
-        ...base,
-        auth: {
-            user,
-            pass: getString(getPrefix('SMTP_PASSWORD')),
-        },
-    };
 };
 
 const version = getString('VERSION', '0.0.0-development');
@@ -104,12 +140,13 @@ const config = {
 
     storage: {
         provider: {
-            endPoint: getString(getPrefix('STORAGE_ENDPOINT')),
-            accessKey: getString(getPrefix('STORAGE_ACCESS_KEY')),
-            secretKey: getString(getPrefix('STORAGE_SECRET_KEY')),
-            useSSL: getBoolean(getPrefix('STORAGE_SSL'), true),
-            port: getInteger(getPrefix('STORAGE_PORT')),
-            region: getString(getPrefix('STORAGE_REGION'), 'ap-southeast-1'),
+            endpoint: getString(getPrefix('STORAGE_ENDPOINT')),
+            credentials: {
+                accessKeyId: getString(getPrefix('STORAGE_ACCESS_KEY')),
+                secretAccessKey: getString(getPrefix('STORAGE_SECRET_KEY')),
+            },
+            sslEnabled: getBoolean(getPrefix('STORAGE_SSL'), true),
+            region: getString(getPrefix('STORAGE_REGION')),
         },
         bucket: getString(getPrefix('STORAGE_BUCKET'), 'app'),
     },

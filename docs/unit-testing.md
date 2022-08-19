@@ -49,11 +49,10 @@ test('dummyTest', () => {
 ## loadFixtures
 
 After using `setupDatabase` you may chain it to load fixtures with `loadFixtures`.
-The fixture must be wrote in EJSON.
 
 ```typescript
 import { composeHandlers, setupDatabase, cleanDatabase, loadFixtures } from './helpers';
-import dummyFixtures from './dummy.fixture.json';
+import dummyFixtures from './dummy.ts';
 
 // it will first connect to the database, execute migration then load fictures as given
 beforeEach(composeHandlers(setupDatabase, loadFixtures(dummyFixtures)));
@@ -62,15 +61,25 @@ beforeEach(composeHandlers(setupDatabase, loadFixtures(dummyFixtures)));
 afterEach(cleanDatabase);
 ```
 
-## setupEmptyBucket
+## createBucket
 
-You may ensure there's a bucket matching your configuration with an empty content by using `setupEmptyBucket`.
+Create a bucket by using `createBucket`.
+Should be used together with `dropBucket`.
 
 ```typescript
-import { setupEmptyBucket } from './helpers';
+import { createBucket } from './helpers';
 
-// it will ensure the bucket exist and drop anything already there
-beforeEach(setupEmptyBucket);
+beforeEach(createBucket);
+```
+
+## dropBucket
+
+Drop a bucket by using `dropBucket`.
+
+```typescript
+import { dropBucket } from './helpers';
+
+afterEach(dropBucket);
 ```
 
 ## getApolloClient

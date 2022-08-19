@@ -1,6 +1,7 @@
+const { createReadStream } = require('fs');
 const path = require('path');
+const s3 = require('@aws-sdk/client-s3');
 const glob = require('glob');
-const Minio = require('minio');
 
 const assetsDir = path.resolve(__dirname, '../../build/public');
 
@@ -38,16 +39,17 @@ const verifyConditions = (pluginConfig, context) => {
 };
 
 const publish = async (pluginConfig, context) => {
-    const { bucket, endPoint, port = 443, useSSL = true, region } = pluginConfig;
+    const { bucket, endPoint, useSSL = true, region } = pluginConfig;
     const { logger, nextRelease } = context;
     const { version } = nextRelease;
 
-    const client = new Minio.Client({
-        endPoint,
-        port,
-        useSSL,
-        accessKey: process.env.CDN_ACCESS_KEY,
-        secretKey: process.env.CDN_SECRET_KEY,
+    const client = new s3.S3Client({
+        endpoint: endPoint,
+        credentials: {
+            accessKeyId: process.env.CDN_ACCESS_KEY,
+            secretAccessKey: process.env.CDN_SECRET_KEY,
+        },
+        sslEnabled: useSSL,
         region,
     });
 
@@ -60,7 +62,14 @@ const publish = async (pluginConfig, context) => {
 
     await Promise.all(
         assets.map(filename =>
-            client.fPutObject(bucket, `${version}/${filename}`, path.join(assetsDir, filename), { version })
+            client.send(
+                new s3.PutObjectCommand({
+                    Bucket: bucket,
+                    Key: `${version}/${filename}`,
+                    Metadata: { version },
+                    Body: createReadStream(path.join(assetsDir, filename)),
+                })
+            )
         )
     );
 };
