@@ -129,7 +129,7 @@
         "execa": "^5.1.1",
         "fetch-blob": "^3.2.0",
         "form-data-encoder": "^1.7.2",
-        "formdata-node": "^4.4.1",
+        "formdata-node": "^5.0.0",
         "glob": "^8.0.3",
         "graphql-tag": "^2.12.6",
         "http-proxy": "^1.18.1",

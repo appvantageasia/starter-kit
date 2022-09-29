@@ -13082,13 +13082,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"formdata-node@npm:^4.4.1":
-  version: 4.4.1
-  resolution: "formdata-node@npm:4.4.1"
+"formdata-node@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "formdata-node@npm:5.0.0"
   dependencies:
     node-domexception: 1.0.0
     web-streams-polyfill: 4.0.0-beta.3
-  checksum: d91d4f667cfed74827fc281594102c0dabddd03c9f8b426fc97123eedbf73f5060ee43205d89284d6854e2fc5827e030cd352ef68b93beda8decc2d72128c576
+  checksum: 384126102c5c541e1203a372f23417a1bbd7b2d866da6c15f2d397bf3475f08ed01b7f940eabb0ca6edfc370ae5bc8d09d3f89a285529016750757a6c2f98bd2
   languageName: node
   linkType: hard
 
@@ -22631,7 +22631,7 @@ __metadata:
     fetch-blob: ^3.2.0
     fido2-lib: ^3.3.3
     form-data-encoder: ^1.7.2
-    formdata-node: ^4.4.1
+    formdata-node: ^5.0.0
     formik: ^2.2.9
     glob: ^8.0.3
     graphql: ^16.6.0
