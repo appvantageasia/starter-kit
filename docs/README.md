@@ -60,7 +60,7 @@ Environment is already setup but may be changed at will (see the environment con
 Once you bound your ports with the docker compose override file, you may now start up the service.
 
 ```bash
-docker-compose up -docker
+docker-compose up -d
 # or with the v2 client
 docker compose up -d
 

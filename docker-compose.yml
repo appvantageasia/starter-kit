@@ -25,7 +25,7 @@ services:
     mongo:
         # can be replace by ghcr.io/appvantageasia/mongo-entreprise:X.X.X
         # changes to be done in override file
-        image: mongo:5.0.10
+        image: mongo:6.0.1
         environment:
             MONGO_INITDB_ROOT_USERNAME: root
             MONGO_INITDB_ROOT_PASSWORD: password

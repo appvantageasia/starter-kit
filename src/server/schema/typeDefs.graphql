@@ -1,68 +1,48 @@
 schema {
-    query: Query
-    mutation: Mutation
-    subscription: Subscription
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
 }
 
 type AuthenticationRequiresNewPassword {
-    """
-    Token to use with the mutation `changePasswordFromAuthentication`
-    """
-    token: String!
-    """
-    User authenticated
-    """
-    user: User!
+  """Token to use with the mutation `changePasswordFromAuthentication`"""
+  token: String!
+  """User authenticated"""
+  user: User!
 }
 
 type AuthenticationRequiresTOTP {
-    """
-    Token to use with the mutation `authenticateWithTOTP`
-    """
-    token: String!
+  """Token to use with the mutation `authenticateWithTOTP`"""
+  token: String!
 }
 
 union AuthenticationResponse = AuthenticationRequiresNewPassword | AuthenticationRequiresTOTP | AuthenticationSuccessful
 
 type AuthenticationSuccessful {
-    """
-    Bearer token to use in the Authorization header
-    """
-    token: String!
-    """
-    User authenticated
-    """
-    user: User!
+  """Bearer token to use in the Authorization header"""
+  token: String!
+  """User authenticated"""
+  user: User!
 }
 
 type AuthenticationWithWebPublicKeyCredential {
-    """
-    Allowed credentials
-    """
-    allowCredentials: [JSONObject!]!
-    """
-    Challenge for the request
-    """
-    challenge: String!
-    """
-    Timeout
-    """
-    timeout: Int
-    """
-    Token to use with the mutation `authenticateWithWebPublicKeyCredential`
-    """
-    token: String!
+  """Allowed credentials"""
+  allowCredentials: [JSONObject!]!
+  """Challenge for the request"""
+  challenge: String!
+  """Timeout"""
+  timeout: Int
+  """
+  Token to use with the mutation `authenticateWithWebPublicKeyCredential`
+  """
+  token: String!
 }
 
 type AuthenticatorSetup {
-    """
-    QRCode URI for the given authenticator secret
-    """
-    qrcodeUri: String!
-    """
-    Authenticator secret
-    """
-    secret: String!
+  """QRCode URI for the given authenticator secret"""
+  qrcodeUri: String!
+  """Authenticator secret"""
+  secret: String!
 }
 
 scalar DateTime
@@ -72,154 +52,104 @@ union ExternalLink = ResetPasswordLink
 scalar JSONObject
 
 type MessageNotice {
-    date: DateTime!
-    message: String!
+  date: DateTime!
+  message: String!
 }
 
 type Mutation {
-    """
-    Request to renew a password
-    """
-    applyForPasswordChange(username: String!): Boolean!
-    """
-    Validate credentials (username/password) and return a Json Web Token
-    """
-    authenticate(password: String!, username: String!): AuthenticationResponse!
-    """
-    Continue authentication with TOTP
-    """
-    authenticateWithTOTP(password: String!, token: String!): AuthenticationResponse!
-    """
-    Authenticate with a web public key credential
-    """
-    authenticateWithWebPublicKeyCredential(response: JSONObject!, token: String!): AuthenticationResponse!
-    """
-    Change password following a successful authentication
-    """
-    changePasswordFromAuthentication(password: String!, token: String!): AuthenticationResponse!
-    """
-    Change password by using a token
-    """
-    changePasswordFromToken(password: String, token: String!): Boolean!
-    """
-    Complete registration request for a web public key
-    """
-    completeWebPublicKeyCredentialRegistration(response: JSONObject!, token: String!): Boolean!
-    """
-    Create a new account/user
-    """
-    createAccount(email: String!, password: String!, username: String!): User!
-    """
-    Disable 2FA / Authenticator for the signed user
-    """
-    disableAuthenticator: User!
-    """
-    Enable 2FA / Authenticator for the signed user
-    """
-    enableAuthenticator(secret: String!, token: String!): User!
-    """
-    Generate a challenge to authenticate with web credentials
-    """
-    generateWebCredentialAuthentication(username: String!): AuthenticationWithWebPublicKeyCredential
-    """
-    Take the Json Web Token (JWT) from headers and returns a new one with a renewed lifetime
-
-    Authentication is required
-    """
-    refreshCredentials: String!
-    """
-    Create a web public key credential registration request
-    """
-    requestWebPublicKeyCredentialRegistration: WebPublicKeyCredentialRegistrationRequest!
-    """
-    Revoke user session
-    """
-    revokeUserSession(displayNotice: Boolean, id: ObjectID!): Boolean!
-    """
-    Revoke web public ket credential
-
-    Return the key ID revoked
-    """
-    revokeWebPublicKeyCredential(id: ObjectID!): String
-    """
-    Update the display name for the logged in user
-
-    Authentication is required
-    """
-    updateDisplayName(displayName: String!): User!
+  """Request to renew a password"""
+  applyForPasswordChange(username: String!): Boolean!
+  """Validate credentials (username/password) and return a Json Web Token"""
+  authenticate(password: String!, username: String!): AuthenticationResponse!
+  """Continue authentication with TOTP"""
+  authenticateWithTOTP(password: String!, token: String!): AuthenticationResponse!
+  """Authenticate with a web public key credential"""
+  authenticateWithWebPublicKeyCredential(response: JSONObject!, token: String!): AuthenticationResponse!
+  """Change password following a successful authentication"""
+  changePasswordFromAuthentication(password: String!, token: String!): AuthenticationResponse!
+  """Change password by using a token"""
+  changePasswordFromToken(password: String, token: String!): Boolean!
+  """Complete registration request for a web public key"""
+  completeWebPublicKeyCredentialRegistration(response: JSONObject!, token: String!): Boolean!
+  """Create a new account/user"""
+  createAccount(email: String!, password: String!, username: String!): User!
+  """Disable 2FA / Authenticator for the signed user"""
+  disableAuthenticator: User!
+  """Enable 2FA / Authenticator for the signed user"""
+  enableAuthenticator(secret: String!, token: String!): User!
+  """Generate a challenge to authenticate with web credentials"""
+  generateWebCredentialAuthentication(username: String!): AuthenticationWithWebPublicKeyCredential
+  """
+  Take the Json Web Token (JWT) from headers and returns a new one with a renewed lifetime
+  
+  Authentication is required
+  """
+  refreshCredentials: String!
+  """Create a web public key credential registration request"""
+  requestWebPublicKeyCredentialRegistration: WebPublicKeyCredentialRegistrationRequest!
+  """Revoke user session"""
+  revokeUserSession(displayNotice: Boolean, id: ObjectID!): Boolean!
+  """
+  Revoke web public ket credential
+  
+  Return the key ID revoked
+  """
+  revokeWebPublicKeyCredential(id: ObjectID!): String
+  """
+  Update the display name for the logged in user
+  
+  Authentication is required
+  """
+  updateDisplayName(displayName: String!): User!
 }
 
 scalar ObjectID
 
 type PaginatedUsers {
-    """
-    Number of user matching the original query
-    """
-    count: Int!
-    """
-    User on the request page
-    """
-    items: [User!]!
+  """Number of user matching the original query"""
+  count: Int!
+  """User on the request page"""
+  items: [User!]!
 }
 
 input Pagination {
-    """
-    Number of items to fetch from a list
-    """
-    limit: Int!
-    """
-    Offset to apply when fetching a list
-    """
-    offset: Int!
+  """Number of items to fetch from a list"""
+  limit: Int!
+  """Offset to apply when fetching a list"""
+  offset: Int!
 }
 
 type Query {
-    """
-    Fetch user document for the logged in user, returns null otherwise for anonymous
-    """
-    currentUser: User
-    """
-    Generate challenge to authenticate with WebAuthn
-    """
-    generateAuthenticatorChallenge(username: String!): AuthenticationWithWebPublicKeyCredential
-    """
-    Generate authenticator secret and qrcode
-    """
-    generateAuthenticatorSetup: AuthenticatorSetup!
-    """
-    Fetch WebAuthn security keys for a username
-    """
-    getWebauthnKeys(username: String!): [String!]!
-    """
-    List users
-    """
-    listUsers(filter: UserFilteringRule, pagination: Pagination!, sort: UserSortingRule): PaginatedUsers!
-    """
-    Retrieve a link information
-    """
-    retrieveLink(id: String!): ExternalLink
+  """
+  Fetch user document for the logged in user, returns null otherwise for anonymous
+  """
+  currentUser: User
+  """Generate challenge to authenticate with WebAuthn"""
+  generateAuthenticatorChallenge(username: String!): AuthenticationWithWebPublicKeyCredential
+  """Generate authenticator secret and qrcode"""
+  generateAuthenticatorSetup: AuthenticatorSetup!
+  """Fetch WebAuthn security keys for a username"""
+  getWebauthnKeys(username: String!): [String!]!
+  """List users"""
+  listUsers(filter: UserFilteringRule, pagination: Pagination!, sort: UserSortingRule): PaginatedUsers!
+  """Retrieve a link information"""
+  retrieveLink(id: String!): ExternalLink
 }
 
 type ResetPasswordLink {
-    """
-    Token to use with mutation `changePasswordFromToken`
-    """
-    token: String!
+  """Token to use with mutation `changePasswordFromToken`"""
+  token: String!
 }
 
 enum SortingOrder {
-    """
-    Ascending order
-    """
-    Asc
-    """
-    Descending order
-    """
-    Desc
+  """Ascending order"""
+  Asc
+  """Descending order"""
+  Desc
 }
 
 type Subscription {
-    listenSystemMessages: SystemMessage!
+  listenSystemMessages: SystemMessage!
 }
 
 union SystemMessage = MessageNotice | UserSessionRevoked
@@ -227,135 +157,81 @@ union SystemMessage = MessageNotice | UserSessionRevoked
 scalar Upload
 
 type User {
-    """
-    Public displayed on interfaces
-    """
-    displayName: String!
-    """
-    Email address for the user
-    """
-    email: String!
-    """
-    User object ID
-    """
-    id: ObjectID!
-    """
-    Is the authenticator enabled for this account
-    """
-    isAuthenticatorEnabled: Boolean!
-    """
-    Is the password expired for this account
-    """
-    isPasswordExpired: Boolean!
-    """
-    Password expiration date
-    """
-    passwordExpiresAt: DateTime!
-    """
-    Sessions
-    """
-    sessions: [UserSession!]!
-    """
-    Username use for authentication
-    """
-    username: String!
-    """
-    WebAuthn keys
-    """
-    webAuthnKeys: [UserWebAuthnKey!]!
+  """Public displayed on interfaces"""
+  displayName: String!
+  """Email address for the user"""
+  email: String!
+  """User object ID"""
+  id: ObjectID!
+  """Is the authenticator enabled for this account"""
+  isAuthenticatorEnabled: Boolean!
+  """Is the password expired for this account"""
+  isPasswordExpired: Boolean!
+  """Password expiration date"""
+  passwordExpiresAt: DateTime!
+  """Sessions"""
+  sessions: [UserSession!]!
+  """Username use for authentication"""
+  username: String!
+  """WebAuthn keys"""
+  webAuthnKeys: [UserWebAuthnKey!]!
 }
 
 input UserFilteringRule {
-    """
-    Filter by email
-    """
-    email: String
+  """Filter by email"""
+  email: String
 }
 
 type UserSession {
-    """
-    Creation date
-    """
-    createdAt: DateTime!
-    """
-    Expiration date
-    """
-    expiresAt: DateTime!
-    """
-    Session ID
-    """
-    id: ObjectID!
-    """
-    IP
-    """
-    ip: String!
-    """
-    Last activity date
-    """
-    lastActivityAt: DateTime!
-    """
-    User agent
-    """
-    userAgent: String!
+  """Creation date"""
+  createdAt: DateTime!
+  """Expiration date"""
+  expiresAt: DateTime!
+  """Session ID"""
+  id: ObjectID!
+  """IP"""
+  ip: String!
+  """Last activity date"""
+  lastActivityAt: DateTime!
+  """User agent"""
+  userAgent: String!
 }
 
 type UserSessionRevoked {
-    date: DateTime!
-    displayNotice: Boolean!
+  date: DateTime!
+  displayNotice: Boolean!
 }
 
 enum UserSortingField {
-    """
-    Sort by authenticator enabled state
-    """
-    Authenticator
-    """
-    Sort by email
-    """
-    Email
+  """Sort by authenticator enabled state"""
+  Authenticator
+  """Sort by email"""
+  Email
 }
 
 input UserSortingRule {
-    """
-    Field on which apply the sorting
-    """
-    field: UserSortingField!
-    """
-    Sorting order
-    """
-    order: SortingOrder!
+  """Field on which apply the sorting"""
+  field: UserSortingField!
+  """Sorting order"""
+  order: SortingOrder!
 }
 
 type UserWebAuthnKey {
-    """
-    Expiration date
-    """
-    expiresAt: DateTime!
-    """
-    Key object ID
-    """
-    id: ObjectID!
-    """
-    Last usage date
-    """
-    lastUsed: DateTime
-    """
-    Raw key ID
-    """
-    rawKeyId: String!
-    """
-    User Agent
-    """
-    userAgent: String!
+  """Expiration date"""
+  expiresAt: DateTime!
+  """Key object ID"""
+  id: ObjectID!
+  """Last usage date"""
+  lastUsed: DateTime
+  """Raw key ID"""
+  rawKeyId: String!
+  """User Agent"""
+  userAgent: String!
 }
 
 type WebPublicKeyCredentialRegistrationRequest {
-    """
-    Options for WebAuthn
-    """
-    options: JSONObject!
-    """
-    Token to proceed with registration
-    """
-    token: String!
+  """Options for WebAuthn"""
+  options: JSONObject!
+  """Token to proceed with registration"""
+  token: String!
 }

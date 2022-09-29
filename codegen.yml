@@ -1,61 +1,58 @@
 schema: ./schema/**/*.graphql
 
 generates:
-    src/server/schema/typeDefs.graphql:
-        plugins:
-            - schema-ast
-        config:
-            includeDirectives: true
+  src/server/schema/typeDefs.graphql:
+    plugins:
+      - schema-ast
+    config:
+      includeDirectives: true
 
-    src/server/schema/resolvers/definitions.ts:
-        plugins:
-            - add:
-                  content: '/* eslint-disable max-len */'
-            - typescript
-            - typescript-resolvers
-        config:
-            contextType: ../context#Context
-            rootValueType: ../context#RootDocument
-            noSchemaStitching: true
-            skipTypename: true
-            preResolveTypes: true
-            typesPrefix: GraphQL
-            mappers:
-                User: ../../database#User
-                UserSession: ../../database#UserSession
-                SystemMessage: ../../utils/systemMessage#SystemMessage
-                AuthenticationResponse: ./typings#AuthenticationResponse
-                ExternalLink: ../../database#ExternalLink
-                ResetPasswordLink: ../../database#ResetPasswordLink
-            enumValues: ./enums
-            scalars:
-                DateTime: Date
-                ObjectID: mongodb#ObjectId
-                Upload: ../context#FileUploadPromise
+  src/server/schema/resolvers/definitions.ts:
+    plugins:
+      - add:
+          content: '/* eslint-disable */'
+      - typescript
+      - typescript-resolvers
+    config:
+      contextType: ../context#Context
+      rootValueType: ../context#RootDocument
+      noSchemaStitching: true
+      skipTypename: true
+      preResolveTypes: true
+      typesPrefix: GraphQL
+      mappers:
+        User: ../../database#User
+        UserSession: ../../database#UserSession
+        SystemMessage: ../../utils/systemMessage#SystemMessage
+        AuthenticationResponse: ./typings#AuthenticationResponse
+        ExternalLink: ../../database#ExternalLink
+        ResetPasswordLink: ../../database#ResetPasswordLink
+      enumValues: ./enums
+      scalars:
+        DateTime: Date
+        ObjectID: mongodb#ObjectId
+        Upload: ../context#FileUploadPromise
 
-    src/app/api/introspection.ts:
-        documents: ./src/app/api/**/*.graphql
-        plugins:
-            - fragment-matcher
+  src/app/api/introspection.ts:
+    documents: ./src/app/api/**/*.graphql
+    plugins:
+      - add:
+          content: '/* eslint-disable */'
+      - fragment-matcher
 
-    src/app/api/index.ts:
-        documents: ./src/app/api/**/*.graphql
-        plugins:
-            - add:
-                  content: '/* eslint-disable max-len */'
-            - typescript
-            - typescript-operations
-            - typescript-react-apollo
-        config:
-            documentMode: documentNode
-            pureMagicComment: true
-            preResolveTypes: true
-            scalars:
-                ObjectID: string
-                DateTime: string | Date
-                Upload: File
-
-hooks:
-    afterAllFileWrite:
-        - prettier --write
-        - eslint --fix
+  src/app/api/index.ts:
+    documents: ./src/app/api/**/*.graphql
+    plugins:
+      - add:
+          content: '/* eslint-disable */'
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo
+    config:
+      documentMode: documentNode
+      pureMagicComment: true
+      preResolveTypes: true
+      scalars:
+        ObjectID: string
+        DateTime: string | Date
+        Upload: File

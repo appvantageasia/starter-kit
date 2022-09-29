@@ -7,10 +7,18 @@ You may run the control with the following command line
 yarn lint
 ```
 
-You may execute the same command and request errors to be fixed as much as it could be :
+You may execute the same command and request errors to be fixed as much as it could be:
 
 ```bash
 yarn lint:fix
+```
+
+The same commands are available with caching which may give faster linting on second runs:
+
+```bash
+yarn lint:cache
+# or with fix option
+yarn lint:cache:fix
 ```
 
 Typing is being verified with the help of [TypeScript][ts].

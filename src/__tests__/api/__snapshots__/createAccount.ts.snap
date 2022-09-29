@@ -1,20 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Create account rejects on duplicate username 1`] = `
-Array [
-  Object {
-    "extensions": Object {
+[
+  {
+    "extensions": {
       "code": "BAD_USER_INPUT",
       "password": "Username already taken",
     },
-    "locations": Array [
-      Object {
+    "locations": [
+      {
         "column": 3,
         "line": 2,
       },
     ],
     "message": "bad request",
-    "path": Array [
+    "path": [
       "createAccount",
     ],
   },
@@ -22,20 +22,20 @@ Array [
 `;
 
 exports[`Create account rejects weak passwords 1`] = `
-Array [
-  Object {
-    "extensions": Object {
+[
+  {
+    "extensions": {
       "code": "BAD_USER_INPUT",
       "password": "Password too weak",
     },
-    "locations": Array [
-      Object {
+    "locations": [
+      {
         "column": 3,
         "line": 2,
       },
     ],
     "message": "bad request",
-    "path": Array [
+    "path": [
       "createAccount",
     ],
   },
