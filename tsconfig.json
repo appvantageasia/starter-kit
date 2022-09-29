@@ -3,5 +3,8 @@
     "exclude": ["cypress", "./cypress.config.ts"],
     "ts-node": {
         "swc": true
+    },
+    "compilerOptions": {
+        "incremental": true
     }
 }

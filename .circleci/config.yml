@@ -28,12 +28,12 @@ partials:
 executors:
   node-standalone:
     docker:
-      - image: cimg/node:18.7.0
+      - image: cimg/node:18.9.1
   node-with-dependencies:
     docker:
-      - image: cimg/node:18.7.0
+      - image: cimg/node:18.9.1
         environment: *main-env
-      - image: mongo:5.0.10-focal
+      - image: mongo:6.0.1-focal
         environment: *mongo-env
       - image: minio/minio:RELEASE.2022-05-26T05-48-41Z
         entrypoint: sh
@@ -47,13 +47,13 @@ executors:
         name: mailhog
   cypress-standalone:
     docker:
-      - image: cypress/browsers:node16.14.2-slim-chrome100-ff99-edge
+      - image: cypress/browsers:node18.6.0-chrome105-ff104
         environment: *main-env
   cypress:
     docker:
-      - image: cypress/browsers:node16.14.2-slim-chrome100-ff99-edge
+      - image: cypress/browsers:node18.6.0-chrome105-ff104
         environment: *main-env
-      - image: mongo:5.0.10-focal
+      - image: mongo:6.0.1-focal
         environment: *mongo-env
       - image: minio/minio:RELEASE.2022-05-26T05-48-41Z
         entrypoint: sh
@@ -139,9 +139,6 @@ jobs:
           path: ~/project/junit/
       - codecov/upload:
           flags: unit
-      - store_artifacts:
-          path: ~/project/coverage/
-          destination: coverage
 
   build:
     executor: node-standalone
@@ -167,9 +164,6 @@ jobs:
           root: ~/project
           paths:
             - build
-      - store_artifacts:
-          path: ~/project/build
-          destination: build
       - store_artifacts:
           path: ~/project/report.html
           destination: report.html
@@ -201,8 +195,10 @@ jobs:
       - attach_workspace:
           at: ~/project
       - run:
-          name: Ready node modules
-          command: yarn install --immutable
+          name: Install GPG
+          command: |
+            apt-get update
+            apt-get install -y gnupg
       - run:
           name: Install Cypress
           command: yarn cypress install
@@ -229,9 +225,6 @@ jobs:
       - store_artifacts:
           path: ~/project/cypress/videos
           destination: cypress/videos
-      - store_artifacts:
-          path: ~/project/coverage
-          destination: coverage
 
   validate-functional-testing:
     executor: cypress
@@ -242,8 +235,13 @@ jobs:
       - attach_workspace:
           at: ~/project
       - run:
-          name: Ready node modules
-          command: yarn install --immutable
+          name: Install GPG
+          command: |
+            apt-get update
+            apt-get install -y gnupg
+      - run:
+          name: Install Cypress
+          command: yarn cypress install
       - run:
           name: Wait for db
           command: |
@@ -252,9 +250,6 @@ jobs:
             ./devtools/wait-for-it.sh 127.0.0.1:9000 --timeout=60
             ./devtools/wait-for-it.sh mailhog:8025 --timeout=60
             ./devtools/wait-for-it.sh html2pdf:3000 --timeout=60
-      - run:
-          name: Install Cypress
-          command: yarn cypress install
       - run:
           name: Start server
           command: node server.js serve
@@ -270,7 +265,6 @@ jobs:
           command: ./devtools/wait-for-it.sh 127.0.0.1:3000 --timeout=60
       - run:
           name: Functional testing
-          # enable --split-by=timings after first runs
           command: |
             TEST_FILES="$(circleci tests glob "cypress/e2e/**/*.cy.ts" | circleci tests split)"
             yarn cypress:run \
@@ -290,9 +284,6 @@ jobs:
       - store_artifacts:
           path: ~/project/cypress/videos
           destination: cypress/videos
-      - store_artifacts:
-          path: ~/project/coverage
-          destination: coverage
 
   release:
     executor: node-standalone

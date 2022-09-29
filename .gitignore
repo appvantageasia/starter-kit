@@ -2,6 +2,7 @@
 /build
 /report.html
 /.cache
+/tsconfig.tsbuildinfo
 
 # dependencies
 /node_modules
@@ -16,6 +17,7 @@
 # test reports & coverage reports
 /coverage
 /junit
+/.nyc_output
 
 # env settings
 /.env*.local
@@ -34,3 +36,7 @@ yarn-error.log*
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# cypress results
+/cypress/videos
+/cypress/screenshots
