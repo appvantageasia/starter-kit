@@ -13032,10 +13032,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data-encoder@npm:^1.7.1, form-data-encoder@npm:^1.7.2":
+"form-data-encoder@npm:^1.7.1":
   version: 1.7.2
   resolution: "form-data-encoder@npm:1.7.2"
   checksum: aeebd87a1cb009e13cbb5e4e4008e6202ed5f6551eb6d9582ba8a062005178907b90f4887899d3c993de879159b6c0c940af8196725b428b4248cec5af3acf5f
+  languageName: node
+  linkType: hard
+
+"form-data-encoder@npm:^2.0.0":
+  version: 2.1.2
+  resolution: "form-data-encoder@npm:2.1.2"
+  checksum: 5c6401e3ebd2ba2adfa151c9fbd1df5adae8b1dd7bca5b18ab25ad1f9b83e20ddffb6b9ff77f5006b93d7ec2032e22828c9543c0bd4b2bc5b05335c31a3ba5b9
   languageName: node
   linkType: hard
 
@@ -22630,7 +22637,7 @@ __metadata:
     extract-files: ^11.0.0
     fetch-blob: ^3.2.0
     fido2-lib: ^3.3.3
-    form-data-encoder: ^1.7.2
+    form-data-encoder: ^2.0.0
     formdata-node: ^4.4.1
     formik: ^2.2.9
     glob: ^8.0.3
