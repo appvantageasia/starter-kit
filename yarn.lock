@@ -8234,7 +8234,62 @@ __metadata:
   languageName: node
   linkType: hard
 
-"antd@npm:^4.20.0 , antd@npm:^4.23.3":
+"antd@npm:^4.20.0 ":
+  version: 4.23.6
+  resolution: "antd@npm:4.23.6"
+  dependencies:
+    "@ant-design/colors": ^6.0.0
+    "@ant-design/icons": ^4.7.0
+    "@ant-design/react-slick": ~0.29.1
+    "@babel/runtime": ^7.18.3
+    "@ctrl/tinycolor": ^3.4.0
+    classnames: ^2.2.6
+    copy-to-clipboard: ^3.2.0
+    lodash: ^4.17.21
+    memoize-one: ^6.0.0
+    moment: ^2.29.2
+    rc-cascader: ~3.7.0
+    rc-checkbox: ~2.3.0
+    rc-collapse: ~3.3.0
+    rc-dialog: ~8.9.0
+    rc-drawer: ~5.1.0
+    rc-dropdown: ~4.0.0
+    rc-field-form: ~1.27.0
+    rc-image: ~5.7.0
+    rc-input: ~0.1.2
+    rc-input-number: ~7.3.9
+    rc-mentions: ~1.10.0
+    rc-menu: ~9.6.3
+    rc-motion: ^2.6.1
+    rc-notification: ~4.6.0
+    rc-pagination: ~3.1.17
+    rc-picker: ~2.6.11
+    rc-progress: ~3.3.2
+    rc-rate: ~2.9.0
+    rc-resize-observer: ^1.2.0
+    rc-segmented: ~2.1.0
+    rc-select: ~14.1.13
+    rc-slider: ~10.0.0
+    rc-steps: ~4.1.0
+    rc-switch: ~3.2.0
+    rc-table: ~7.26.0
+    rc-tabs: ~12.2.0
+    rc-textarea: ~0.4.5
+    rc-tooltip: ~5.2.0
+    rc-tree: ~5.7.0
+    rc-tree-select: ~5.5.0
+    rc-trigger: ^5.2.10
+    rc-upload: ~4.3.0
+    rc-util: ^5.22.5
+    scroll-into-view-if-needed: ^2.2.25
+  peerDependencies:
+    react: ">=16.9.0"
+    react-dom: ">=16.9.0"
+  checksum: 8139cadcb51a0ca8aa56b4c2eb75fe6879f0a4f1253151fef545da19aa10e0afb1b8c2caeae328b690519f355f353d05d19f726d0a3266c80e0e0f348b3d9b67
+  languageName: node
+  linkType: hard
+
+"antd@npm:^4.23.3":
   version: 4.23.3
   resolution: "antd@npm:4.23.3"
   dependencies:
@@ -14173,12 +14228,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18next-http-backend@npm:^1.4.4":
-  version: 1.4.4
-  resolution: "i18next-http-backend@npm:1.4.4"
+"i18next-http-backend@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "i18next-http-backend@npm:2.0.0"
   dependencies:
     cross-fetch: 3.1.5
-  checksum: 760a5f96a97f2cbcb0db1ec84dd29781592d11360ad96493ade66300c4013e7cef8f978c790db8c123fab1d21c672248e0c78a1eded5031e68372fe1c4055858
+  checksum: 2e2c8f427880540ce82a37367f095a9e4b2c816602443d1729a64062b6cedbaeb503a013e3fe5df0aa077ed0c252eb490d3c87245ef2945dbf2a11abad9872fe
   languageName: node
   linkType: hard
 
@@ -20491,6 +20546,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rc-mentions@npm:~1.10.0":
+  version: 1.10.0
+  resolution: "rc-mentions@npm:1.10.0"
+  dependencies:
+    "@babel/runtime": ^7.10.1
+    classnames: ^2.2.6
+    rc-menu: ~9.6.0
+    rc-textarea: ^0.4.0
+    rc-trigger: ^5.0.4
+    rc-util: ^5.22.5
+  peerDependencies:
+    react: ">=16.9.0"
+    react-dom: ">=16.9.0"
+  checksum: 0464c5132ceceaec048d2fba63c654ecbc7f17284543bfb7c9582b3f0ebd034fbb1ace228bb0698d5beeac0b068da6ed4b9668b67c51f5ce5274307a38fe42e0
+  languageName: node
+  linkType: hard
+
 "rc-mentions@npm:~1.9.1":
   version: 1.9.2
   resolution: "rc-mentions@npm:1.9.2"
@@ -20631,6 +20703,25 @@ __metadata:
     react: ">=16.9.0"
     react-dom: ">=16.9.0"
   checksum: 4a94b64ce57d6bbd9dab3b496c652ccfb05f4a621e1cfbd71071a81fc184dc81dc3a4a6095765c34b20f547774adbc8615125179ca89b0795c38c966a5cce135
+  languageName: node
+  linkType: hard
+
+"rc-picker@npm:~2.6.11":
+  version: 2.6.11
+  resolution: "rc-picker@npm:2.6.11"
+  dependencies:
+    "@babel/runtime": ^7.10.1
+    classnames: ^2.2.1
+    date-fns: 2.x
+    dayjs: 1.x
+    moment: ^2.24.0
+    rc-trigger: ^5.0.4
+    rc-util: ^5.4.0
+    shallowequal: ^1.1.0
+  peerDependencies:
+    react: ">=16.9.0"
+    react-dom: ">=16.9.0"
+  checksum: 85a50c1a26764602bf5072c63be9c8a3141696ec4d6db7bb5252e574d9e63ab0abc33c85ad2f6337f455c858e0257c20ea188d792546b70d293a42e25348fc05
   languageName: node
   linkType: hard
 
@@ -20806,6 +20897,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rc-tabs@npm:~12.2.0":
+  version: 12.2.1
+  resolution: "rc-tabs@npm:12.2.1"
+  dependencies:
+    "@babel/runtime": ^7.11.2
+    classnames: 2.x
+    rc-dropdown: ~4.0.0
+    rc-menu: ~9.6.0
+    rc-motion: ^2.6.2
+    rc-resize-observer: ^1.0.0
+    rc-util: ^5.5.0
+  peerDependencies:
+    react: ">=16.9.0"
+    react-dom: ">=16.9.0"
+  checksum: f2ed5b66a4c1ea077b23221d84fef5aa9b01cd45984870d59f66db82f1c8a36c63a74e24fe94b7c7695bb10574d5d1004ddf6939e3ae9f844aa4701ff3807db6
+  languageName: node
+  linkType: hard
+
 "rc-textarea@npm:^0.3.0, rc-textarea@npm:~0.3.0":
   version: 0.3.7
   resolution: "rc-textarea@npm:0.3.7"
@@ -20819,6 +20928,22 @@ __metadata:
     react: ">=16.9.0"
     react-dom: ">=16.9.0"
   checksum: 1a588f2b2b86c74127ebc114401b30b6f3627d0eca7cd9fef7966ad497ddf0534b2ec2405e43f02e20c1e0f20f2af976419a88eb20b0c645f65d05a555bdf676
+  languageName: node
+  linkType: hard
+
+"rc-textarea@npm:^0.4.0, rc-textarea@npm:~0.4.5":
+  version: 0.4.5
+  resolution: "rc-textarea@npm:0.4.5"
+  dependencies:
+    "@babel/runtime": ^7.10.1
+    classnames: ^2.2.1
+    rc-resize-observer: ^1.0.0
+    rc-util: ^5.7.0
+    shallowequal: ^1.1.0
+  peerDependencies:
+    react: ">=16.9.0"
+    react-dom: ">=16.9.0"
+  checksum: 029bb4102b14c9ab27f05b5104ecbaa7ee9fbf2616e506be050e882d04b8d0d159da70c93a30c5724241305ba487f64a22f3cda8bb57b439a201cf3d38a46411
   languageName: node
   linkType: hard
 
@@ -22646,7 +22771,7 @@ __metadata:
     husky: ^8.0.1
     i18next: ^21.9.2
     i18next-fs-backend: ^1.1.5
-    i18next-http-backend: ^1.4.4
+    i18next-http-backend: ^2.0.0
     identity-obj-proxy: ^3.0.0
     ioredis: ^5.2.2
     ipaddr.js: ^2.0.1

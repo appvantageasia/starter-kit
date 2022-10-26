@@ -210,7 +210,7 @@
         "graphql-ws": "^5.11.2",
         "i18next": "^21.9.2",
         "i18next-fs-backend": "^1.1.5",
-        "i18next-http-backend": "^1.4.4",
+        "i18next-http-backend": "^2.0.0",
         "ioredis": "^5.2.2",
         "ipaddr.js": "^2.0.1",
         "jsonwebtoken": "^8.5.1",
