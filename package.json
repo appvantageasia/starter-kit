@@ -126,7 +126,7 @@
         "eslint-plugin-prettier": "^4.2.1",
         "eslint-plugin-react": "^7.31.8",
         "eslint-plugin-react-hooks": "^4.6.0",
-        "execa": "^5.1.1",
+        "execa": "^7.0.0",
         "fetch-blob": "^3.2.0",
         "form-data-encoder": "^1.7.2",
         "formdata-node": "^4.4.1",
