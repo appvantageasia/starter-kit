@@ -130,7 +130,7 @@
         "fetch-blob": "^3.2.0",
         "form-data-encoder": "^1.7.2",
         "formdata-node": "^4.4.1",
-        "glob": "^8.0.3",
+        "glob": "^9.0.0",
         "graphql-tag": "^2.12.6",
         "http-proxy": "^1.18.1",
         "husky": "^8.0.1",
