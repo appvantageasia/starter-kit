@@ -168,7 +168,7 @@
         "@ant-design/pro-layout": "^6.38.22",
         "@apollo/client": "^3.6.9",
         "@babel/runtime": "^7.19.0",
-        "@bull-board/api": "^4.3.1",
+        "@bull-board/api": "^5.0.0",
         "@bull-board/express": "^4.3.1",
         "@graphql-tools/schema": "^9.0.4",
         "@loadable/component": "^5.15.2",
