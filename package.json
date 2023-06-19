@@ -209,7 +209,7 @@
         "graphql-upload": "^13.0.0",
         "graphql-ws": "^5.11.2",
         "i18next": "^21.9.2",
-        "i18next-fs-backend": "^1.1.5",
+        "i18next-fs-backend": "^2.0.0",
         "i18next-http-backend": "^1.4.4",
         "ioredis": "^5.2.2",
         "ipaddr.js": "^2.0.1",
