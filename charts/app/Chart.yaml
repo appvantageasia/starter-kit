@@ -6,14 +6,14 @@ version: 0.1.0
 dependencies:
     - name: minio
       repository: https://charts.bitnami.com/bitnami
-      version: 11.10.3
+      version: 11.10.26
       condition: minio.enabled
     - name: mongodb
       repository: https://charts.bitnami.com/bitnami
-      version: 13.1.5
+      version: 13.18.5
       condition: mongodb.enabled
     - name: redis
       repository: https://charts.bitnami.com/bitnami
-      version: 17.2.0
+      version: 17.17.1
       condition: redis.enabled
 
