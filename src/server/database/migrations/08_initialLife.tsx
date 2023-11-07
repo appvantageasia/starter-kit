@@ -7,5 +7,3 @@ export default {
         await db.collection('lives').createIndex({ firstName: 1, lastName: 1 }, { unique: true });
     },
 };
-
-// comment

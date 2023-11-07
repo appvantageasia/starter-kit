@@ -22,5 +22,3 @@ export const getCollections = ({
     externalLinks: regular.db.collection<documents.ExternalLink>('externalLinks'),
     lives: regular.db.collection<documents.Life>('lives'),
 });
-
-// comment

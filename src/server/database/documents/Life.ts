@@ -9,5 +9,3 @@ export type Life = {
     description: string;
     hobbies: string[];
 };
-
-// comment
