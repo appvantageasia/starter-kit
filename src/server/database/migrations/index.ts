@@ -26,3 +26,5 @@ const migrations: Migration[] = [
 ];
 
 export default migrations;
+
+// comment
