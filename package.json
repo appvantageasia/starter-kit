@@ -164,7 +164,7 @@
         "webpackbar": "^5.0.2"
     },
     "dependencies": {
-        "@ant-design/icons": "^4.7.0",
+        "@ant-design/icons": "^5.0.0",
         "@ant-design/pro-layout": "^6.38.22",
         "@apollo/client": "^3.6.9",
         "@babel/runtime": "^7.19.0",
