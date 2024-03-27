@@ -28,18 +28,18 @@ partials:
 executors:
   node-standalone:
     docker:
-      - image: cimg/node:18.9.1
+      - image: cimg/node:18.19.1
   node-with-dependencies:
     docker:
-      - image: cimg/node:18.9.1
+      - image: cimg/node:18.19.1
         environment: *main-env
-      - image: mongo:6.0.1-focal
+      - image: mongo:6.0.4-focal
         environment: *mongo-env
       - image: minio/minio:RELEASE.2022-05-26T05-48-41Z
         entrypoint: sh
         command: -c 'mkdir -p /data/app && /opt/bin/minio server /data'
         environment: *mino-env
-      - image: cimg/redis:7.0.4
+      - image: cimg/redis:7.2.4
         command: redis-server --appendonly yes
       - image: appvantage/html2pdf-service:1.7.2
         name: html2pdf
@@ -53,12 +53,12 @@ executors:
     docker:
       - image: cypress/browsers:node18.6.0-chrome105-ff104
         environment: *main-env
-      - image: mongo:6.0.1-focal
+      - image: mongo:6.0.4-focal
         environment: *mongo-env
       - image: minio/minio:RELEASE.2022-05-26T05-48-41Z
         entrypoint: sh
         command: -c 'mkdir -p /data/app && /opt/bin/minio server /data'
-      - image: cimg/redis:7.0.4
+      - image: cimg/redis:7.2.4
         command: redis-server --appendonly yes
       - image: appvantage/html2pdf-service:1.7.2
         name: html2pdf
